@@ -71,17 +71,8 @@ CREATE TABLE Food_attribute (
    PRIMARY KEY (attr_id)
 );
 
- /*
-  Relational Tables:
-  Has_order
-  Has_disc
-  Has_cust
-  Ordered_item
-  Ordered_with
-  Has_attr
-  Has_cat
-  */
 
+/* TODO: For relational tables, do we want to cascade updates or deletes? */
 CREATE TABLE Has_order (
    loc_id         INTEGER,
    order_id       INTEGER,
@@ -93,29 +84,45 @@ CREATE TABLE Has_order (
 );
 
 CREATE TABLE Has_disc (
-   loc            INTEGER,
-   ord            INTEGER,
-   PRIMARY KEY (ord),
-   FOREIGN KEY (loc)            REFERENCES Location(loc_id),
-   FOREIGN KEY (ord)            REFERENCES Order(order_id)
+   disc_id         INTEGER,
+   order_id        INTEGER,
+   FOREIGN KEY (disc_id)        REFERENCES Discount(disc_id),
+   FOREIGN KEY (order_id)       REFERENCES Order(order_id)
 );
 
+CREATE TABLE Has_cust (
+   cust_id         INTEGER,
+   order_id        INTEGER,
+   FOREIGN KEY (cust_id)        REFERENCES Customer(cust_id),
+   FOREIGN KEY (order_id)       REFERENCES Order(order_id)
+);
 
+CREATE TABLE Ordered_item (
+   item_id         INTEGER,
+   cust_id         INTEGER,
+   menu_id         INTEGER,
+   FOREIGN KEY (item_id)        REFERENCES Item(item_id),
+   FOREIGN KEY (cust_id)        REFERENCES Customer(cust_id),
+   FOREIGN KEY (menu_id)        REFERENCES Menu_item(menu_id)
+);
 
-/* 
-Below examples of rel tables 
-*/
+CREATE TABLE Ordered_with (
+   item_id         INTEGER,
+   attr_id         INTEGER,
+   FOREIGN KEY (item_id)        REFERENCES Item(item_id),
+   FOREIGN KEY (attr_id)        REFERENCES Food_attribute(attr_id)
+);
 
-CREATE TABLE On_waitlist (
-   stud_ssn    INTEGER,
-   sect_id     INTEGER,
-   join_num    INTEGER     NOT NULL,
-   position    INTEGER     NOT NULL,
-   PRIMARY KEY (stud_ssn, sect_id),
-   FOREIGN KEY (stud_ssn) REFERENCES Student(ssn)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE,
-   FOREIGN KEY (sect_id) REFERENCES Section(section_id)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE
+CREATE TABLE Has_attr (
+   menu_id         INTEGER,
+   attr_id         INTEGER,
+   FOREIGN KEY (menu_id)        REFERENCES Menu_item(menu_id),
+   FOREIGN KEY (attr_id)        REFERENCES Food_attribute(attr_id)
+);
+
+CREATE TABLE Has_cat (
+   menu_id         INTEGER,
+   cat_id          INTEGER,
+   FOREIGN KEY (menu_id)        REFERENCES Menu_item(menu_id),
+   FOREIGN KEY (cat_id)         REFERENCES Category(cat_id)
 );
