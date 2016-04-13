@@ -25,12 +25,12 @@ CREATE TABLE Location (
    PRIMARY KEY (loc_id)
 );
 
-CREATE TABLE Order (
-   order_id       INTEGER        IDENTITY(1,1),
-   order_status   VARCHAR(20)    NOT NULL,
+CREATE TABLE Tab (
+   tab_id         INTEGER        IDENTITY(1,1),
+   tab_status     VARCHAR(20)    NOT NULL,
    time_in        TIME,
    time_out       TIME,
-   PRIMARY KEY (order_id)
+   PRIMARY KEY (tab_id)
 );
 
 CREATE TABLE Discount (
@@ -52,7 +52,7 @@ CREATE TABLE Menu_item (
 
 CREATE TABLE Item (
    item_id        INTEGER        IDENTITY(1,1),
-   notes          VARCHAR(100)   NOT NULL,
+   notes          VARCHAR(100),
    item_status    VARCHAR(20)    NOT NULL,
    PRIMARY KEY (item_id)
 );
@@ -79,7 +79,7 @@ CREATE TABLE Has_order (
    emp_id         INTEGER,
    PRIMARY KEY (order_id),
    FOREIGN KEY (loc_id)         REFERENCES Location(loc_id),
-   FOREIGN KEY (order_id)       REFERENCES Order(order_id),
+   FOREIGN KEY (order_id)       REFERENCES Tab(tab_id),
    FOREIGN KEY (emp_id)         REFERENCES Employee(emp_id)
 );
 
@@ -87,14 +87,14 @@ CREATE TABLE Has_disc (
    disc_id         INTEGER,
    order_id        INTEGER,
    FOREIGN KEY (disc_id)        REFERENCES Discount(disc_id),
-   FOREIGN KEY (order_id)       REFERENCES Order(order_id)
+   FOREIGN KEY (order_id)       REFERENCES Tab(tab_id)
 );
 
 CREATE TABLE Has_cust (
    cust_id         INTEGER,
    order_id        INTEGER,
    FOREIGN KEY (cust_id)        REFERENCES Customer(cust_id),
-   FOREIGN KEY (order_id)       REFERENCES Order(order_id)
+   FOREIGN KEY (order_id)       REFERENCES Tab(tab_id)
 );
 
 CREATE TABLE Ordered_item (
