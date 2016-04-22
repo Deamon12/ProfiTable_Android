@@ -3,15 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:id="@+id/partition_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_light"
+        android:layout_alignTop="@+id/section_text"
+        android:layout_alignBottom="@+id/section_text"/>
+
     <TextView
         android:id="@+id/section_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bar"
         android:padding="5dp"
         android:textSize="20sp"
-        android:textIsSelectable="true"
-        android:background="@color/primary_light"/>
+        android:textIsSelectable="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_drop_down_white_36dp"
+        android:layout_alignTop="@+id/section_text"
+        android:layout_alignBottom="@+id/section_text"
+        android:layout_alignParentRight="true"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="10dp"

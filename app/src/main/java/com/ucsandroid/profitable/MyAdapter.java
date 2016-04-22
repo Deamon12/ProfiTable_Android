@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private int mLayout;
     private ArrayList<String> mDataset;
@@ -20,11 +20,11 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         public TextView mTextView;
 
-
         public ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.table_tile_name);
         }
+
     }
 
     public MyAdapter(Context context, ArrayList myDataset, int layout, ViewGroup.LayoutParams params) {
@@ -51,6 +51,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
 
         holder.mTextView.setText(mDataset.get(position));
 

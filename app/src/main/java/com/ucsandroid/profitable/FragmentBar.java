@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class FragmentBar extends Fragment {
+public class FragmentBar extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
-
+    private View partitionBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +25,9 @@ public class FragmentBar extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bar, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
+
+        partitionBar = view.findViewById(R.id.partition_bar);
+        partitionBar.setOnClickListener(this);
 
         return view;
     }
@@ -64,6 +67,16 @@ public class FragmentBar extends Fragment {
                 layoutWidth,
                 layoutHeight));
         recyclerView.setAdapter(rcAdapter);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        if(v == partitionBar){
+            ((ActivityTableView)getActivity()).toggleBarSection();
+        }
+
     }
 
 

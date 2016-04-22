@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.FrameLayout;
 
 public class ActivityTableView extends AppCompatActivity {
 
 
-
+    private int barFragHeight;
+    private FrameLayout barFragContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +34,14 @@ public class ActivityTableView extends AppCompatActivity {
 
         int orientation = getResources().getConfiguration().orientation;
 
+        barFragContainer = (FrameLayout) findViewById(R.id.bar_frag_container);
+
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            FrameLayout barFragContainer = (FrameLayout) findViewById(R.id.bar_frag_container);
-            barFragContainer.getLayoutParams().height = (int)(metrics.heightPixels*.5);
+            barFragHeight = (int)(metrics.heightPixels*.5);
+            barFragContainer.getLayoutParams().height = barFragHeight;
         }
+        else
+            barFragHeight = barFragContainer.getLayoutParams().height;
 
 
 
@@ -63,6 +69,20 @@ public class ActivityTableView extends AppCompatActivity {
         transaction.commit();
 
 
+    }
+
+
+    public void toggleBarSection(){
+
+
+        if(barFragContainer.findViewById(R.id.bar_recyclerview).getVisibility() == View.VISIBLE) {
+            barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.GONE);
+            barFragContainer.getLayoutParams().height = barFragContainer.findViewById(R.id.partition_bar).getLayoutParams().height;
+        }
+        else {
+            barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.VISIBLE);
+            barFragContainer.getLayoutParams().height = barFragHeight;
+        }
     }
 
 

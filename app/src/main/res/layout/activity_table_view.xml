@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="7">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/the_toolbar"
@@ -15,20 +13,21 @@
 
     <FrameLayout
         android:id="@+id/table_frag_container"
-        android:layout_weight="3"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="200dp"
+        android:layout_below="@+id/the_toolbar"
+        android:layout_above="@+id/bar_frag_container"/>
 
     <FrameLayout
         android:id="@+id/bar_frag_container"
-        android:layout_weight="2"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="200dp"
+        android:layout_above="@+id/takeout_frag_container"/>
 
     <FrameLayout
         android:id="@+id/takeout_frag_container"
-        android:layout_weight="2"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>
