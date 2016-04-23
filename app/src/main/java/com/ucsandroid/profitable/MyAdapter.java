@@ -34,8 +34,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>  {
         @Override
         public void onClick(View v) {
             System.out.println("Clicked: "+getAdapterPosition());
-            Intent tableViewActivity = new Intent(mContext, ActivityTableView.class);
-            mContext.startActivity(tableViewActivity);
+            Intent orderViewActivity = new Intent(mContext, ActivityOrderView.class);
+            mContext.startActivity(orderViewActivity);
         }
 
     }
@@ -52,8 +52,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>  {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
 
-        v.getLayoutParams().height = mParams.height;
-        v.getLayoutParams().width = mParams.width;
+        if(mParams == null){
+
+        }else{
+            v.getLayoutParams().height = mParams.height;
+            v.getLayoutParams().width = mParams.width;
+        }
+
 
 
         ViewHolder vh = new ViewHolder(v);
@@ -66,7 +71,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>  {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
 
         holder.mTextView.setText(mDataset.get(position));
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/server_table_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Table 8  -  Nicki"
+        android:layout_alignTop="@+id/send_to_kitchen_button"
+        android:layout_alignBottom="@+id/send_to_kitchen_button"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/send_to_kitchen_button"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/square_rounded">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cross_fork_spoon"
+            android:layout_alignBottom="@+id/send_to_kitchen"
+            android:layout_alignTop="@+id/send_to_kitchen"
+            android:layout_toLeftOf="@+id/send_to_kitchen"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/send_to_kitchen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send to kitchen"
+            android:textSize="30sp"/>
+
+
+
+
+    </RelativeLayout>
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/orders_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/server_table_text"/>
+
+
+</RelativeLayout>
