@@ -36,14 +36,30 @@ public class ActivityOrderView extends AppCompatActivity {
         int orientation = getResources().getConfiguration().orientation;
 
 
-        int custFragHeight;
+        int custFragHeight, custFragWidth;
+        int menuItemsFragHeight, menuItemsFragWidth;
+
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             custFragHeight = (int)(metrics.heightPixels*.5);
-            customerFragContainer.getLayoutParams().height = custFragHeight;
+            custFragWidth = (int)(metrics.widthPixels*.7);
+            menuItemsFragHeight = (int)(metrics.heightPixels*.4);
+            menuItemsFragWidth = (int)(metrics.widthPixels);
+
         }
-        else
-            custFragHeight = customerFragContainer.getLayoutParams().height;
+        else {
+            custFragHeight = (int)(metrics.heightPixels*.5);
+            custFragWidth = (int)(metrics.widthPixels*.7);
+            menuItemsFragHeight = (int)(metrics.heightPixels*.4);
+            menuItemsFragWidth = (int)(metrics.widthPixels);
+        }
+
+        customerFragContainer.getLayoutParams().height = custFragHeight;
+        customerFragContainer.getLayoutParams().width = custFragWidth;
+
+        menuitemFragContainer.getLayoutParams().height = menuItemsFragHeight;
+        menuitemFragContainer.getLayoutParams().width = menuItemsFragWidth;
+
 
 
         initFragments();
