@@ -1,10 +1,10 @@
 package com.ucsandroid.profitable;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
@@ -40,7 +40,25 @@ public class ActivityOrderView extends AppCompatActivity {
         int menuItemsFragHeight, menuItemsFragWidth;
 
 
+        int smallestWidth = getResources().getConfiguration().smallestScreenWidthDp;
+
+
+
+        if (smallestWidth > 720) {
+            //Device is a 10" tablet
+            System.out.println("10 inch tablet");
+        }
+        else if (smallestWidth > 600) {
+            //Device is a 7" tablet
+            System.out.println("7 inch tablet");
+        }
+        else{
+            System.out.println("not a tablet: "+smallestWidth);
+        }
+
+
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+
             custFragHeight = (int)(metrics.heightPixels*.5);
             custFragWidth = (int)(metrics.widthPixels*.7);
             menuItemsFragHeight = (int)(metrics.heightPixels*.4);
@@ -48,12 +66,15 @@ public class ActivityOrderView extends AppCompatActivity {
 
         }
         else {
+
             custFragHeight = (int)(metrics.heightPixels*.5);
             custFragWidth = (int)(metrics.widthPixels*.7);
             menuItemsFragHeight = (int)(metrics.heightPixels*.4);
             menuItemsFragWidth = (int)(metrics.widthPixels);
         }
 
+
+        //Dynamic resizing of the fragment containers
         customerFragContainer.getLayoutParams().height = custFragHeight;
         customerFragContainer.getLayoutParams().width = custFragWidth;
 
@@ -70,13 +91,14 @@ public class ActivityOrderView extends AppCompatActivity {
 
         Fragment orderFrag = new FragmentOrders();
         Fragment amountFrag = new FragmentOrderAmount();
-        Fragment menuFrag = new FragmentOrders();
+        Fragment menuFrag = new FragmentMenuItems();
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.orders_frag_container, orderFrag);
         transaction.replace(R.id.amounts_frag_container, amountFrag);
-        //transaction.replace(R.id.menuitems_frag_container, menuFrag);
+        transaction.replace(R.id.menuitems_frag_container, menuFrag);
 
         // Commit the transaction
         transaction.commit();

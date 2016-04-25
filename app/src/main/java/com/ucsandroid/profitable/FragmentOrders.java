@@ -1,11 +1,10 @@
 package com.ucsandroid.profitable;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -41,13 +40,13 @@ public class FragmentOrders extends Fragment {
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 6;
+            iconRowLength = 2;
             layoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels);
 
 
         }else{
-            iconRowLength = 9;
+            iconRowLength = 1;
             layoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels);
         }
@@ -57,17 +56,16 @@ public class FragmentOrders extends Fragment {
 
         ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 37; a++)
+        for(int a = 1; a <= 5; a++)
             dataSet.add("Customer "+a);
 
 
         GridLayoutManager gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this.getActivity());
+
 
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(gridLayout);
 
         MyOrdersAdapter rcAdapter = new MyOrdersAdapter(getActivity(), dataSet, R.layout.tile_customer_order, null);
         mRecyclerView.setAdapter(rcAdapter);
