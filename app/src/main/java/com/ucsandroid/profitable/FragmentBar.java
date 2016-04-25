@@ -50,20 +50,21 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         }else{
             iconRowLength = 9;
             layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.2);
+            layoutWidth = (int)(metrics.widthPixels*.1);
+            layoutHeight = layoutWidth;
         }
 
         ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 45; a++)
-            dataSet.add("Bar "+a);
+        for(int a = 1; a <= 20; a++)
+            dataSet.add(""+a);
 
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
+        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight));
         recyclerView.setAdapter(rcAdapter);

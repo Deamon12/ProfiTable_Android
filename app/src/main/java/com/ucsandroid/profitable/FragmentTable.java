@@ -40,14 +40,16 @@ public class FragmentTable extends Fragment {
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             iconRowLength = 6;
-            layoutHeight = (int)(metrics.heightPixels*.15);
+            layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.1);
+            layoutWidth = layoutHeight;
 
 
         }else{
-            iconRowLength = 9;
+            iconRowLength = 8;
             layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.2);
+            layoutWidth = (int)(metrics.widthPixels*.1);
+            layoutHeight = layoutWidth;
         }
 
 
