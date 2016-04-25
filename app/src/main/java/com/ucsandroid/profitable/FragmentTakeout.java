@@ -46,17 +46,17 @@ public class FragmentTakeout extends Fragment {
             iconRowLength = 8;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.1);
-            System.out.println("layoutHeight: "+layoutHeight);
-            System.out.println("layoutWidth: "+layoutWidth);
-            System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
+            //System.out.println("layoutHeight: "+layoutHeight);
+            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
 
         }else{
             iconRowLength = 9;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.2);
-            System.out.println("layoutHeight: "+layoutHeight);
-            System.out.println("layoutWidth: "+layoutWidth);
-            System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
+            //System.out.println("layoutHeight: "+layoutHeight);
+            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
         }
 
         ArrayList<String> dataSet = new ArrayList<>();
@@ -69,7 +69,7 @@ public class FragmentTakeout extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        MyTakeoutAdapter rcAdapter = new MyTakeoutAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
+        MyTakeoutAdapter rcAdapter = new MyTakeoutAdapter(getActivity(), dataSet, R.layout.tile_takeout, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight));
         recyclerView.setAdapter(rcAdapter);
@@ -93,7 +93,7 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
 
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.table_tile_name);
+            mTextView = (TextView) v.findViewById(R.id.takeout_tile_name);
         }
 
     }

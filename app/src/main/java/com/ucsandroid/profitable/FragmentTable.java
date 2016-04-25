@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class FragmentTable extends Fragment {
 
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
 
 
 
@@ -23,7 +23,7 @@ public class FragmentTable extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_table, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
         initRecyclerView();
 
         return view;
@@ -40,14 +40,16 @@ public class FragmentTable extends Fragment {
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             iconRowLength = 6;
-            layoutHeight = (int)(metrics.heightPixels*.15);
+            layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.1);
+            layoutWidth = layoutHeight;
 
 
         }else{
-            iconRowLength = 9;
+            iconRowLength = 8;
             layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.2);
+            layoutWidth = (int)(metrics.widthPixels*.1);
+            layoutHeight = layoutWidth;
         }
 
 
@@ -60,13 +62,15 @@ public class FragmentTable extends Fragment {
 
 
         GridLayoutManager gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(gridLayout);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(gridLayout);
 
         MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight));
-        recyclerView.setAdapter(rcAdapter);
+        mRecyclerView.setAdapter(rcAdapter);
+
+
     }
 
 
