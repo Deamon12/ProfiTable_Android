@@ -17,22 +17,19 @@
 
         <ImageView
             android:id="@+id/table_image"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/profit_table2"
-            android:layout_above="@+id/table_tile_name"
+            android:src="@drawable/profit_bar2"
+            android:layout_below="@+id/table_tile_name"
             android:padding="5dp"/>
 
         <TextView
             android:id="@+id/table_tile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Table #"
-            android:lines="1"
+            android:text="35"
             android:textSize="14sp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             />
 
 
