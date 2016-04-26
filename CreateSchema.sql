@@ -175,6 +175,7 @@ CREATE TABLE Ordered_with (
 CREATE TABLE Has_attr (
    menu_id         BIGINT,
    attr_id         BIGINT,
+   default_incl    BOOLEAN NOT NULL,
    FOREIGN KEY (menu_id)        REFERENCES Menu_item(menu_id),
    FOREIGN KEY (attr_id)        REFERENCES Food_attribute(attr_id)
 );
@@ -224,6 +225,16 @@ END TRANSACTION;
 
 BEGIN TRANSACTION;
 /* 1 */
+INSERT INTO Tab (tab_status) 
+   VALUES('inprogress');
+/* 2 */   
+INSERT INTO Tab (tab_status) 
+   VALUES('complete');
+COMMIT;
+END TRANSACTION;
+
+BEGIN TRANSACTION;
+/* 1 */
 INSERT INTO Customer (order_id) 
    VALUES(1);
 /* 2 */
@@ -264,16 +275,6 @@ INSERT INTO Location (loc_status, name, loc_cat, restaurant)
 /* 5 */
 INSERT INTO Location (loc_status, name, loc_cat, restaurant) 
    VALUES('occupied','order184-Shamim',3,1);
-COMMIT;
-END TRANSACTION;
-
-BEGIN TRANSACTION;
-/* 1 */
-INSERT INTO Tab (tab_status) 
-   VALUES('inprogress');
-/* 2 */   
-INSERT INTO Tab (tab_status) 
-   VALUES('complete');
 COMMIT;
 END TRANSACTION;
 
@@ -446,61 +447,61 @@ COMMIT;
 END TRANSACTION;
 
 BEGIN TRANSACTION;
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 1, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 2, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 4, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 11, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 1, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 2, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 4, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(3, 7, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(3, 8, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(3, 12, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(3, 13, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(3, 11, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 3, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 5, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 12, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(1, 13, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 3, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 5, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 12, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(2, 13, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(4, 10, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(5, 9, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 1, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 3, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 2, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 5, FALSE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 11, TRUE);
-INSERT INTO Has_attr (menu_id, attr_id, default) 
+INSERT INTO Has_attr (menu_id, attr_id, default_incl) 
    VALUES(6, 4, TRUE);
 COMMIT;
 END TRANSACTION;
@@ -536,3 +537,43 @@ INSERT INTO Ordered_with (item_id, attr_id)
    VALUES(4,10);
 COMMIT;
 END TRANSACTION;
+
+/* 
+ * Example Query:
+ *
+ * Searching for all ordered items with 
+ * their location and status
+ */
+select 
+   l.loc_id, 
+   l.name, 
+   t.tab_status, 
+   c.cust_id, 
+   mi.menu_name
+from
+   location l, 
+   tab t, 
+   customer c, 
+   has_order ho, 
+   ordered_item oi, 
+   menu_item mi
+where
+   ho.loc_id=l.loc_id
+   AND
+   ho.order_id=t.tab_id
+   AND
+   c.order_id=t.tab_id
+   AND
+   l.restaurant=1
+   AND
+   oi.cust_id=c.cust_id
+   AND
+   mi.menu_id=oi.menu_id
+order by c.cust_id ASC;
+/* should produce:
+2  "barseat 4"    "inprogress"  1  "cheeseburger"
+2  "barseat 4"    "inprogress"  1  "soda"
+2  "barseat 4"    "inprogress"  2  "cheeseburger"
+2  "barseat 4"    "inprogress"  2  "milkshake"
+4  "table for 8"  "complete"    3  "burger"
+*/
