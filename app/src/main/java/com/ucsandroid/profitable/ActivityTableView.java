@@ -13,12 +13,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 public class ActivityTableView extends AppCompatActivity {
 
 
-    private int barFragHeight;
+    private int barFragHeight, takeoutFragHeight;
     private FrameLayout barFragContainer;
+    private FrameLayout takeoutFragContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +31,8 @@ public class ActivityTableView extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
 
-        toolbar.setTitle(R.string.app_name);
-        setSupportActionBar(toolbar);
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
 
 
 
@@ -39,6 +42,8 @@ public class ActivityTableView extends AppCompatActivity {
         int orientation = getResources().getConfiguration().orientation;
 
         barFragContainer = (FrameLayout) findViewById(R.id.bar_frag_container);
+        takeoutFragContainer = (FrameLayout) findViewById(R.id.takeout_frag_container);
+
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             barFragHeight = (int)(metrics.heightPixels*.5);
@@ -48,7 +53,7 @@ public class ActivityTableView extends AppCompatActivity {
             barFragHeight = barFragContainer.getLayoutParams().height;
 
 
-
+        takeoutFragHeight = takeoutFragContainer.getLayoutParams().height;
 
 
         initFragments();
@@ -82,10 +87,28 @@ public class ActivityTableView extends AppCompatActivity {
         if(barFragContainer.findViewById(R.id.bar_recyclerview).getVisibility() == View.VISIBLE) {
             barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.GONE);
             barFragContainer.getLayoutParams().height = barFragContainer.findViewById(R.id.partition_bar).getLayoutParams().height;
+            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_36dp);
         }
         else {
             barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.VISIBLE);
             barFragContainer.getLayoutParams().height = barFragHeight;
+            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_36dp);
+        }
+    }
+
+    public void toggleTakeoutSection(){
+
+        System.out.println("toggling takeout");
+
+        if(takeoutFragContainer.findViewById(R.id.takeout_recyclerview).getVisibility() == View.VISIBLE) {
+            takeoutFragContainer.findViewById(R.id.takeout_recyclerview).setVisibility(View.GONE);
+            takeoutFragContainer.getLayoutParams().height = takeoutFragContainer.findViewById(R.id.partition_bar).getLayoutParams().height;
+            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_36dp);
+        }
+        else {
+            takeoutFragContainer.findViewById(R.id.takeout_recyclerview).setVisibility(View.VISIBLE);
+            takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
+            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_36dp);
         }
     }
 

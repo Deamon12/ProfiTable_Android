@@ -5,6 +5,7 @@
 
 
     <View
+        android:id="@+id/partition_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_light"
@@ -13,7 +14,7 @@
 
     <TextView
         android:id="@+id/section_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Takeout"
         android:padding="5dp"
@@ -22,6 +23,7 @@
         android:background="@color/primary_light"/>
 
     <ImageView
+        android:id="@+id/takeout_divider_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_drop_down_white_36dp"

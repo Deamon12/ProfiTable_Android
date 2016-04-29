@@ -21,6 +21,7 @@
         android:textIsSelectable="true" />
 
     <ImageView
+        android:id="@+id/bar_divider_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_drop_down_white_36dp"

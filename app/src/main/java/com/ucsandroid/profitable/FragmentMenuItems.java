@@ -92,13 +92,19 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
 
         @Override
         public int getCount() {
-            return 100;
+            return 20;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return "Menu " + (position + 1);
         }
+
+
+        public float getPageWidth(int position) {
+            return 0.5f;
+        }
+
     }
 
 
