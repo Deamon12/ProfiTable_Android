@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/profit_table2"
+            android:src="@drawable/profit_table_icon"
             android:layout_above="@+id/tile_text"
             android:padding="5dp"/>
 
