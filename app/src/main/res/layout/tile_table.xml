@@ -9,23 +9,23 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/table_tile_total"
+            android:id="@+id/tile_total"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:text="$150.00"
             android:textSize="24sp" />
 
         <ImageView
-            android:id="@+id/table_image"
+            android:id="@+id/tile_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:src="@drawable/profit_table2"
-            android:layout_above="@+id/table_tile_name"
+            android:layout_above="@+id/tile_text"
             android:padding="5dp"/>
 
         <TextView
-            android:id="@+id/table_tile_name"
+            android:id="@+id/tile_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Table #"

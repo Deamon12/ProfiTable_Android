@@ -2,11 +2,15 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -23,10 +27,10 @@ public class ActivityTableView extends AppCompatActivity {
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            setSupportActionBar(toolbar);
-        }
+
+        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
+
 
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -82,6 +86,28 @@ public class ActivityTableView extends AppCompatActivity {
         else {
             barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.VISIBLE);
             barFragContainer.getLayoutParams().height = barFragHeight;
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_table_view, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_kitchen:
+                Intent intent = new Intent(ActivityTableView.this, ActivityKitchen.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

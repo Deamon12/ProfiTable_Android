@@ -93,7 +93,7 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
 
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.takeout_tile_name);
+            mTextView = (TextView) v.findViewById(R.id.tile_name);
         }
 
     }

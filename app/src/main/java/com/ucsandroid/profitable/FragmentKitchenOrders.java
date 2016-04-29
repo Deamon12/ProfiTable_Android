@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -12,26 +13,32 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import supportclasses.MyAdapter;
+import supportclasses.MyLinearLayoutManager;
+import supportclasses.OrdersAdapter;
 
-public class FragmentBar extends Fragment implements View.OnClickListener {
+public class FragmentKitchenOrders extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
-    private View partitionBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_bar, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
+        View view = inflater.inflate(R.layout.fragment_kitchen_orders, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_orders_recyclerview);
+
+        getOrders();
+
         initRecyclerView();
 
-        partitionBar = view.findViewById(R.id.partition_bar);
-        partitionBar.setOnClickListener(this);
 
         return view;
+    }
+
+    private void getOrders() {
+
+
     }
 
     private void initRecyclerView() {
@@ -39,36 +46,37 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        int iconRowLength;
+
         int layoutHeight, layoutWidth;
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
+            //layoutHeight = (int)(metrics.heightPixels);
+            layoutWidth = (int)(metrics.widthPixels*.3);
 
 
         }else{
-            iconRowLength = 9;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutHeight = layoutWidth;
+            //layoutHeight = (int)(metrics.heightPixels*.1);
+            layoutWidth = (int)(metrics.widthPixels*.4);
+            //layoutHeight = layoutWidth;
         }
+
+
 
         ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 20; a++)
-            dataSet.add(""+a);
+        for(int a = 1; a <= 10; a++)
+            dataSet.add("Table "+a);
 
+        MyLinearLayoutManager layoutManager
+                = new MyLinearLayoutManager(this.getActivity(), LinearLayoutManager.HORIZONTAL, false);
 
-        gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(gridLayout);
+        recyclerView.setLayoutManager(layoutManager);
 
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight));
+
+        OrdersAdapter rcAdapter = new OrdersAdapter(getActivity(), dataSet, R.layout.tile_kitchen_order,
+                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
         recyclerView.setAdapter(rcAdapter);
     }
 
@@ -76,11 +84,12 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        if(v == partitionBar){
-            ((ActivityTableView)getActivity()).toggleBarSection();
-        }
+
 
     }
+
+
+
 
 
 }

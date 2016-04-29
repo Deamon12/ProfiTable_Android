@@ -5,10 +5,9 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="10dp"
-        android:id="@+id/orders_recyclerview"
+        android:id="@+id/kitchen_orders_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent"/>
 
 
 </RelativeLayout>
