@@ -18,10 +18,13 @@ import android.widget.ImageView;
 public class ActivityTableView extends AppCompatActivity {
 
 
-    private int barFragHeight, takeoutFragHeight;
+    private int barFragHeight, takeoutFragHeight, tableFragWidth;
     private FrameLayout barFragContainer;
+    private FrameLayout tableFragContainer;
     private FrameLayout takeoutFragContainer;
 
+
+    private DisplayMetrics metrics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,12 @@ public class ActivityTableView extends AppCompatActivity {
 
 
 
-        DisplayMetrics metrics = new DisplayMetrics();
+        metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int orientation = getResources().getConfiguration().orientation;
 
+        tableFragContainer = (FrameLayout) findViewById(R.id.table_frag_container);
         barFragContainer = (FrameLayout) findViewById(R.id.bar_frag_container);
         takeoutFragContainer = (FrameLayout) findViewById(R.id.takeout_frag_container);
 
@@ -54,7 +58,7 @@ public class ActivityTableView extends AppCompatActivity {
 
 
         takeoutFragHeight = takeoutFragContainer.getLayoutParams().height;
-
+        tableFragWidth = tableFragContainer.getLayoutParams().width;
 
         initFragments();
     }
@@ -87,29 +91,49 @@ public class ActivityTableView extends AppCompatActivity {
         if(barFragContainer.findViewById(R.id.bar_recyclerview).getVisibility() == View.VISIBLE) {
             barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.GONE);
             barFragContainer.getLayoutParams().height = barFragContainer.findViewById(R.id.partition_bar).getLayoutParams().height;
-            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_36dp);
+            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_18dp);
         }
         else {
             barFragContainer.findViewById(R.id.bar_recyclerview).setVisibility(View.VISIBLE);
             barFragContainer.getLayoutParams().height = barFragHeight;
-            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_36dp);
+            ((ImageView) barFragContainer.findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
         }
+        checkVisibility();
     }
 
     public void toggleTakeoutSection(){
 
-        System.out.println("toggling takeout");
 
         if(takeoutFragContainer.findViewById(R.id.takeout_recyclerview).getVisibility() == View.VISIBLE) {
             takeoutFragContainer.findViewById(R.id.takeout_recyclerview).setVisibility(View.GONE);
             takeoutFragContainer.getLayoutParams().height = takeoutFragContainer.findViewById(R.id.partition_bar).getLayoutParams().height;
-            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_36dp);
+            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_18dp);
         }
         else {
             takeoutFragContainer.findViewById(R.id.takeout_recyclerview).setVisibility(View.VISIBLE);
             takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
-            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_36dp);
+            ((ImageView) takeoutFragContainer.findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
         }
+
+        checkVisibility();
+    }
+
+    private void checkVisibility() {
+
+        if (barFragContainer.findViewById(R.id.bar_recyclerview).getVisibility() == View.GONE &&
+                takeoutFragContainer.findViewById(R.id.takeout_recyclerview).getVisibility() == View.GONE){
+
+            tableFragContainer.getLayoutParams().width = (int) (metrics.widthPixels*.85);
+
+        }
+        else{
+
+            tableFragContainer.getLayoutParams().width = tableFragWidth;
+
+        }
+
+
+
     }
 
 

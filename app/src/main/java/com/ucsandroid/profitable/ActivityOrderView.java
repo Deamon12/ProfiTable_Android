@@ -128,12 +128,12 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         if(menuitemFragContainer.findViewById(R.id.pager).getVisibility() == View.VISIBLE) {
             menuitemFragContainer.findViewById(R.id.pager).setVisibility(View.GONE);
             menuitemFragContainer.getLayoutParams().height = 0;
-            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_up_white_36dp);
+            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_up_white_18dp);
         }
         else {
             menuitemFragContainer.findViewById(R.id.pager).setVisibility(View.VISIBLE);
             menuitemFragContainer.getLayoutParams().height = menuItemsFragHeight;
-            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_down_white_36dp);
+            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
         }
 
     }

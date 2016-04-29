@@ -83,11 +83,10 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        System.out.println("clicked "+v);
-
         if(v == partitionBar){
             ((ActivityTableView)getActivity()).toggleTakeoutSection();
         }
+
     }
 
 
