@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_below="@+id/the_toolbar"
+        android:layout_above="@+id/takeout_frag_container"
         android:layout_toRightOf="@+id/table_frag_container"
         />
 
@@ -30,7 +31,6 @@
         android:id="@+id/takeout_frag_container"
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:layout_below="@+id/bar_frag_container"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/table_frag_container"
         />
