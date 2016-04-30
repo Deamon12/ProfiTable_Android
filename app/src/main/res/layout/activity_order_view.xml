@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/the_toolbar"
-            android:layout_above="@+id/menu_divider"
+            android:layout_alignBottom="@+id/orders_frag_container"
             android:layout_toRightOf="@+id/orders_frag_container" />
 
 
