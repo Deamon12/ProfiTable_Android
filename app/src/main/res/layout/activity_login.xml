@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="61dp"
-        android:src="@mipmap/profit_256"/>
+        android:src="@mipmap/profit_logo"/>
 
 
     <com.rey.material.widget.EditText
