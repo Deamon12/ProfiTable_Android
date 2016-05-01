@@ -1,4 +1,4 @@
-package com.ucsandroid.profitable;
+package supportclasses;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.ucsandroid.profitable.ActivityOrderView;
+import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>  {
 
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.table_tile_name);
+            mTextView = (TextView) v.findViewById(R.id.tile_text);
             v.setOnClickListener(this);
 
         }
@@ -45,6 +48,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>  {
         mContext = context;
         mLayout = layout;
         mParams = params;
+    }
+
+    public MyAdapter(Context context, ArrayList myDataset, int layout) {
+        mDataset = myDataset;
+        mContext = context;
+        mLayout = layout;
+        mParams = null;
     }
 
 

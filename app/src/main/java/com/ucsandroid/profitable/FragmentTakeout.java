@@ -14,10 +14,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FragmentTakeout extends Fragment {
+public class FragmentTakeout extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
+    private View partitionBar;
 
 
     @Override
@@ -27,6 +28,9 @@ public class FragmentTakeout extends Fragment {
         View view = inflater.inflate(R.layout.fragment_takeout, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
+
+        partitionBar = view.findViewById(R.id.partition_bar);
+        partitionBar.setOnClickListener(this);
 
         initRecyclerView();
 
@@ -76,6 +80,16 @@ public class FragmentTakeout extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View v) {
+
+        if(v == partitionBar){
+            ((ActivityTableView)getActivity()).toggleTakeoutSection();
+        }
+
+    }
+
+
 }
 
 class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder> {
@@ -93,7 +107,7 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
 
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.takeout_tile_name);
+            mTextView = (TextView) v.findViewById(R.id.tile_name);
         }
 
     }

@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ActivityTableView" />
-        <activity android:name=".ActivityOrderView"></activity>
+        <activity android:name=".ActivityOrderView" />
+        <activity android:name=".ActivityKitchen"></activity>
     </application>
 
 </manifest>

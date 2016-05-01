@@ -7,10 +7,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import supportclasses.MyAdapter;
+import supportclasses.MyLinearLayoutManager;
 
 public class FragmentMenuItems extends Fragment implements View.OnClickListener {
 
@@ -84,21 +91,37 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
         public Fragment getItem(int i) {
             Fragment fragment = new MenuItemFrag();
 
-            //Bundle args = new Bundle();
-            //args.putInt("ARG_OBJ", i + 1);
-            //fragment.setArguments(args);
+            int color;
+            if(i%2 == 0){
+                color = R.color.primary_light;
+            }
+            else{
+                color = android.R.color.white;
+            }
+            Bundle args = new Bundle();
+            args.putInt("color", color);
+            fragment.setArguments(args);
             return fragment;
         }
 
         @Override
         public int getCount() {
-            return 100;
+
+            //Depend on some JSONArray of Menu categories
+
+            return 10;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return "Menu " + (position + 1);
         }
+
+
+        public float getPageWidth(int position) {
+            return 0.3f;
+        }
+
     }
 
 
@@ -106,14 +129,40 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
     // object in our collection.
     public static class MenuItemFrag extends Fragment {
 
+        RecyclerView recyclerView;
+
+
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
 
-            View rootView = inflater.inflate(R.layout.fragment_order_amount, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_menu_page, container, false);
+            int color = this.getArguments().getInt("color");
+
+            rootView.setBackgroundResource(color);
+            recyclerView = (RecyclerView) rootView.findViewById(R.id.menu_page_recyclerview);
+
+            initRecycler();
 
             return rootView;
         }
+
+
+        private void initRecycler() {
+
+            int count = new Random().nextInt(10);
+            ArrayList itemSet = new ArrayList<>();
+            for(int a = 1; a <= count; a++)
+                itemSet.add(""+a);
+
+            recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
+            MyAdapter rcAdapter = new MyAdapter(getActivity(), itemSet, R.layout.item_textview_imageview);
+
+            recyclerView.setAdapter(rcAdapter);
+
+        }
+
+
     }
 
 

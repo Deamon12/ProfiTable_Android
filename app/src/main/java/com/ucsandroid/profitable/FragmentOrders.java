@@ -1,18 +1,18 @@
 package com.ucsandroid.profitable;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import supportclasses.OrdersAdapter;
 
 public class FragmentOrders extends Fragment {
 
@@ -35,18 +35,18 @@ public class FragmentOrders extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        int iconRowLength;
+        int spanCount;
         int layoutHeight, layoutWidth;
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 2;
+            spanCount = 2;
             layoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels);
 
 
         }else{
-            iconRowLength = 1;
+            spanCount = 1;
             layoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels);
         }
@@ -60,19 +60,28 @@ public class FragmentOrders extends Fragment {
             dataSet.add("Customer "+a);
 
 
-        GridLayoutManager gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
+        StaggeredGridLayoutManager stagLayout = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
 
 
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(gridLayout);
+        mRecyclerView.setLayoutManager(stagLayout);
 
-        MyOrdersAdapter rcAdapter = new MyOrdersAdapter(getActivity(), dataSet, R.layout.tile_customer_order, null);
+
+        OrdersAdapter rcAdapter = new OrdersAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
+                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.MATCH_PARENT));
         mRecyclerView.setAdapter(rcAdapter);
 
 
     }
 
+
+
+
+}
+
+
+/*
     class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHolder> {
 
         private int mLayout;
@@ -143,6 +152,6 @@ public class FragmentOrders extends Fragment {
         }
 
 
-    }
+    }*/
 
-    }
+

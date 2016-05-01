@@ -7,13 +7,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
-public class ActivityOrderView extends AppCompatActivity {
+public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
     private FrameLayout customerFragContainer;
     private FrameLayout amountFragContainter;
     private FrameLayout menuitemFragContainer;
+
+    private ImageView dividerArrow;
+
+    private View menuDivider;
+    private DisplayMetrics metrics;
+
+    int custFragHeight, custFragWidth;
+    int menuItemsFragHeight, menuItemsFragWidth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +39,18 @@ public class ActivityOrderView extends AppCompatActivity {
         customerFragContainer = (FrameLayout) findViewById(R.id.orders_frag_container);
         amountFragContainter = (FrameLayout) findViewById(R.id.amounts_frag_container);
         menuitemFragContainer = (FrameLayout) findViewById(R.id.menuitems_frag_container);
+        menuDivider = findViewById(R.id.menu_divider);
+        menuDivider.setOnClickListener(this);
 
-        DisplayMetrics metrics = new DisplayMetrics();
+        dividerArrow = (ImageView) findViewById(R.id.divider_image);
+
+
+        metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int orientation = getResources().getConfiguration().orientation;
 
 
-        int custFragHeight, custFragWidth;
-        int menuItemsFragHeight, menuItemsFragWidth;
 
 
         int smallestWidth = getResources().getConfiguration().smallestScreenWidthDp;
@@ -59,9 +72,9 @@ public class ActivityOrderView extends AppCompatActivity {
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
 
-            custFragHeight = (int)(metrics.heightPixels*.5);
+            custFragHeight = (int)(metrics.heightPixels*.6);
             custFragWidth = (int)(metrics.widthPixels*.7);
-            menuItemsFragHeight = (int)(metrics.heightPixels*.4);
+            menuItemsFragHeight = (int)(metrics.heightPixels*.3);
             menuItemsFragWidth = (int)(metrics.widthPixels);
 
         }
@@ -105,6 +118,36 @@ public class ActivityOrderView extends AppCompatActivity {
 
 
     }
+
+
+    /**
+     * Dynamically show or hide the menu items to give more room to see customer info
+     */
+    private void toggleMenuContainer(){
+
+        if(menuitemFragContainer.findViewById(R.id.pager).getVisibility() == View.VISIBLE) {
+            menuitemFragContainer.findViewById(R.id.pager).setVisibility(View.GONE);
+            menuitemFragContainer.getLayoutParams().height = 0;
+            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_up_white_18dp);
+        }
+        else {
+            menuitemFragContainer.findViewById(R.id.pager).setVisibility(View.VISIBLE);
+            menuitemFragContainer.getLayoutParams().height = menuItemsFragHeight;
+            dividerArrow.setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
+        }
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        if(v == menuDivider){
+            toggleMenuContainer();
+
+        }
+
+    }
+
 
 
 }

@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import supportclasses.MyAdapter;
+
 public class FragmentTable extends Fragment {
 
     private RecyclerView mRecyclerView;

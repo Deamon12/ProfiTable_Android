@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tile_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item 1"
+            android:textSize="25sp"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@+id/tile_image"
+            android:lines="1"
+            android:ellipsize="end" />
+
+
+        <ImageView
+            android:id="@+id/tile_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tile_text"
+            android:layout_alignBottom="@+id/tile_text"
+            android:padding="8dp"
+            android:src="@drawable/ic_query_builder_black_18dp"
+            />
+
+
+    </RelativeLayout>
