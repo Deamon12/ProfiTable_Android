@@ -1,8 +1,10 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -18,7 +20,6 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
-    private View partitionBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,10 +29,24 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
 
-        partitionBar = view.findViewById(R.id.partition_bar);
-        partitionBar.setOnClickListener(this);
+
+
+
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean shown = settings.getBoolean("barFragShown", true);
+
+        //Hide fragment based on SharedPrefs
+        if(!shown)
+            ((ActivityTableView)getActivity()).toggleBarSection(false);
+
     }
 
     private void initRecyclerView() {
@@ -58,12 +73,12 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
 
         ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 20; a++)
+        for(int a = 1; a <= 50; a++)
             dataSet.add(""+a);
 
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
         MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
@@ -76,9 +91,7 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        if(v == partitionBar){
-            ((ActivityTableView)getActivity()).toggleBarSection();
-        }
+
 
     }
 

@@ -3,22 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
-        android:id="@+id/section_text"
+        android:id="@+id/section_text_takeout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tables"
         android:padding="5dp"
         android:textSize="20sp"
-        android:background="@color/primary_light"
+        android:background="@drawable/square_rounded"
         android:textIsSelectable="true"/>
 
     <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="0dp"
         android:id="@+id/table_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/section_text"/>
+        android:layout_below="@+id/section_text_takeout"/>
 
 
 </RelativeLayout>

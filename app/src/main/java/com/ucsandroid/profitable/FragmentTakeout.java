@@ -2,8 +2,10 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -18,7 +20,7 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
-    private View partitionBar;
+    //private View partitionBar;
 
 
     @Override
@@ -29,12 +31,25 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
 
-        partitionBar = view.findViewById(R.id.partition_bar);
-        partitionBar.setOnClickListener(this);
+        //partitionBar = view.findViewById(R.id.partition_bar);
+        //partitionBar.setOnClickListener(this);
 
         initRecyclerView();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean shown = settings.getBoolean("takeoutFragShown", true);
+
+        //Hide fragment based on SharedPrefs
+        if(!shown)
+            ((ActivityTableView)getActivity()).toggleTakeoutSection(false);
+
     }
 
     private void initRecyclerView() {
@@ -65,7 +80,7 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
 
         ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 10; a++)
+        for(int a = 1; a <= 50; a++)
             dataSet.add("Takeout "+a);
 
 
@@ -83,9 +98,9 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        if(v == partitionBar){
+        /*if(v == partitionBar){
             ((ActivityTableView)getActivity()).toggleTakeoutSection();
-        }
+        }*/
 
     }
 
