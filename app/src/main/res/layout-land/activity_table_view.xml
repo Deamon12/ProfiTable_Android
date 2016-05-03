@@ -18,67 +18,93 @@
         android:layout_below="@+id/the_toolbar"/>
 
 
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_rounded"
+        android:layout_alignBottom="@+id/section_text_bar"
+        android:layout_alignLeft="@+id/section_text_bar"
+        android:layout_alignTop="@+id/section_text_bar"
+        android:layout_alignRight="@+id/bar_divider_arrow"/>
+
+    <TextView
+        android:id="@+id/section_text_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bar"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/the_toolbar"
+        android:layout_toLeftOf="@+id/bar_divider_arrow"
+        android:layout_toRightOf="@+id/table_frag_container"
+        />
+
+    <ImageView
+        android:id="@+id/bar_divider_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_drop_down_white_18dp"
+        android:layout_alignTop="@+id/section_text_bar"
+        android:layout_alignBottom="@+id/section_text_bar"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitCenter" />
+
+    <!--end divider-->
+
     <FrameLayout
         android:id="@+id/bar_frag_container"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/takeout_frag_container"
-        android:layout_toRightOf="@+id/table_frag_container"
-        />
+        android:layout_height="50dp"
+        android:layout_below="@+id/section_text_bar"
+        android:layout_toRightOf="@+id/table_frag_container" />
+
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_rounded"
+        android:layout_alignBottom="@+id/section_text_takeout"
+        android:layout_alignLeft="@+id/section_text_takeout"
+        android:layout_alignTop="@+id/section_text_takeout"
+        android:layout_alignRight="@+id/takeout_divider_arrow"/>
+
+
+    <TextView
+        android:id="@+id/section_text_takeout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Takeout"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/bar_frag_container"
+        android:layout_toLeftOf="@+id/takeout_divider_arrow"
+        android:layout_toRightOf="@+id/table_frag_container"/>
+
+    <ImageView
+        android:id="@+id/takeout_divider_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_drop_down_white_18dp"
+        android:layout_alignTop="@+id/section_text_takeout"
+        android:layout_alignBottom="@+id/section_text_takeout"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitCenter" />
+
+    <!--end divider-->
 
     <FrameLayout
         android:id="@+id/takeout_frag_container"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/table_frag_container"
-        />
-
-    <!--
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="6">
-
-
-        <FrameLayout
-            android:id="@+id/table_frag_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3" />
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
-
-            <FrameLayout
-                android:id="@+id/bar_frag_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                />
-
-            <FrameLayout
-                android:id="@+id/takeout_frag_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/bar_frag_container"
-                android:layout_alignParentBottom="true"
-                />
-
-
-        </RelativeLayout>
-
-
-
-    </LinearLayout>
-
-    -->
+        android:layout_below="@+id/section_text_takeout"
+        android:layout_toRightOf="@+id/table_frag_container" />
 
 
 </RelativeLayout>
