@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_check_circle_grey600_18dp"
             android:layout_margin="5dp"
+            android:padding="10sp"
             android:tint="@color/primary"
             android:layout_alignParentRight="true" />
 
@@ -25,7 +26,7 @@
             android:id="@+id/tile_name_text"
             android:text="Table 1"
             android:layout_margin="10dp"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center_vertical"
             android:layout_alignParentLeft="true"
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tile_name_text"
             android:layout_alignLeft="@+id/tile_name_text"
+            android:layout_marginBottom="10dp"
             >
 
 
