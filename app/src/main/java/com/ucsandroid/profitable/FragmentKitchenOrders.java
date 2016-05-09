@@ -28,9 +28,11 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.fragment_kitchen_orders, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_orders_recyclerview);
 
+
+
         getOrders();
 
-        initRecyclerView();
+
 
 
         return view;
@@ -38,7 +40,7 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
 
     private void getOrders() {
 
-
+        initRecyclerView();
     }
 
     private void initRecyclerView() {
@@ -53,7 +55,6 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             //layoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels*.3);
-
 
         }else{
             //layoutHeight = (int)(metrics.heightPixels*.1);
