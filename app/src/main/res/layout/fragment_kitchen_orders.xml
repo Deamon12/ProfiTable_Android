@@ -13,7 +13,7 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_bar_height"
+        android:layout_height="20dp"
         android:background="@color/primary"
         android:layout_above="@+id/kitchen_sums_recyclerview"/>
 

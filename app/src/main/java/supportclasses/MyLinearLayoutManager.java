@@ -10,6 +10,8 @@ import android.view.View;
 
 import java.lang.reflect.Field;
 
+
+
 public class MyLinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
 
     private static boolean canMakeInsetsDirty = true;
