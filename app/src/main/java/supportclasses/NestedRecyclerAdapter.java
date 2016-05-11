@@ -45,7 +45,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
-        OrderRecyclerAdapter rcAdapter;
+        MenuItemRecyclerAdapter rcAdapter;
 
         public ViewHolder(View v) {
             super(v);
@@ -139,7 +139,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        holder.rcAdapter = new OrderRecyclerAdapter(context, dataSet.get(position).getItems(), R.layout.item_textview_imageview);
+        holder.rcAdapter = new MenuItemRecyclerAdapter(context, dataSet.get(position).getItems(), R.layout.item_textview_imageview);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
 
@@ -164,12 +164,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             dataSet.get(selectedPosition).addItem(item);
         }
 
-
-        //ArrayList items = (ArrayList) orders.get(selectedPosition);
-        //items.add(item);
-        //orders.put(selectedPosition, items);
-        //itemSet.add(item);
-        //notifyDataSetChanged();
         notifyItemChanged(selectedPosition);
 
     }

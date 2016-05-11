@@ -11,7 +11,7 @@ import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
 
-public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdapter.ViewHolder> {
+public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecyclerAdapter.ViewHolder> {
 
     private int layout;
     private ArrayList<MenuItem> dataSet;
@@ -43,7 +43,7 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
 
     }
 
-    public OrderRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -53,7 +53,7 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
     }
 
 
-    public OrderRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
+    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -61,7 +61,7 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
     }
 
 
-    public OrderRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MenuItemRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
