@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Random;
 
-import supportclasses.MyAdapter;
+import supportclasses.BasicRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
 
 public class FragmentMenuItems extends Fragment implements View.OnClickListener {
@@ -156,7 +156,7 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
                 itemSet.add(""+a);
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            MyAdapter rcAdapter = new MyAdapter(getActivity(), itemSet, R.layout.item_textview_imageview);
+            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_imageview);
 
             recyclerView.setAdapter(rcAdapter);
 

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import supportclasses.MyAdapter;
+import supportclasses.BasicRecyclerAdapter;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment implements View.OnClickListener {
@@ -89,7 +89,7 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
+        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight),
                 clickListener);

@@ -13,11 +13,12 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import supportclasses.OrdersAdapter;
+import supportclasses.NestedRecyclerAdapter;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentOrders extends Fragment {
 
+    private NestedRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int tileLayoutHeight, tileLayoutWidth;
 
@@ -42,9 +43,7 @@ public class FragmentOrders extends Fragment {
 
         int spanCount;
 
-        int orientation = getResources().getConfiguration().orientation;
-
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             spanCount = 2;
             tileLayoutHeight = (int)(metrics.heightPixels);
             tileLayoutWidth = (int)(metrics.widthPixels);
@@ -56,7 +55,6 @@ public class FragmentOrders extends Fragment {
         }
 
         StaggeredGridLayoutManager stagLayout = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(stagLayout);
 
         getOrders();
@@ -74,9 +72,10 @@ public class FragmentOrders extends Fragment {
         for(int a = 1; a <= 5; a++)
             dataSet.add("Customer "+a);
 
-        OrdersAdapter rcAdapter = new OrdersAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
-                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT));
-        mRecyclerView.setAdapter(rcAdapter);
+
+        mAdapter = new NestedRecyclerAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
+                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT), clickListener);
+        mRecyclerView.setAdapter(mAdapter);
 
     }
 
@@ -91,79 +90,3 @@ public class FragmentOrders extends Fragment {
 
 
 }
-
-
-/*
-    class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHolder> {
-
-        private int mLayout;
-        private ArrayList<String> mDataset;
-        private ViewGroup.LayoutParams mParams;
-        private Context mContext;
-
-
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-            public TextView mTextView;
-
-            public ViewHolder(View v) {
-                super(v);
-                mTextView = (TextView) v.findViewById(R.id.customer_count_text);
-                v.setOnClickListener(this);
-
-            }
-
-
-            @Override
-            public void onClick(View v) {
-                System.out.println("Clicked: " + getAdapterPosition());
-                //Intent orderViewActivity = new Intent(mContext, ActivityOrderView.class);
-                //mContext.startActivity(orderViewActivity);
-            }
-
-        }
-
-        public MyOrdersAdapter(Context context, ArrayList myDataset, int layout, ViewGroup.LayoutParams params) {
-            mDataset = myDataset;
-            mContext = context;
-            mLayout = layout;
-            mParams = params;
-        }
-
-
-        public MyOrdersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            View v = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
-
-            if (mParams == null) {
-
-            } else {
-                v.getLayoutParams().height = mParams.height;
-                v.getLayoutParams().width = mParams.width;
-            }
-
-
-            ViewHolder vh = new ViewHolder(v);
-
-
-            return vh;
-        }
-
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-
-            holder.mTextView.setText(mDataset.get(position));
-
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return mDataset.size();
-        }
-
-
-    }*/
-
-

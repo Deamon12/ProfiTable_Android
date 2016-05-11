@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import supportclasses.MyAdapter;
+import supportclasses.BasicRecyclerAdapter;
 import supportclasses.RecyclerViewClickListener;
 
 
@@ -24,7 +24,9 @@ import supportclasses.RecyclerViewClickListener;
 public class FragmentTable extends Fragment {
 
     private RecyclerView mRecyclerView;
-
+    private BasicRecyclerAdapter mAdapter;
+    int iconRowLength;
+    int tileLayoutHeight, tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,39 +39,38 @@ public class FragmentTable extends Fragment {
         return view;
     }
 
+
     private void initRecyclerView() {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int iconRowLength;
-        int layoutHeight, layoutWidth;
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             iconRowLength = 6;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutWidth = layoutHeight;
+            tileLayoutHeight = (int)(metrics.heightPixels*.1);
+            tileLayoutWidth = (int)(metrics.widthPixels*.1);
+            tileLayoutWidth = tileLayoutHeight;
 
 
         }else{
             iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutHeight = layoutWidth;
+            tileLayoutHeight = (int)(metrics.heightPixels*.1);
+            tileLayoutWidth = (int)(metrics.widthPixels*.1);
+            tileLayoutHeight = tileLayoutWidth;
         }
 
 
-        RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
-            @Override
-            public void recyclerViewListClicked(View v, int position) {
-                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                getActivity().startActivity(orderViewActivity);
-            }
-        };
+        getTableData();
 
 
+    }
+
+
+    /**
+     * Volley call to acquire table data
+     */
+    private void getTableData() {
 
         ArrayList<String> dataSet = new ArrayList<>();
 
@@ -81,16 +82,26 @@ public class FragmentTable extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        MyAdapter mAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight),
+        mAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
+                tileLayoutWidth,
+                tileLayoutHeight),
                 clickListener);
         mRecyclerView.setAdapter(mAdapter);
-
 
     }
 
 
+    /**
+     * Click interface for adapter
+     */
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int position) {
+            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+            orderViewActivity.putExtra("name", mAdapter.getDataSetTitle(position));
+            getActivity().startActivity(orderViewActivity);
+        }
+    };
 
 
 }

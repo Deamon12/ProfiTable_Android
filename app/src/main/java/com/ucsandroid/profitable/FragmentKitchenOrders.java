@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
-import supportclasses.MyAdapter;
+import supportclasses.BasicRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
 
 public class FragmentKitchenOrders extends Fragment implements View.OnClickListener {
@@ -54,13 +54,13 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            //layoutHeight = (int)(metrics.heightPixels);
+            //tileLayoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels*.3);
 
         }else{
-            //layoutHeight = (int)(metrics.heightPixels*.1);
+            //tileLayoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.4);
-            //layoutHeight = layoutWidth;
+            //tileLayoutHeight = tileLayoutWidth;
         }
 
 
@@ -169,7 +169,7 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
                 itemSet.add(""+a);
 
 
-            MyAdapter rcAdapter = new MyAdapter(mContext, itemSet, R.layout.item_textview_imageview);
+            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(mContext, itemSet, R.layout.item_textview_imageview);
 
             holder.recyclerView.setAdapter(rcAdapter);
 

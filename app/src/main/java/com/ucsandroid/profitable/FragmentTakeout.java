@@ -70,16 +70,16 @@ public class FragmentTakeout extends Fragment {
             iconRowLength = 8;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.1);
-            //System.out.println("layoutHeight: "+layoutHeight);
-            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
+            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
             //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
 
         }else{
             iconRowLength = 9;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.2);
-            //System.out.println("layoutHeight: "+layoutHeight);
-            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
+            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
             //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
         }
 

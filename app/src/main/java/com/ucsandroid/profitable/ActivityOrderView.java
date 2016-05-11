@@ -32,7 +32,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
+            toolbar.setTitle(getIntent().getStringExtra("name"));
             setSupportActionBar(toolbar);
         }
 

@@ -11,13 +11,13 @@ import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdapter.ViewHolder> {
 
-    private int mLayout;
-    ArrayList<String> dataset;
-    private ViewGroup.LayoutParams mParams;
+    private int layout;
+    private ArrayList<String> dataSet;
+    private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
-    Context mContext;
+    private Context context;
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -39,39 +39,36 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             if (clickListener != null) {
                 clickListener.recyclerViewListClicked(v, getAdapterPosition());
             }
-
         }
-
 
     }
 
-    public MyAdapter(Context context, ArrayList myDataset, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
-        dataset = myDataset;
-        mContext = context;
-        mLayout = layout;
-        mParams = params;
+    public BasicRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.params = params;
         this.clickListener = clickListener;
     }
 
-    public MyAdapter(Context context, ArrayList myDataset, int layout) {
-        dataset = myDataset;
-        mContext = context;
-        mLayout = layout;
-        mParams = null;
+    public BasicRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        params = null;
     }
 
 
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BasicRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if (mParams == null) {
+        if (params == null) {
 
         } else {
-            v.getLayoutParams().height = mParams.height;
-            v.getLayoutParams().width = mParams.width;
+            v.getLayoutParams().height = params.height;
+            v.getLayoutParams().width = params.width;
         }
-
 
         ViewHolder vh = new ViewHolder(v);
 
@@ -83,14 +80,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.mTextView.setText(dataset.get(position));
+        holder.mTextView.setText(dataSet.get(position));
 
     }
 
 
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return dataSet.size();
+    }
+
+    public String getDataSetTitle(int position){
+        return dataSet.get(position);
     }
 
 }
