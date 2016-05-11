@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import supportclasses.MyAdapter;
+import supportclasses.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment implements View.OnClickListener {
 
@@ -28,8 +30,6 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_bar, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
-
-
 
 
 
@@ -77,13 +77,23 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
             dataSet.add(""+a);
 
 
+        RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewListClicked(View v, int position) {
+                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                getActivity().startActivity(orderViewActivity);
+            }
+        };
+
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        //recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
         MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
                 layoutWidth,
-                layoutHeight));
+                layoutHeight),
+                clickListener);
+
         recyclerView.setAdapter(rcAdapter);
     }
 
