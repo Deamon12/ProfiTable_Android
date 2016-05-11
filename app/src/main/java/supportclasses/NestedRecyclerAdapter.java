@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder>  {
 
     private int layout;
-    private ArrayList<String> dataSet;
+    private ArrayList<Order> dataSet;
+
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
     private int lastClickedItem = -11;
     private int selectedPosition = -11;
+
 
 
     public NestedRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
@@ -28,6 +29,13 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
+
+        //TODO: This will be a nested JSONARRAY within the dataset
+
+
+
+
+
 
     }
 
@@ -37,6 +45,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
+        OrderRecyclerAdapter rcAdapter;
 
         public ViewHolder(View v) {
             super(v);
@@ -80,13 +89,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         }
 
+
     }
 
     /**
      * Add new tile, and select it
      */
     public void addCustomer(){
-        dataSet.add("Customer " + (dataSet.size() + 1));
+        dataSet.add(new Order("Customer " + (dataSet.size() + 1)));
         selectedPosition = getItemCount()-1;
         notifyDataSetChanged();
 
@@ -114,7 +124,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.mTextView.setText(dataSet.get(position));
+
+        holder.mTextView.setText(dataSet.get(position).getName());
 
         //initial loadup
         if(selectedPosition == -11 && position == (getItemCount()-1)){
@@ -128,17 +139,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        //TODO: This will be a nested JSONARRAY within the dataset
-        int count = new Random().nextInt(10);
-
-        //temp, will be included in dataSet
-        ArrayList<String> itemSet = new ArrayList<>();
-        for(int a = 1; a <= count; a++)
-            itemSet.add("Item "+a);
-
-        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(context, itemSet, R.layout.item_textview_imageview);
-
-        holder.recyclerView.setAdapter(rcAdapter);
+        holder.rcAdapter = new OrderRecyclerAdapter(context, dataSet.get(position).getItems(), R.layout.item_textview_imageview);
+        holder.recyclerView.setAdapter(holder.rcAdapter);
 
 
     }
@@ -147,6 +149,29 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     @Override
     public int getItemCount() {
         return dataSet.size();
+    }
+
+
+    public int getSelectedPosition(){
+        return selectedPosition;
+    }
+
+    public void addItemToCustomer(int customerPosition, String item){
+
+        System.out.println("In nested addItemToCust");
+
+        if(selectedPosition != -1){
+            dataSet.get(selectedPosition).addItem(item);
+        }
+
+
+        //ArrayList items = (ArrayList) orders.get(selectedPosition);
+        //items.add(item);
+        //orders.put(selectedPosition, items);
+        //itemSet.add(item);
+        //notifyDataSetChanged();
+        notifyItemChanged(selectedPosition);
+
     }
 
 

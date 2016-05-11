@@ -89,18 +89,17 @@ public class FragmentTakeout extends Fragment {
             dataSet.add("Takeout "+a);
 
          clickListener = new RecyclerViewClickListener() {
-            @Override
-            public void recyclerViewListClicked(View v, int position) {
+             @Override
+             public void recyclerViewListClicked(View v, int position, String item) {
+                 if(position == 0){
+                     mAdapter.dataSet.add(1, "New " + dataSet.size());
+                     mAdapter.notifyDataSetChanged();
+                 }else{
+                     Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                     getActivity().startActivity(orderViewActivity);
+                 }
+             }
 
-                if(position == 0){
-                    mAdapter.dataSet.add(1, "New " + dataSet.size());
-                    mAdapter.notifyDataSetChanged();
-                }else{
-                    Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                    getActivity().startActivity(orderViewActivity);
-                }
-
-            }
         };
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
@@ -142,7 +141,7 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
         public void onClick(View v) {
 
             if (clickListener != null) {
-                clickListener.recyclerViewListClicked(v, getAdapterPosition());
+                clickListener.recyclerViewListClicked(v, getAdapterPosition(), null);
             }
 
         }

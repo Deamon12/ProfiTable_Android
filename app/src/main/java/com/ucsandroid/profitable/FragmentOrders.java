@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import supportclasses.NestedRecyclerAdapter;
+import supportclasses.Order;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentOrders extends Fragment {
@@ -73,10 +74,8 @@ public class FragmentOrders extends Fragment {
      */
     private void getOrders() {
 
-        ArrayList<String> dataSet = new ArrayList<>();
-
-        for(int a = 1; a <= 5; a++)
-            dataSet.add("Customer "+a);
+        ArrayList<Order> dataSet = new ArrayList<>();
+        dataSet.add(new Order("Customer "+1));
 
 
         mAdapter = new NestedRecyclerAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
@@ -86,15 +85,21 @@ public class FragmentOrders extends Fragment {
     }
 
 
+    /**
+     * ClickListener Interface
+     */
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int position) {
+        public void recyclerViewListClicked(View v, int position, String item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
             getActivity().startActivity(orderViewActivity);
         }
     };
 
 
+    /**
+     * Start the broadcast receiver to add customers to the order recyclerview
+     */
     private void initAddCustomerListener() {
 
         mMessageReceiver = new BroadcastReceiver() {
@@ -107,9 +112,25 @@ public class FragmentOrders extends Fragment {
             }
         };
 
-
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
                 new IntentFilter("add-customer"));
+    }
+
+    /**
+     * ItemId is passed from Menu Items Pager. Use this itemId to pull attributes from webservice.
+     * And begin add item dialog flow.
+     * @param itemId
+     */
+    public void addItem(String itemId){
+
+        if(mAdapter.getSelectedPosition() > -1){
+            System.out.println("Need to add item: "+itemId+ " to customer "+(mAdapter.getSelectedPosition()+1));
+            mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), itemId); //TODO: start attribute flow if necessary
+
+
+        }
+        else
+            System.out.println("Need to add item: "+itemId+ " to nobody ");
 
     }
 

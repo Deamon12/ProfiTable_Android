@@ -1,6 +1,5 @@
 package com.ucsandroid.profitable;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,72 +16,47 @@ import java.util.Random;
 
 import supportclasses.BasicRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
+import supportclasses.RecyclerViewClickListener;
 
-public class FragmentMenuItems extends Fragment implements View.OnClickListener {
+public class FragmentMenuItems extends Fragment {
 
 
-    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
-    ViewPager mViewPager;
-    View mView;
+    private static BasicRecyclerAdapter mAdapter;
+    private MenuCollectionStatePagerAdapter mMenuPages;
+    private static ViewPager mViewPager;
+    private View mView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.fragment_menu_items, container, false);
-
         initViewPager();
-
-
 
         return mView;
     }
 
+
     private void initViewPager() {
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int iconRowLength;
-        int layoutHeight, layoutWidth;
-        int orientation = getResources().getConfiguration().orientation;
-
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-
-        }else{
-            iconRowLength = 9;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.2);
-        }
-
-        mDemoCollectionPagerAdapter =
-                new DemoCollectionPagerAdapter(getActivity().getSupportFragmentManager());
+        mMenuPages =
+                new MenuCollectionStatePagerAdapter(getActivity().getSupportFragmentManager());
         mViewPager = (ViewPager) mView.findViewById(R.id.pager);
-        mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+        mViewPager.setAdapter(mMenuPages);
+
 
         TabLayout tabLayout = (TabLayout) mView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-
     }
 
 
-    @Override
-    public void onClick(View v) {
+    /**
+     * Since this is an object collection, use a FragmentStatePagerAdapter, NOT a FragmentPagerAdapter.
+     */
+    public class MenuCollectionStatePagerAdapter extends FragmentStatePagerAdapter {
 
-
-
-    }
-
-    // Since this is an object collection, use a FragmentStatePagerAdapter,
-    // and NOT a FragmentPagerAdapter.
-
-    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
-
-        public DemoCollectionPagerAdapter(FragmentManager fm) {
+        public MenuCollectionStatePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -106,9 +79,7 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
 
         @Override
         public int getCount() {
-
             //Depend on some JSONArray of Menu categories
-
             return 10;
         }
 
@@ -117,27 +88,30 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
             return "Menu " + (position + 1);
         }
 
-
+        /**
+         * Reduces the horizontal width of the fragments inside the viewpager
+         * @param position
+         * @return width size
+         */
         public float getPageWidth(int position) {
             return 0.3f;
         }
 
     }
 
-
-    // Instances of this class are fragments representing a single
-    // object in our collection.
+    /**
+     * Food category fragments
+     */
     public static class MenuItemFrag extends Fragment {
 
         RecyclerView recyclerView;
-
 
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_menu_page, container, false);
-            int color = this.getArguments().getInt("color");
+            int color = getArguments().getInt("color");
 
             rootView.setBackgroundResource(color);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.menu_page_recyclerview);
@@ -148,24 +122,48 @@ public class FragmentMenuItems extends Fragment implements View.OnClickListener 
         }
 
 
+        /**
+         * recycler that shows items for a particular food category
+         */
         private void initRecycler() {
 
             int count = new Random().nextInt(10);
             ArrayList itemSet = new ArrayList<>();
             for(int a = 1; a <= count; a++)
-                itemSet.add(""+a);
+                itemSet.add("Food item "+a);
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_imageview);
+            mAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_imageview, null, clickListener);
 
-            recyclerView.setAdapter(rcAdapter);
+            recyclerView.setAdapter(mAdapter);
+
 
         }
 
+        /**
+         * Recieves the clicked position from a menu category
+         * Pass off an itemId from a MenuPage, to the OrderFragment to start the add item flow.
+         */
+        RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+            @Override
+            public void recyclerViewListClicked(View v, int position, String item) {
+                System.out.println("position: "+position);
+                System.out.println("item: "+item);
+                //System.out.println("not accurate page: "+mViewPager.getCurrentItem()); //TODO: dont use. have id with food item
+               // System.out.println("hmm: "+getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container).isVisible());
+
+                FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
+
+                if(orderFrag != null){
+                    orderFrag.addItem(item);
+                }
+
+
+            }
+        };
 
     }
 
-
-
-
 }
+

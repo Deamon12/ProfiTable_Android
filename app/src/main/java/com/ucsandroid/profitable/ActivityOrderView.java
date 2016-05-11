@@ -25,6 +25,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     private ImageView dividerArrow;
     private FloatingActionButton addCustomer;
+    private FloatingActionButton doCheckout;
     private View menuDivider;
     private DisplayMetrics metrics;
 
@@ -46,6 +47,8 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         amountFragContainter = (FrameLayout) findViewById(R.id.amounts_frag_container);
         menuitemFragContainer = (FrameLayout) findViewById(R.id.menuitems_frag_container);
         addCustomer = (FloatingActionButton) findViewById(R.id.addcustomer_fab);
+        doCheckout = (FloatingActionButton) findViewById(R.id.docheckout_fab);
+        doCheckout.setOnClickListener(this);
         addCustomer.setOnClickListener(this);
         menuDivider = findViewById(R.id.menu_divider);
         menuDivider.setOnClickListener(this);
@@ -160,14 +163,22 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         else if(v == addCustomer){
             sendAddCustomerBroadcast();
         }
-
+        else if(v == addCustomer){
+            sendAddCustomerBroadcast();
+        }
 
     }
 
+    /**
+     * Create and send a broadcast for the order fragment to recieve and create a new customer,
+     * and add them to the dataset.
+     */
     private void sendAddCustomerBroadcast() {
         Intent intent = new Intent("add-customer");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
+
+
 
 
 }

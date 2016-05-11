@@ -11,10 +11,10 @@ import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
 
-public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdapter.ViewHolder> {
+public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdapter.ViewHolder> {
 
     private int layout;
-    private ArrayList<String> dataSet;
+    private ArrayList<MenuItem> dataSet;
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
     private Context context;
@@ -37,22 +37,23 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
             if (clickListener != null) {
                 System.out.println("BasicRecycler: " + getAdapterPosition());
 
-                    clickListener.recyclerViewListClicked(v, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+                    clickListener.recyclerViewListClicked(v, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
             }
         }
 
     }
 
-    public BasicRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public OrderRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
         this.params = params;
         this.clickListener = clickListener;
+        System.out.println("Class: "+dataSet.get(0).getClass().equals(String.class));
     }
 
 
-    public BasicRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
+    public OrderRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -60,7 +61,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
     }
 
 
-    public BasicRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OrderRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -80,7 +81,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.mTextView.setText(dataSet.get(position));
+            holder.mTextView.setText(dataSet.get(position).getName());
 
     }
 
