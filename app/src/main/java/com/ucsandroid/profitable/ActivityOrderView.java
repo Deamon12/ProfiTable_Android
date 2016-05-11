@@ -1,9 +1,12 @@
 package com.ucsandroid.profitable;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -13,12 +16,15 @@ import android.widget.ImageView;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
+
+    private Fragment orderFrag;
+
     private FrameLayout customerFragContainer;
     private FrameLayout amountFragContainter;
     private FrameLayout menuitemFragContainer;
 
     private ImageView dividerArrow;
-
+    private FloatingActionButton addCustomer;
     private View menuDivider;
     private DisplayMetrics metrics;
 
@@ -39,11 +45,12 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         customerFragContainer = (FrameLayout) findViewById(R.id.orders_frag_container);
         amountFragContainter = (FrameLayout) findViewById(R.id.amounts_frag_container);
         menuitemFragContainer = (FrameLayout) findViewById(R.id.menuitems_frag_container);
+        addCustomer = (FloatingActionButton) findViewById(R.id.addcustomer_fab);
+        addCustomer.setOnClickListener(this);
         menuDivider = findViewById(R.id.menu_divider);
         menuDivider.setOnClickListener(this);
 
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
-
 
         dynamicallySizeContainers();
 
@@ -84,7 +91,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             custFragWidth = (int)(metrics.widthPixels*.7);
             menuItemsFragHeight = (int)(metrics.heightPixels*.3);
             menuItemsFragWidth = (int)(metrics.widthPixels);
-
         }
         else {
 
@@ -110,7 +116,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
      */
     private void initFragments() {
 
-        Fragment orderFrag = new FragmentOrders();
+        orderFrag = new FragmentOrders();
         Fragment amountFrag = new FragmentOrderAmount();
         Fragment menuFrag = new FragmentMenuItems();
 
@@ -150,11 +156,18 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         if(v == menuDivider){
             toggleMenuContainer();
-
         }
+        else if(v == addCustomer){
+            sendAddCustomerBroadcast();
+        }
+
+
     }
 
-
+    private void sendAddCustomerBroadcast() {
+        Intent intent = new Intent("add-customer");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 
 
 }

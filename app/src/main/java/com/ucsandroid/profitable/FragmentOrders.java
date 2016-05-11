@@ -1,9 +1,13 @@
 package com.ucsandroid.profitable;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
@@ -18,6 +22,7 @@ import supportclasses.RecyclerViewClickListener;
 
 public class FragmentOrders extends Fragment {
 
+    private BroadcastReceiver mMessageReceiver;
     private NestedRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private int tileLayoutHeight, tileLayoutWidth;
@@ -29,6 +34,7 @@ public class FragmentOrders extends Fragment {
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recyclerview);
         initRecyclerView();
+        initAddCustomerListener();
 
         return view;
     }
@@ -87,6 +93,25 @@ public class FragmentOrders extends Fragment {
             getActivity().startActivity(orderViewActivity);
         }
     };
+
+
+    private void initAddCustomerListener() {
+
+        mMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(mAdapter != null) {
+                    mAdapter.addCustomer();
+                    mRecyclerView.scrollToPosition(mAdapter.getItemCount()-1);
+                }
+            }
+        };
+
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+                new IntentFilter("add-customer"));
+
+    }
 
 
 }

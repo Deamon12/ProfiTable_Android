@@ -19,9 +19,17 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private ArrayList<String> dataSet;
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
+    private int lastClickedItem = -11;
+    private int selectedPosition = -11;
 
-    private int lastClickedItem = -1;
 
+    public NestedRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.layoutParams = params;
+
+    }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -44,34 +52,45 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
+
+        /**
+         * Changes the bg color of the currently selected card.
+         * Resets the recently selected tile, if one exists.
+         * @param v
+         */
         @Override
         public void onClick(View v) {
 
-            if (lastClickedItem != -1){
-                notifyItemChanged(lastClickedItem);
+            if(selectedPosition == getAdapterPosition()){
+                lastClickedItem = selectedPosition;
+                selectedPosition = -1;
+            }
+            else{
+                lastClickedItem = selectedPosition;
+                selectedPosition = getAdapterPosition();
             }
 
-            cardView.setCardBackgroundColor(context.getResources().getColor( R.color.primary_light));
 
-            if(lastClickedItem == getAdapterPosition()){
-                lastClickedItem = -1;
-            }else
-                lastClickedItem = getAdapterPosition();
+
+            if(lastClickedItem != -1)
+                notifyItemChanged(lastClickedItem);
+            if (selectedPosition != -1)
+                notifyItemChanged(selectedPosition);
+
 
         }
 
     }
 
-    public NestedRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.layoutParams = params;
-
+    /**
+     * Add new tile, and select it
+     */
+    public void addCustomer(){
+        dataSet.add("Customer " + (dataSet.size() + 1));
+        selectedPosition = getItemCount()-1;
+        notifyDataSetChanged();
 
     }
-
-
 
     public NestedRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -96,9 +115,20 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.mTextView.setText(dataSet.get(position));
-        holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
 
-        //TODO: This will be a nest JSONARRAY within the dataset
+        //initial loadup
+        if(selectedPosition == -11 && position == (getItemCount()-1)){
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            selectedPosition = (getItemCount()-1);
+        }
+        else if(selectedPosition != -1 && position == selectedPosition){
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+        }else{
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
+        }
+
+
+        //TODO: This will be a nested JSONARRAY within the dataset
         int count = new Random().nextInt(10);
 
         //temp, will be included in dataSet
@@ -118,6 +148,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public int getItemCount() {
         return dataSet.size();
     }
+
+
 
 
 }
