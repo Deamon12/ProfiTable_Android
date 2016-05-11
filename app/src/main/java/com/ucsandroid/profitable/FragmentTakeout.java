@@ -2,10 +2,12 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -16,11 +18,18 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class FragmentTakeout extends Fragment implements View.OnClickListener {
+import supportclasses.RecyclerViewClickListener;
+
+public class FragmentTakeout extends Fragment {
 
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayout;
-    //private View partitionBar;
+    private MyTakeoutAdapter mAdapter;
+
+    private ArrayList<String> dataSet;
+    int iconRowLength;
+    int layoutHeight, layoutWidth;
+    RecyclerViewClickListener clickListener;
 
 
     @Override
@@ -30,9 +39,6 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_takeout, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
-
-        //partitionBar = view.findViewById(R.id.partition_bar);
-        //partitionBar.setOnClickListener(this);
 
         initRecyclerView();
 
@@ -57,8 +63,7 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        int iconRowLength;
-        int layoutHeight, layoutWidth;
+
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
@@ -78,31 +83,38 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
             //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
         }
 
-        ArrayList<String> dataSet = new ArrayList<>();
+        dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 50; a++)
+        for(int a = 1; a <= 30; a++)
             dataSet.add("Takeout "+a);
 
+         clickListener = new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewListClicked(View v, int position) {
+
+                if(position == 0){
+                    mAdapter.dataSet.add(1, "New " + dataSet.size());
+                    mAdapter.notifyDataSetChanged();
+                }else{
+                    Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                    getActivity().startActivity(orderViewActivity);
+                }
+
+            }
+        };
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        MyTakeoutAdapter rcAdapter = new MyTakeoutAdapter(getActivity(), dataSet, R.layout.tile_takeout, new ViewGroup.LayoutParams(
+        mAdapter = new MyTakeoutAdapter(getActivity(), dataSet, R.layout.tile_takeout, new ViewGroup.LayoutParams(
                 layoutWidth,
-                layoutHeight));
-        recyclerView.setAdapter(rcAdapter);
+                layoutHeight),
+                clickListener);
+        recyclerView.setAdapter(mAdapter);
     }
 
-
-    @Override
-    public void onClick(View v) {
-
-        /*if(v == partitionBar){
-            ((ActivityTableView)getActivity()).toggleTakeoutSection();
-        }*/
-
-    }
 
 
 }
@@ -110,42 +122,46 @@ public class FragmentTakeout extends Fragment implements View.OnClickListener {
 class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder> {
 
     private int mLayout;
-    private ArrayList<String> mDataset;
+    protected ArrayList<String> dataSet;
     private ViewGroup.LayoutParams mParams;
     Context mContext;
+    private RecyclerViewClickListener clickListener;
 
 
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView mTextView;
 
         public ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.tile_name);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (clickListener != null) {
+                clickListener.recyclerViewListClicked(v, getAdapterPosition());
+            }
+
         }
 
     }
 
-    public static class ViewHolderSpecial extends RecyclerView.ViewHolder {
-
-        public ViewHolderSpecial(View v) {
-            super(v);
-            //mTextView = (TextView) v.findViewById(R.id.table_tile_name);
-        }
-
-    }
-
-    public MyTakeoutAdapter(Context context, ArrayList myDataset, int layout, ViewGroup.LayoutParams params) {
-        mDataset = myDataset;
+    public MyTakeoutAdapter(Context context,
+                            ArrayList myDataset,
+                            int layout,
+                            ViewGroup.LayoutParams params,
+                            RecyclerViewClickListener clickListener) {
+        dataSet = myDataset;
         mContext = context;
         mLayout = layout;
         mParams = params;
+        this.clickListener = clickListener;
     }
 
-
     public MyTakeoutAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
 
         View v;
 
@@ -175,18 +191,17 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
             return 1;
     }
 
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if(position > 0)
-            holder.mTextView.setText(mDataset.get(position));
+            holder.mTextView.setText(dataSet.get(position));
 
     }
-
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return dataSet.size();
     }
+
 }

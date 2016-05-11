@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,11 +14,16 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import supportclasses.MyAdapter;
+import supportclasses.RecyclerViewClickListener;
 
+
+/**
+ * Fragment that displays a grid of table icons that
+ * are related to a table object with orders attached to it.
+ */
 public class FragmentTable extends Fragment {
 
     private RecyclerView mRecyclerView;
-
 
 
     @Override
@@ -55,6 +61,14 @@ public class FragmentTable extends Fragment {
         }
 
 
+        RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewListClicked(View v, int position) {
+                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                getActivity().startActivity(orderViewActivity);
+            }
+        };
+
 
 
         ArrayList<String> dataSet = new ArrayList<>();
@@ -63,14 +77,15 @@ public class FragmentTable extends Fragment {
             dataSet.add("Table "+a);
 
 
-        GridLayoutManager gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
+        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), iconRowLength);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
+        MyAdapter mAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
                 layoutWidth,
-                layoutHeight));
-        mRecyclerView.setAdapter(rcAdapter);
+                layoutHeight),
+                clickListener);
+        mRecyclerView.setAdapter(mAdapter);
 
 
     }
