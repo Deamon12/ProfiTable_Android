@@ -41,18 +41,14 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         menuitemFragContainer = (FrameLayout) findViewById(R.id.menuitems_frag_container);
         menuDivider = findViewById(R.id.menu_divider);
         menuDivider.setOnClickListener(this);
-
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
+
 
 
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int orientation = getResources().getConfiguration().orientation;
-
-
-
-
         int smallestWidth = getResources().getConfiguration().smallestScreenWidthDp;
 
 
@@ -90,15 +86,18 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         //Dynamic resizing of the fragment containers
         customerFragContainer.getLayoutParams().height = custFragHeight;
         customerFragContainer.getLayoutParams().width = custFragWidth;
-
         menuitemFragContainer.getLayoutParams().height = menuItemsFragHeight;
         menuitemFragContainer.getLayoutParams().width = menuItemsFragWidth;
-
 
 
         initFragments();
     }
 
+
+    /**
+     * Initialize the fragments that are being displayed in this activity
+     * and add them to their respective containers
+     */
     private void initFragments() {
 
 
@@ -106,7 +105,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         Fragment amountFrag = new FragmentOrderAmount();
         Fragment menuFrag = new FragmentMenuItems();
 
-        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.orders_frag_container, orderFrag);
@@ -115,7 +113,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         // Commit the transaction
         transaction.commit();
-
 
     }
 

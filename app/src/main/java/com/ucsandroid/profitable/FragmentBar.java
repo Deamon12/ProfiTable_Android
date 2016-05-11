@@ -29,10 +29,6 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
 
-
-
-
-
         return view;
     }
 

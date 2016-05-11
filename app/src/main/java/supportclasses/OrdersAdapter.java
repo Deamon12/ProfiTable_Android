@@ -31,7 +31,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
 
             mTextView = (TextView) v.findViewById(R.id.tile_name_text);
             recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
-            //recyclerView.setHasFixedSize(true);
+            recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new MyLinearLayoutManager(mContext));
             v.setOnClickListener(this);
 
