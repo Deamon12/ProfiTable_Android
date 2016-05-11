@@ -45,17 +45,26 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
 
+        dynamicallySizeContainers();
+
+        initFragments();
+    }
+
+    /**
+     * Use screen metrics to adjust the sizing of fragment containers.
+     */
+    private void dynamicallySizeContainers() {
+
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int orientation = getResources().getConfiguration().orientation;
-
-
-
-
-        int smallestWidth = getResources().getConfiguration().smallestScreenWidthDp;
-
-
+        int smallestWidth;
+        if(metrics.widthPixels > metrics.heightPixels) {
+            smallestWidth = metrics.widthPixels;
+        }
+        else
+            smallestWidth = metrics.heightPixels;
 
         if (smallestWidth > 720) {
             //Device is a 10" tablet
@@ -68,7 +77,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         else{
             System.out.println("not a tablet: "+smallestWidth);
         }
-
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
 
@@ -94,19 +102,18 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         menuitemFragContainer.getLayoutParams().height = menuItemsFragHeight;
         menuitemFragContainer.getLayoutParams().width = menuItemsFragWidth;
 
-
-
-        initFragments();
     }
 
-    private void initFragments() {
 
+    /**
+     * Basic fragment initialization
+     */
+    private void initFragments() {
 
         Fragment orderFrag = new FragmentOrders();
         Fragment amountFrag = new FragmentOrderAmount();
         Fragment menuFrag = new FragmentMenuItems();
 
-        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.orders_frag_container, orderFrag);
@@ -116,12 +123,12 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         // Commit the transaction
         transaction.commit();
 
-
     }
 
 
     /**
      * Dynamically show or hide the menu items to give more room to see customer info
+     * TODO:animate
      */
     private void toggleMenuContainer(){
 
@@ -145,8 +152,8 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             toggleMenuContainer();
 
         }
-
     }
+
 
 
 
