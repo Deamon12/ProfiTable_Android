@@ -1,5 +1,6 @@
 package com.ucsandroid.profitable;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,11 +14,12 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import supportclasses.OrdersAdapter;
+import supportclasses.RecyclerViewClickListener;
 
 public class FragmentOrders extends Fragment {
 
     private RecyclerView mRecyclerView;
-
+    private int tileLayoutHeight, tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,52 +32,62 @@ public class FragmentOrders extends Fragment {
         return view;
     }
 
+    /**
+     * Init recyclerview with some basic properties
+     */
     private void initRecyclerView() {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int spanCount;
-        int layoutHeight, layoutWidth;
+
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             spanCount = 2;
-            layoutHeight = (int)(metrics.heightPixels);
-            layoutWidth = (int)(metrics.widthPixels);
-
+            tileLayoutHeight = (int)(metrics.heightPixels);
+            tileLayoutWidth = (int)(metrics.widthPixels);
 
         }else{
             spanCount = 1;
-            layoutHeight = (int)(metrics.heightPixels);
-            layoutWidth = (int)(metrics.widthPixels);
+            tileLayoutHeight = (int)(metrics.heightPixels);
+            tileLayoutWidth = (int)(metrics.widthPixels);
         }
 
+        StaggeredGridLayoutManager stagLayout = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(stagLayout);
 
+        getOrders();
 
+    }
+
+    /**
+     * Volley call to retrieve data and populate the adapter
+     * TODO: add volley
+     */
+    private void getOrders() {
 
         ArrayList<String> dataSet = new ArrayList<>();
 
         for(int a = 1; a <= 5; a++)
             dataSet.add("Customer "+a);
 
-
-        StaggeredGridLayoutManager stagLayout = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
-
-
-
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(stagLayout);
-
-
         OrdersAdapter rcAdapter = new OrdersAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
-                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT));
         mRecyclerView.setAdapter(rcAdapter);
-
 
     }
 
 
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int position) {
+            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+            getActivity().startActivity(orderViewActivity);
+        }
+    };
 
 
 }
