@@ -97,7 +97,7 @@ public class FragmentTable extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int position, String item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
             orderViewActivity.putExtra("name", mAdapter.getDataSetTitle(position));
             getActivity().startActivity(orderViewActivity);

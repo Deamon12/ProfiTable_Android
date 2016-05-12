@@ -133,7 +133,7 @@ public class FragmentMenuItems extends Fragment {
                 itemSet.add("Food item "+a);
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            mAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_imageview, null, clickListener);
+            mAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_textview, null, clickListener);
 
             recyclerView.setAdapter(mAdapter);
 
@@ -147,19 +147,15 @@ public class FragmentMenuItems extends Fragment {
         RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
             @Override
-            public void recyclerViewListClicked(View v, int position, String item) {
-                System.out.println("position: "+position);
-                System.out.println("item: "+item);
-                //System.out.println("not accurate page: "+mViewPager.getCurrentItem()); //TODO: dont use. have id with food item
-               // System.out.println("hmm: "+getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container).isVisible());
-
+            public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+                //System.out.println("position: "+position);
+                //System.out.println("item: "+item);
+                //TODO : change from String item to JSONObject item or MenuItem obj
                 FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
 
                 if(orderFrag != null){
                     orderFrag.addItem(item);
                 }
-
-
             }
         };
 

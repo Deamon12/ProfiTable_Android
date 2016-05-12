@@ -21,18 +21,20 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private static Context context;
     private int lastClickedItem = -11;
     private int selectedPosition = -11;
+    private RecyclerViewClickListener nestedClickListener;
+    private RecyclerViewLongClickListener nestedLongClickListener;
 
 
 
-    public NestedRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public NestedRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
+                                 RecyclerViewLongClickListener longClickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
-
+        this.nestedClickListener = clickListener;
+        this.nestedLongClickListener = longClickListener;
         //TODO: This will be a nested JSONARRAY within the dataset
-
-
 
 
 
@@ -65,8 +67,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         /**
          * Changes the bg color of the currently selected card.
          * Resets the recently selected tile, if one exists.
+         * Update only the altered viewholders, if they are being shown.
          * @param v
          */
+
         @Override
         public void onClick(View v) {
 
@@ -79,8 +83,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
                 selectedPosition = getAdapterPosition();
             }
 
-
-
             if(lastClickedItem != -1)
                 notifyItemChanged(lastClickedItem);
             if (selectedPosition != -1)
@@ -88,7 +90,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
 
         }
-
 
     }
 
@@ -106,16 +107,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if(layoutParams == null){
-
-        }
+        if(layoutParams == null){}
         else{
             //v.getLayoutParams().height = layoutParams.height;
             v.getLayoutParams().width = layoutParams.width;
         }
-
-
         ViewHolder vh = new ViewHolder(v);
+
+
 
         return vh;
     }
@@ -127,7 +126,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         holder.mTextView.setText(dataSet.get(position).getName());
 
-        //initial loadup
+        //initialize the last tile as selected
         if(selectedPosition == -11 && position == (getItemCount()-1)){
             holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
             selectedPosition = (getItemCount()-1);
@@ -139,11 +138,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        holder.rcAdapter = new MenuItemRecyclerAdapter(context, dataSet.get(position).getItems(), R.layout.item_textview_imageview);
+        holder.rcAdapter = new MenuItemRecyclerAdapter(context, dataSet.get(position).getItems(), R.layout.item_textview, position, clickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
 
     }
+
 
 
     @Override
@@ -156,9 +156,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         return selectedPosition;
     }
 
+    /**
+     * Setter method to be accessed from the fragment that contains this adapter
+     * @param customerPosition
+     * @param item
+     */
     public void addItemToCustomer(int customerPosition, String item){
-
-        System.out.println("In nested addItemToCust");
 
         if(selectedPosition != -1){
             dataSet.get(selectedPosition).addItem(item);
@@ -168,6 +171,28 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     }
 
+
+    /**
+     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
+     */
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+            nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);
+        }
+    };
+
+    /**
+     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
+     */
+    RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
+
+        @Override
+        public void recyclerViewListLongClicked(View v, int parentPosition, int position, String item) {
+            nestedLongClickListener.recyclerViewListLongClicked(v, parentPosition, position, item);
+        }
+    };
 
 
 

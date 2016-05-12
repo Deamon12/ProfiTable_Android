@@ -2,12 +2,16 @@ package com.ucsandroid.profitable;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 import supportclasses.NestedRecyclerAdapter;
 import supportclasses.Order;
 import supportclasses.RecyclerViewClickListener;
+import supportclasses.RecyclerViewLongClickListener;
 
 public class FragmentOrders extends Fragment {
 
@@ -79,26 +84,45 @@ public class FragmentOrders extends Fragment {
 
 
         mAdapter = new NestedRecyclerAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
-                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT), clickListener);
+                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT), clickListener, longClickListener);
         mRecyclerView.setAdapter(mAdapter);
 
     }
 
 
     /**
-     * ClickListener Interface
+     * Click listener for inner nested recyclerview. Pair this result with the current adapter position
+     * to understand what customer and what item has been clicked.
      */
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int position, String item) {
-            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-            getActivity().startActivity(orderViewActivity);
+        public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+            System.out.println("clicked: " + position + " on parent " + parentPosition);
+
+            showEditDialog(parentPosition, position);
         }
+
+
     };
 
+    /**
+     * Click listener for inner nested recyclerview. Pair this result with the current adapter position
+     * to understand what customer and what item has been clicked.
+     */
+    RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
+        @Override
+        public void recyclerViewListLongClicked(View v, int parentPosition, int position, String item) {
+            System.out.println("long clicked: " + position + " on parent " + parentPosition);
+
+            showLongClickedDialog(parentPosition, position);
+        }
+
+
+    };
 
     /**
-     * Start the broadcast receiver to add customers to the order recyclerview
+     * Start the broadcast receiver to listen for add customers broadcasts from other fragments
+     * in order to add customers to the order recyclerview in this fragment
      */
     private void initAddCustomerListener() {
 
@@ -127,11 +151,51 @@ public class FragmentOrders extends Fragment {
             System.out.println("Need to add item: "+itemId+ " to customer "+(mAdapter.getSelectedPosition()+1));
             mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), itemId); //TODO: start attribute flow if necessary
 
-
         }
         else
-            System.out.println("Need to add item: "+itemId+ " to nobody ");
+            System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
 
+    }
+
+
+    private void showLongClickedDialog(final int parentPosition, final int subPosition) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("What to do...");
+
+        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                showEditDialog(parentPosition, subPosition);
+            }
+        });
+        builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+    }
+
+
+    private void showEditDialog(final int parentPosition, final int subPosition) {
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = DialogItemAttributes.newInstance(3);
+
+        newFragment.show(ft, "dialog");
     }
 
 

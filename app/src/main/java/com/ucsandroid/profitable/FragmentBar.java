@@ -79,10 +79,11 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
 
         RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
             @Override
-            public void recyclerViewListClicked(View v, int position, String item) {
+            public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
                 Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
                 getActivity().startActivity(orderViewActivity);
             }
+
         };
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);

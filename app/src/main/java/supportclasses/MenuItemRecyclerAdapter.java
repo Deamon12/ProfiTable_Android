@@ -17,9 +17,11 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     private ArrayList<MenuItem> dataSet;
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
+    private RecyclerViewLongClickListener longClickListener;
     private Context context;
+    private int parentPosition = -1;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public TextView mTextView;
 
@@ -27,6 +29,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
             super(v);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
 
         }
 
@@ -35,12 +38,16 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         public void onClick(View v) {
 
             if (clickListener != null) {
-                System.out.println("BasicRecycler: " + getAdapterPosition());
-
-                    clickListener.recyclerViewListClicked(v, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
+                clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            if(longClickListener != null)
+                longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
+            return true;
+        }
     }
 
     public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
@@ -49,7 +56,16 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         this.layout = layout;
         this.params = params;
         this.clickListener = clickListener;
-        System.out.println("Class: "+dataSet.get(0).getClass().equals(String.class));
+    }
+
+    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout, int parentPosition,
+                                   RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.parentPosition = parentPosition;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
     }
 
 
@@ -90,9 +106,6 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         return dataSet.size();
     }
 
-    public String getDataSetTitle(int position){
-            return dataSet.get(position).toString();
-    }
 
 
 }

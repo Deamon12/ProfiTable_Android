@@ -36,8 +36,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
 
             if (clickListener != null) {
                 System.out.println("BasicRecycler: " + getAdapterPosition());
-
-                    clickListener.recyclerViewListClicked(v, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
             }
         }
 
