@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import supportclasses.NestedRecyclerAdapter;
@@ -101,8 +103,6 @@ public class FragmentOrders extends Fragment {
 
             showEditDialog(parentPosition, position);
         }
-
-
     };
 
     /**
@@ -193,7 +193,7 @@ public class FragmentOrders extends Fragment {
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = DialogItemAttributes.newInstance(3);
+        DialogFragment newFragment = DialogItemAttributes.newInstance(new JSONObject());
 
         newFragment.show(ft, "dialog");
     }

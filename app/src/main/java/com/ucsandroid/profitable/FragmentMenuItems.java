@@ -11,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Random;
 
 import supportclasses.BasicRecyclerAdapter;
@@ -128,12 +131,20 @@ public class FragmentMenuItems extends Fragment {
         private void initRecycler() {
 
             int count = new Random().nextInt(10);
-            ArrayList itemSet = new ArrayList<>();
-            for(int a = 1; a <= count; a++)
-                itemSet.add("Food item "+a);
+            JSONArray dataSet = new JSONArray();
+            try {
+                for(int a = 1; a <= count;a++){
+                    JSONObject temp = new JSONObject();
+                    temp.put("name", "Food item "+a);
+                    dataSet.put(temp);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            mAdapter = new BasicRecyclerAdapter(getActivity(), itemSet, R.layout.item_textview_textview, null, clickListener);
+            mAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.item_textview_textview, null, clickListener);
 
             recyclerView.setAdapter(mAdapter);
 

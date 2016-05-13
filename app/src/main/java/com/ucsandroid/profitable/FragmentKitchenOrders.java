@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -164,12 +168,20 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
                 holder.mTextView.setText(mDataset.get(position));
 
             int count = new Random().nextInt(10);
-            itemSet = new ArrayList<>();
-            for(int a = 1; a <= count; a++)
-                itemSet.add(""+a);
+            JSONArray dataSet = new JSONArray();
+            try {
+                for(int a = 1; a <= count;a++){
+                    JSONObject temp = new JSONObject();
+                    temp.put("name", ""+a);
+                    dataSet.put(temp);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
-            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(mContext, itemSet, R.layout.item_textview_imageview);
+            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(mContext, dataSet, R.layout.item_textview_imageview);
 
             holder.recyclerView.setAdapter(rcAdapter);
 

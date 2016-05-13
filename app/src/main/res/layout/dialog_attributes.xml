@@ -1,17 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:padding="20dp">
+
+<RelativeLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
 
+    <TextView
+        android:id="@+id/addons_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Addons"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textStyle="bold"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/addons_recycler"
+        android:layout_below="@+id/addons_text"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"/>
+
+
+    <TextView
+        android:id="@+id/sides_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sides"
+        android:textSize="20sp"
+        android:layout_below="@+id/addons_recycler"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textStyle="bold"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sides_recycler"
+        android:layout_below="@+id/sides_text"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:layout_below="@+id/sides_recycler"
+        android:layout_alignParentRight="true"/>
 
 
 
 
 </RelativeLayout>
+
+
+</LinearLayout>
