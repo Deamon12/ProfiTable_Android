@@ -159,14 +159,20 @@ public class FragmentMenuItems extends Fragment {
 
             @Override
             public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
-                //System.out.println("position: "+position);
-                //System.out.println("item: "+item);
                 //TODO : change from String item to JSONObject item or MenuItem obj
                 FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
 
                 if(orderFrag != null){
                     orderFrag.addItem(item);
                 }
+
+                FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
+
+                if(amountFrag != null){
+                    //amountFrag.addItem(item);
+                }
+
+
             }
         };
 
