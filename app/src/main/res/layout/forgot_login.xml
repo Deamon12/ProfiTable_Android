@@ -1,113 +1,91 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
 
-    <TextView android:text="Forget Something?" android:layout_width="wrap_content"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textview"
-        android:textSize="35dp"
+        android:text="Forget Something?"
+        android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp" />
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textview"
+        android:layout_below="@+id/textView"
         android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
         android:src="@mipmap/profit_logo"/>
 
-    <!-- layout width and height used to be wrap_content-->
-
-    <com.rey.material.widget.EditText
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        style="@style/Material.Widget.EditText.Light"
-        android:id="@+id/username_textfield"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/primary_text"
-        android:textColorHint="@color/secondary_text"
-        android:hint="Username"
-        app:et_autoCompleteMode="none"
-        app:et_dividerColor="@color/primary"
-        app:et_dividerPadding="4dp"
-        app:et_supportTextErrorColor="#FFFF0000"
-        app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
-        android:gravity="left"
-        android:ems="7"
-        android:textCursorDrawable="@null"
-        android:layout_centerInParent="true" />
+        android:text="Retrieve Login Info"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:textSize="37dp"
+        android:textColor="@android:color/black" />
 
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="130dp"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="100dp"
+        android:weightSum="1"
+        android:id="@+id/radioGroup">
 
-    <com.rey.material.widget.EditText
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        style="@style/Material.Widget.EditText.Light"
-        android:id="@+id/restaurant_id_textfield"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:et_autoCompleteMode="none"
-        android:textColor="@color/primary_text"
-        android:textColorHint="@color/secondary_text"
-        android:hint="Restaurant"
-        app:et_dividerColor="@color/primary"
-        app:et_dividerPadding="4dp"
-        app:et_supportTextErrorColor="#FFFF0000"
-        app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
-        android:gravity="start"
-        android:ems="7"
-        android:textCursorDrawable="@null"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/username_textfield"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Username"
+            android:id="@+id/radioButton"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center_horizontal"
+            android:checked="false"
+            android:textSize="25dp"
+            android:layout_weight="0.13"/>
 
-    <com.rey.material.widget.EditText
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        style="@style/Material.Widget.EditText.Light"
-        android:id="@+id/pin_textfield"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/primary_text"
-        android:textColorHint="@color/secondary_text"
-        android:hint="Pin"
-        android:inputType="numberPassword"
-        app:et_autoCompleteMode="none"
-        app:et_dividerColor="@color/primary"
-        app:et_dividerPadding="4dp"
-        app:et_supportTextErrorColor="#FFFF0000"
-        app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
-        android:gravity="start"
-        android:ems="7"
-        android:textCursorDrawable="@null"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/restaurant_id_textfield"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password"
+            android:id="@+id/radioButton2"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center_horizontal"
+            android:checked="false"
+            android:textSize="25dp"
+            android:layout_weight="0.13" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Restaurant ID"
+            android:id="@+id/radioButton3"
+            android:layout_gravity="center_horizontal"
+            android:checked="false"
+            android:textSize="25dp"
+            android:layout_weight="0.13" />
+    </RadioGroup>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/login_ok_button"
-        android:layout_below="@+id/pin_textfield"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Forgot"
-        android:id="@+id/login_forgot_button"
-        android:layout_below="@+id/pin_textfield"
-        android:layout_toLeftOf="@+id/imageView"
-        android:layout_toStartOf="@+id/imageView" />
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Ok"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/radioGroup"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
