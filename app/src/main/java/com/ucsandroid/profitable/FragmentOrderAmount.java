@@ -16,14 +16,15 @@ import java.util.Locale;
 public class FragmentOrderAmount extends Fragment {
 
 
+    private double taxRate = 7.5;
     private Locale currentLocale;
     private Currency currentCurrency;
     private NumberFormat currencyFormatter;
 
-    private int subTotal = 0;
-    private int tax = 0;
-    private int discount = 0;
-    private int amountDue = 0;
+    private double subTotal = 0;
+    private double tax = 0;
+    private double discount = 0;
+    private double amountDue = 0;
 
     private TextView subTotalText;
     private TextView taxText;
@@ -38,6 +39,8 @@ public class FragmentOrderAmount extends Fragment {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String localeLang = settings.getString("locale_lang", "en");
         String localeCountry = settings.getString("locale_country", "us");
+        taxRate = settings.getLong("tax_rate", 75)*.001;
+
         currentLocale = new Locale(localeLang, localeCountry);
         currentCurrency = Currency.getInstance(currentLocale);
         currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
@@ -49,22 +52,31 @@ public class FragmentOrderAmount extends Fragment {
         discountText = (TextView) view.findViewById(R.id.discount_textview);
         amountDueText = (TextView) view.findViewById(R.id.amountdue_textview);
 
-        subTotalText.setText(currencyFormatter.format(subTotal));
-        taxText.setText(currencyFormatter.format(tax));
-        discountText.setText(currencyFormatter.format(discount));
-        amountDueText.setText(currencyFormatter.format(amountDue));
-
-        /*
-
-        System.out.println(
-                currentLocale.getDisplayName() + ", " +
-                        currentCurrency.getDisplayName() + ": " +
-                        currencyFormatter.format(currencyAmount));
-*/
+        updateUI();
 
 
 
         return view;
+    }
+
+    public void addItem(int amount){
+
+        subTotal+=amount;
+
+        tax = (subTotal-(discount))*(taxRate);
+        System.out.println("Tax: "+tax);
+
+        amountDue = subTotal+tax;
+
+        updateUI();
+
+    }
+
+    private void updateUI(){
+        subTotalText.setText(currencyFormatter.format(subTotal));
+        taxText.setText(currencyFormatter.format(tax));
+        discountText.setText(currencyFormatter.format(discount));
+        amountDueText.setText(currencyFormatter.format(amountDue));
     }
 
 

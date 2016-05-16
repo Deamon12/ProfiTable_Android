@@ -11,10 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import supportclasses.BasicRecyclerAdapter;
@@ -26,17 +33,52 @@ public class FragmentMenuItems extends Fragment {
 
     private static BasicRecyclerAdapter mAdapter;
     private MenuCollectionStatePagerAdapter mMenuPages;
-    private static ViewPager mViewPager;
+    private ViewPager mViewPager;
     private View mView;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(getActivity());
+        }
+
+
         mView = inflater.inflate(R.layout.fragment_menu_items, container, false);
         initViewPager();
 
+        getMenuItems();
+
+
+
+
+
+
         return mView;
+    }
+
+
+
+    private void getMenuItems() {
+
+        StringRequest myReq = new StringRequest(Request.Method.GET,
+                "http://52.38.148.241:8080/com.ucsandroid.profitable/rest/serviceclass/menuItem",
+                successListener,
+                errorListener) {
+
+            protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("rest_id", "1");
+                //params.put("param2", "hgt");
+                return params;
+            };
+        };
+        //queue.add(myReq);
+        Singleton.getInstance().addToRequestQueue(myReq);
+
+
     }
 
 
@@ -169,7 +211,7 @@ public class FragmentMenuItems extends Fragment {
                 FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
 
                 if(amountFrag != null){
-                    //amountFrag.addItem(item);
+                    amountFrag.addItem(5); //todo
                 }
 
 
@@ -177,6 +219,23 @@ public class FragmentMenuItems extends Fragment {
         };
 
     }
+
+
+    private Response.Listener successListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            System.out.println("Volley success: "+response);
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            System.out.println("Volley error: "+error);
+        }
+    };
+
+
 
 }
 
