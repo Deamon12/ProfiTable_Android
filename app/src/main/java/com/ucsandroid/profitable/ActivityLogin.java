@@ -28,6 +28,11 @@ abstract class ActivityLogin extends AppCompatActivity implements View.OnClickLi
         restaurant_id_textfield = (EditText) findViewById(R.id.restaurant_id_textfield);
         pin_textfield = (EditText) findViewById(R.id.pin_textfield);
 
+        /**
+         Login and move on to the next page if you have the correct information,
+         otherwise inform user and do not move on.
+         TODO: Implement access to Database to check for correct login
+         */
         loginOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,7 +51,7 @@ abstract class ActivityLogin extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        //If you forgot login info, press this button, then you move onto to ForgotLogin page
+        //If you forgot login info, press this button, then move on to ForgotLogin page
         loginForgotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -58,15 +63,17 @@ abstract class ActivityLogin extends AppCompatActivity implements View.OnClickLi
     }
 
     //Function to jump to the tableViewActivity page after log-in is succcessful
-    private void doLogin() {
+    private void doLogin()
+    {
         Intent tableViewActivity = new Intent(ActivityLogin.this, ActivityTableView.class);
         startActivity(tableViewActivity);
         finish();
     }
 
-    //Function to jump to the reset page if you forgot pass/username
-    private void resetPage() {
-        Intent forgotLoginActivity = new Intent(ActivityLogin.this, ForgotLogin.class);
+    //Function to jump to the reset page where you enter email if you forgot pass/username
+    private void resetPage()
+    {
+        Intent forgotLoginActivity = new Intent(ActivityLogin.this, EmailLoginInfo.class);
         startActivity(forgotLoginActivity);
         finish();
     }
