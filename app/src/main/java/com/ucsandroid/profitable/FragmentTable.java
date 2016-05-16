@@ -106,10 +106,16 @@ public class FragmentTable extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-            orderViewActivity.putExtra("name", item); //mAdapter.getDataSetTitle(position));
-            getActivity().startActivity(orderViewActivity);
+
+            try {
+                orderViewActivity.putExtra("name", item.getString("name")); //mAdapter.getDataSetTitle(position));
+                getActivity().startActivity(orderViewActivity);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
     };

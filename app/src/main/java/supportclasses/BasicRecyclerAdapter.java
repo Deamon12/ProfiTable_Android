@@ -48,7 +48,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
             if (clickListener != null) {
                 System.out.println("BasicRecycler: " + getAdapterPosition());
                 try {
-                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.getJSONObject(getAdapterPosition()).getString("name"));
+                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.getJSONObject(getAdapterPosition()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -128,8 +128,14 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
             }
         }
         else {
+
             try {
-                holder.mTextView.setText(dataSet.getJSONObject(position).getString("name"));
+                if(dataSet.getJSONObject(position).has("name")){
+                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("name"));
+                }
+                else{
+                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("menuName"));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

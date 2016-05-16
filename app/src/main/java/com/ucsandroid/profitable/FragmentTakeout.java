@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import supportclasses.RecyclerViewClickListener;
@@ -91,9 +93,10 @@ public class FragmentTakeout extends Fragment {
          clickListener = new RecyclerViewClickListener() {
 
              @Override
-             public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+             public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
                  if(position == 0){
                      mAdapter.dataSet.add(1, "New " + dataSet.size());
+
                      mAdapter.notifyDataSetChanged();
                  }else{
                      Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);

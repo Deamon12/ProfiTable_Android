@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
@@ -178,6 +179,11 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+
+    //TODO: change to snackbar
+    public void showErrorSnackbar(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
 
 

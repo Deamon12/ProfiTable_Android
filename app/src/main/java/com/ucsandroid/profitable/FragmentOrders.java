@@ -19,12 +19,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import supportclasses.NestedRecyclerAdapter;
-import supportclasses.Order;
 import supportclasses.RecyclerViewClickListener;
 import supportclasses.RecyclerViewLongClickListener;
 
@@ -41,6 +40,7 @@ public class FragmentOrders extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recyclerview);
+        mRecyclerView.setHasFixedSize(false);
         initRecyclerView();
         initAddCustomerListener();
 
@@ -81,13 +81,23 @@ public class FragmentOrders extends Fragment {
      */
     private void getOrders() {
 
-        ArrayList<Order> dataSet = new ArrayList<>();
-        dataSet.add(new Order("Customer "+1));
+
+        try {
+            JSONArray dataSet = new JSONArray();
+            JSONObject newCustomer = new JSONObject();
+            newCustomer.put("customer_name", "Customer 1");
+            dataSet.put(newCustomer);
+
+            mAdapter = new NestedRecyclerAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
+                    new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT), clickListener, longClickListener);
+
+            mRecyclerView.setAdapter(mAdapter);
 
 
-        mAdapter = new NestedRecyclerAdapter(getActivity(), dataSet, R.layout.tile_customer_order,
-                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.MATCH_PARENT), clickListener, longClickListener);
-        mRecyclerView.setAdapter(mAdapter);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -98,7 +108,7 @@ public class FragmentOrders extends Fragment {
      */
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, String item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
             System.out.println("clicked: " + position + " on parent " + parentPosition);
 
             showEditDialog(parentPosition, position);
@@ -111,7 +121,7 @@ public class FragmentOrders extends Fragment {
      */
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
         @Override
-        public void recyclerViewListLongClicked(View v, int parentPosition, int position, String item) {
+        public void recyclerViewListLongClicked(View v, int parentPosition, int position, JSONObject item) {
             System.out.println("long clicked: " + position + " on parent " + parentPosition);
 
             showLongClickedDialog(parentPosition, position);
@@ -143,17 +153,16 @@ public class FragmentOrders extends Fragment {
     /**
      * ItemId is passed from Menu Items Pager. Use this itemId to pull attributes from webservice.
      * And begin add item dialog flow.
-     * @param itemId
+     * @param item
      */
-    public void addItem(String itemId){
+    public void addItem(JSONObject item){
 
         if(mAdapter.getSelectedPosition() > -1){
-            System.out.println("Need to add item: "+itemId+ " to customer "+(mAdapter.getSelectedPosition()+1));
-            mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), itemId); //TODO: start attribute flow if necessary
-
+            System.out.println("Need to add item: "+item+ " to customer "+(mAdapter.getSelectedPosition()+1));
+            mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), item); //TODO: start attribute flow if necessary
         }
-        else
-            System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
+        //else
+            //System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
 
     }
 

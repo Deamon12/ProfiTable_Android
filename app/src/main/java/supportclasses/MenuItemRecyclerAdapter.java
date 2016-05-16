@@ -9,12 +9,14 @@ import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecyclerAdapter.ViewHolder> {
 
     private int layout;
-    private ArrayList<MenuItem> dataSet;
+    //private ArrayList<MenuItem> dataSet;
+    private JSONArray dataSet;
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
     private RecyclerViewLongClickListener longClickListener;
@@ -38,19 +40,27 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         public void onClick(View v) {
 
             if (clickListener != null) {
-                clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
+                try {
+                    clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), dataSet.getJSONObject(getAdapterPosition()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
             if(longClickListener != null)
-                longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()).getName());
+                try {
+                    longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.getJSONObject(getAdapterPosition()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             return true;
         }
     }
 
-    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public MenuItemRecyclerAdapter(Context context, JSONArray dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -58,7 +68,18 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         this.clickListener = clickListener;
     }
 
-    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout, int parentPosition,
+    public MenuItemRecyclerAdapter(Context context, JSONArray dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
+                                   RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.parentPosition = parentPosition;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+        this.params = params;
+    }
+
+    public MenuItemRecyclerAdapter(Context context, JSONArray dataSet, int layout, int parentPosition,
                                    RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
         this.dataSet = dataSet;
         this.context = context;
@@ -69,7 +90,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     }
 
 
-    public MenuItemRecyclerAdapter(Context context, ArrayList dataSet, int layout) {
+    public MenuItemRecyclerAdapter(Context context, JSONArray dataSet, int layout) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -97,13 +118,17 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.mTextView.setText(dataSet.get(position).getName());
+        try {
+            holder.mTextView.setText(dataSet.getJSONObject(position).getString("menuName"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        return dataSet.length();
     }
 
 
