@@ -17,9 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class ForgotLogin extends AppCompatActivity implements View.OnClickListener {
+public class ActivityForgotLogin extends AppCompatActivity implements View.OnClickListener {
 
-    private Button loginOkButton;
+    private Button forgotOkButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +28,21 @@ public class ForgotLogin extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.forgot_login);
 
         //Create the buttons for choices on the page
-        loginOkButton = (Button) findViewById(R.id.login_ok_button);
-        loginOkButton.setOnClickListener(this);
+        forgotOkButton = (Button) findViewById(R.id.forgot_ok_button);
+        forgotOkButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
 
         //If you click on the button, then call the function
-        if(v == loginOkButton){
+        if(v == forgotOkButton){
             doLogin();
         }
     }
 
     private void doLogin() {
-        Intent tableViewActivity = new Intent(ForgotLogin.this, ActivityTableView.class);
+        Intent tableViewActivity = new Intent(ActivityForgotLogin.this, ActivityTableView.class);
 
         //Open up a new activity
         startActivity(tableViewActivity);

@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-abstract class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
+import com.rey.material.widget.EditText;
+
+public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
     private Button loginOkButton, loginForgotButton;
     private EditText username_textfield, restaurant_id_textfield, pin_textfield;
@@ -24,7 +24,7 @@ abstract class ActivityLogin extends AppCompatActivity implements View.OnClickLi
         loginForgotButton = (Button) findViewById(R.id.login_forgot_button);
 
         //Input Textfields
-        username_textfield = (EditText)findViewById(R.id.username_textfield);
+        username_textfield = (EditText) findViewById(R.id.username_textfield);
         restaurant_id_textfield = (EditText) findViewById(R.id.restaurant_id_textfield);
         pin_textfield = (EditText) findViewById(R.id.pin_textfield);
 
@@ -66,8 +66,13 @@ abstract class ActivityLogin extends AppCompatActivity implements View.OnClickLi
 
     //Function to jump to the reset page if you forgot pass/username
     private void resetPage() {
-        Intent forgotLoginActivity = new Intent(ActivityLogin.this, ForgotLogin.class);
+        Intent forgotLoginActivity = new Intent(ActivityLogin.this, ActivityForgotLogin.class);
         startActivity(forgotLoginActivity);
         finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
