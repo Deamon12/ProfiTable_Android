@@ -3,24 +3,18 @@ package supportclasses;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder>  {
+public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder> {
 
     private int layout;
 
-    private JSONArray orderDataSet;
+    private Table tableData;
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
@@ -32,10 +26,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private ViewHolder vh;
 
 
-
-    public NestedRecyclerAdapter(Context context, JSONArray dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
+    public NestedRecyclerAdapter(Context context, Table dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
-        this.orderDataSet = dataSet;
+        this.tableData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
@@ -66,53 +59,42 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-
         /**
          * Changes the bg color of the currently selected card.
          * Resets the recently selected tile, if one exists.
          * Update only the altered viewholders, if they are being shown.
+         *
          * @param v
          */
 
         @Override
         public void onClick(View v) {
 
-            if(selectedPosition == getAdapterPosition()){
+            if (selectedPosition == getAdapterPosition()) {
                 lastClickedItem = selectedPosition;
                 selectedPosition = -1;
-            }
-            else{
+            } else {
                 lastClickedItem = selectedPosition;
                 selectedPosition = getAdapterPosition();
             }
 
-            if(lastClickedItem != -1)
+            if (lastClickedItem != -1)
                 notifyItemChanged(lastClickedItem);
             if (selectedPosition != -1)
                 notifyItemChanged(selectedPosition);
-
 
         }
 
     }
 
     /**
-     * Add new tile, and select it
+     * Add new order/customer to local data structure
      */
-    public void addCustomer(){
+    public void addCustomer() {
 
-        JSONObject newCustomer = new JSONObject();
-        try {
-            newCustomer.put("customer_name", "Customer " + (orderDataSet.length() + 1));
-            newCustomer.put("items", new JSONArray());
-            orderDataSet.put(newCustomer);
-            selectedPosition = getItemCount()-1;
-            notifyDataSetChanged();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        tableData.addOrder(new Order());
+        selectedPosition = 0;//getItemCount() - 1;
+        notifyDataSetChanged();
 
     }
 
@@ -120,13 +102,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if(layoutParams == null){}
-        else{
+        if (layoutParams == null) {
+        } else {
             //v.getLayoutParams().height = layoutParams.height;
             v.getLayoutParams().width = layoutParams.width;
         }
         vh = new ViewHolder(v);
-
 
 
         return vh;
@@ -137,107 +118,58 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        try {
-            holder.mTextView.setText(orderDataSet.getJSONObject(position).getString("customer_name"));
+        holder.mTextView.setText("Customer " + (position+1));
 
 
-            //initialize the last tile as selected
-            if(selectedPosition == -11 && position == (getItemCount()-1)){
-                holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
-                selectedPosition = (getItemCount()-1);
-            }
-            else if(selectedPosition != -1 && position == selectedPosition){
-                holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
-            }else{
-                holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
-            }
-
-
-            if(orderDataSet.getJSONObject(position).has("items")) {
-
-
-                holder.rcAdapter = new MenuItemRecyclerAdapter(context, orderDataSet.getJSONObject(position).getJSONArray("items"), R.layout.item_textview, position,
-                        clickListener, longClickListener);
-                holder.recyclerView.setAdapter(holder.rcAdapter);
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        //initialize the last tile as selected
+        if (selectedPosition == -11 && position == (getItemCount() - 1)) {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            selectedPosition = (getItemCount() - 1);
+        } else if (selectedPosition != -1 && position == selectedPosition) {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+        } else {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
         }
 
 
+        //Get menuItems from order object
+        //Table # from singleton, Order # = position
+        //dataset input = Arraylist<MenuItems>
+
+
+        holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getOrder(position).getItems(), R.layout.item_textview, position, null,
+                clickListener, longClickListener);
+        holder.recyclerView.setAdapter(holder.rcAdapter);
+
 
     }
-
-
-    private RecyclerView.LayoutParams getTileWidth(){
-
-            DisplayMetrics metrics = new DisplayMetrics();
-
-            WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
-            windowManager.getDefaultDisplay().getMetrics(metrics);
-
-
-            int layoutWidth;
-            //int orientation = context.getResources().getConfiguration().orientation;
-
-            //if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            //    layoutWidth = (int)(metrics.widthPixels*.3);
-            //}else{
-                layoutWidth = (int)(metrics.widthPixels*.2);
-            //}
-
-        return new RecyclerView.LayoutParams(layoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-    }
-
 
 
     @Override
     public int getItemCount() {
-        return orderDataSet.length();
+        return tableData.getOrders().size();
     }
 
 
-    public int getSelectedPosition(){
+    public int getSelectedPosition() {
         return selectedPosition;
     }
 
     /**
      * Setter method to be accessed from the fragment that contains this adapter
+     *
      * @param customerPosition the customer position in the array
-     * @param item -  the food as a JSONObject
+     * @param item             -  the food as a JSONObject
      */
-   public void addItemToCustomer(int customerPosition, JSONObject item){
+    public void addItemToCustomer(int customerPosition, MenuItem item) {
 
-        if(selectedPosition != -1){
-            try {
-                //System.out.println("orderDataSet: "+orderDataSet);
+        if (selectedPosition != -1) {
 
-                //System.out.println("orderDataSet.getJSONObject(selectedPosition): " + orderDataSet.getJSONObject(selectedPosition));
+            tableData.getOrder(selectedPosition).addMenuItem(item);
 
-                if(orderDataSet.getJSONObject(selectedPosition).has("items")){
-                    orderDataSet.getJSONObject(selectedPosition).getJSONArray("items").put(item);
-                }
-                else{
-                    JSONArray newItems = new JSONArray();
-                    newItems.put(item);
-                    orderDataSet.getJSONObject(selectedPosition).put("items", newItems);
-                }
-
-
-
-                notifyItemChanged(selectedPosition);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            notifyItemChanged(selectedPosition);
 
         }
-
-
 
     }
 
@@ -248,7 +180,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);
         }
     };
@@ -259,7 +191,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
 
         @Override
-        public void recyclerViewListLongClicked(View v, int parentPosition, int position, JSONObject item) {
+        public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
             nestedLongClickListener.recyclerViewListLongClicked(v, parentPosition, position, item);
         }
     };

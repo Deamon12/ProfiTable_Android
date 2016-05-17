@@ -16,10 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentTakeout extends Fragment {
@@ -93,7 +92,7 @@ public class FragmentTakeout extends Fragment {
          clickListener = new RecyclerViewClickListener() {
 
              @Override
-             public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
+             public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
                  if(position == 0){
                      mAdapter.dataSet.add(1, "New " + dataSet.size());
 

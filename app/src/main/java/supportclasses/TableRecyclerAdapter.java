@@ -1,6 +1,7 @@
 package supportclasses;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,23 +12,25 @@ import com.ucsandroid.profitable.R;
 
 import java.util.ArrayList;
 
-public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdapter.ViewHolder> {
+public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdapter.ViewHolder> {
 
     private int layout;
-    private ArrayList<String> dataSet;
+    private ArrayList<Table> dataSet;
 
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
     private RecyclerViewCheckListener checkListener;
     private Context context;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        public CardView mCardView;
         public TextView mTextView;
 
         public ViewHolder(View v) {
             super(v);
 
+            mCardView = (CardView) v.findViewById(R.id.the_cardview);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
             v.setOnClickListener(this);
@@ -39,17 +42,14 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
         public void onClick(View v) {
 
             if (clickListener != null) {
-                //System.out.println("BasicRecycler: " + getAdapterPosition());
-
-                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), null);
-
+                clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), null);
             }
         }
 
     }
 
 
-    public BasicRecyclerAdapter(Context context, ArrayList<String> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewCheckListener checkListener) {
+    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewCheckListener checkListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -57,7 +57,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
         this.checkListener = checkListener;
     }
 
-    public BasicRecyclerAdapter(Context context, ArrayList<String> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -66,7 +66,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
     }
 
 
-    public BasicRecyclerAdapter(Context context, ArrayList<String> dataSet, int layout) {
+    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -74,7 +74,7 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
     }
 
 
-    public BasicRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TableRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -95,7 +95,11 @@ public class BasicRecyclerAdapter extends RecyclerView.Adapter<BasicRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.mTextView.setText(dataSet.get(position));
+        if(dataSet.get(position).hasOrders()){
+            holder.mCardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+        }
+
+        holder.mTextView.setText("Table "+position);
     }
 
     @Override

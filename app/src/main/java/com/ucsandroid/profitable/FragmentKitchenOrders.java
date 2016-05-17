@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Random;
 
-import supportclasses.BasicRecyclerAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
 
 public class FragmentKitchenOrders extends Fragment implements View.OnClickListener {
@@ -181,7 +181,8 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
             }
 
 
-            BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(mContext, dataSet, R.layout.item_textview_imageview);
+            //TODO : structure may change
+            JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(mContext, dataSet, R.layout.item_textview_imageview);
 
             holder.recyclerView.setAdapter(rcAdapter);
 

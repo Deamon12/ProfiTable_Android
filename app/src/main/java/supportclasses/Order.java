@@ -1,6 +1,8 @@
 package supportclasses;
 
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 public class Order {
@@ -8,18 +10,14 @@ public class Order {
     private String name;
     private ArrayList<MenuItem> items;
 
+    public Order(){
+        name = "";
+        items = new ArrayList<>();
+    }
 
     public Order(String name){
         this.name = name;
         items = new ArrayList<>();
-    }
-
-    public ArrayList getItems() {
-        return items;
-    }
-
-    public void setItems(ArrayList items) {
-        this.items = items;
     }
 
     public String getName() {
@@ -30,8 +28,29 @@ public class Order {
         this.name = name;
     }
 
-    public void addItem(String item){
-        items.add(new MenuItem(item));
+    public ArrayList<MenuItem> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<MenuItem> items) {
+        this.items = items;
+    }
+
+    public void addMenuItem(MenuItem item){
+        items.add(item);
+    }
+
+    public int getCost()  {
+        int total = 0;
+        for(int a = 0; a < items.size();a++){
+
+            try {
+                total += items.get(a).getJsonItem().getInt("menuItemPrice");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return total;
     }
 
 }

@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import supportclasses.BasicRecyclerAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.RecyclerViewCheckListener;
 
 public class DialogItemAttributes extends DialogFragment {
@@ -86,7 +86,7 @@ public class DialogItemAttributes extends DialogFragment {
         addonsRecycler.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4, GridLayoutManager.HORIZONTAL, false);
         addonsRecycler.setLayoutManager(gridLayoutManager);
-        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, addonsCheckListener);
+        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, addonsCheckListener);
 
         addonsRecycler.setAdapter(rcAdapter);
 
@@ -112,7 +112,7 @@ public class DialogItemAttributes extends DialogFragment {
         sidesRecycler.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4, GridLayoutManager.HORIZONTAL, false);
         sidesRecycler.setLayoutManager(gridLayoutManager);
-        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, sidesCheckListener);
+        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, sidesCheckListener);
         sidesRecycler.setAdapter(rcAdapter);
 
     }

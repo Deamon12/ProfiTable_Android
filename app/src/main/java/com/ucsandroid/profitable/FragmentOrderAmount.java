@@ -36,6 +36,11 @@ public class FragmentOrderAmount extends Fragment {
                              Bundle savedInstanceState) {
 
 
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(getActivity());
+        }
+
+        //temp US currency
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String localeLang = settings.getString("locale_lang", "en");
         String localeCountry = settings.getString("locale_country", "us");
@@ -52,27 +57,37 @@ public class FragmentOrderAmount extends Fragment {
         discountText = (TextView) view.findViewById(R.id.discount_textview);
         amountDueText = (TextView) view.findViewById(R.id.amountdue_textview);
 
-        updateUI();
+        getPreviousOrders();
+
 
 
 
         return view;
     }
 
+
+    public void getPreviousOrders(){
+
+        subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTable()).getTableCost();
+
+        subTotal = (subTotal/100);
+
+        updateUI();
+    }
+
     public void addItem(int amount){
 
         subTotal+=amount;
-
-        tax = (subTotal-(discount))*(taxRate);
-        System.out.println("Tax: "+tax);
-
-        amountDue = subTotal+tax;
 
         updateUI();
 
     }
 
     private void updateUI(){
+
+        tax = (subTotal-(discount))*(taxRate);
+        amountDue = subTotal+tax;
+
         subTotalText.setText(currencyFormatter.format(subTotal));
         taxText.setText(currencyFormatter.format(tax));
         discountText.setText(currencyFormatter.format(discount));

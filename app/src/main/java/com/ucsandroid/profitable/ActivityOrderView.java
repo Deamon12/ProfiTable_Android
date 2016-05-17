@@ -40,7 +40,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         if (toolbar != null) {
-            toolbar.setTitle(getIntent().getStringExtra("name"));
+            toolbar.setTitle("Table "+Singleton.getInstance().getCurrentTable());
             setSupportActionBar(toolbar);
         }
 
@@ -79,14 +79,14 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         if (smallestWidth > 720) {
             //Device is a 10" tablet
-            System.out.println("10 inch tablet");
+            //System.out.println("10 inch tablet");
         }
         else if (smallestWidth > 600) {
             //Device is a 7" tablet
-            System.out.println("7 inch tablet");
+            //System.out.println("7 inch tablet");
         }
         else{
-            System.out.println("not a tablet: "+smallestWidth);
+            //System.out.println("not a tablet: "+smallestWidth);
         }
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
@@ -122,7 +122,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         orderFrag = new FragmentOrders();
         Fragment amountFrag = new FragmentOrderAmount();
-        Fragment menuFrag = new FragmentMenuItems();
+        Fragment menuFrag = new FragmentMenuViewpager();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 

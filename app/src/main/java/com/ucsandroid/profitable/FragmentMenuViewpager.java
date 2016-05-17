@@ -20,10 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class FragmentMenuItems extends Fragment {
+public class FragmentMenuViewpager extends Fragment {
 
-
-    //private static BasicRecyclerAdapter mAdapter;
     private MenuCollectionStatePagerAdapter mMenuPages;
     private ViewPager mViewPager;
     private View mView;
@@ -73,17 +71,26 @@ public class FragmentMenuItems extends Fragment {
 
     }
 
+
+    /**
+     * Populate menu items in the viewpager
+     * TODO: Adjust tab item widths, reduce space between them to sync movement better
+     */
     private void initViewPager() {
 
-        mMenuPages =
-                new MenuCollectionStatePagerAdapter(getActivity().getSupportFragmentManager(), mMenuItems);
-        mViewPager = (ViewPager) mView.findViewById(R.id.pager);
-        mViewPager.setAdapter(mMenuPages);
+        if(getActivity() == null){
+        }
+        else {
+            mMenuPages =
+                    new MenuCollectionStatePagerAdapter(getActivity().getSupportFragmentManager(), mMenuItems);
+            mViewPager = (ViewPager) mView.findViewById(R.id.pager);
+            mViewPager.setAdapter(mMenuPages);
+
+            TabLayout tabLayout = (TabLayout) mView.findViewById(R.id.sliding_tabs);
+            tabLayout.setupWithViewPager(mViewPager);
 
 
-        TabLayout tabLayout = (TabLayout) mView.findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
+        }
     }
 
 
@@ -101,8 +108,6 @@ public class FragmentMenuItems extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            //Fragment fragment = new FragmentMenuItem();
-
 
             int color;
             if (position % 2 == 0) {

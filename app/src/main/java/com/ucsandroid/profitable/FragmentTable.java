@@ -11,12 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import supportclasses.BasicRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
+import supportclasses.TableRecyclerAdapter;
 
 
 /**
@@ -26,13 +23,17 @@ import supportclasses.RecyclerViewClickListener;
 public class FragmentTable extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private BasicRecyclerAdapter mAdapter;
+    private TableRecyclerAdapter mAdapter;
     int iconRowLength;
     int tileLayoutHeight, tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(getActivity());
+        }
 
         View view = inflater.inflate(R.layout.fragment_table, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
@@ -74,24 +75,11 @@ public class FragmentTable extends Fragment {
      */
     private void getTableData() {
 
-
-        JSONArray dataSet  = new JSONArray();
-        try {
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", "Table "+a);
-                dataSet.put(temp);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), iconRowLength);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        mAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
+        mAdapter = new TableRecyclerAdapter(getActivity(), Singleton.getInstance().getAllTables(), R.layout.tile_table, new ViewGroup.LayoutParams(
                 tileLayoutWidth,
                 tileLayoutHeight),
                 clickListener);
@@ -106,15 +94,12 @@ public class FragmentTable extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
 
-            try {
-                orderViewActivity.putExtra("name", item.getString("name")); //mAdapter.getDataSetTitle(position));
-                getActivity().startActivity(orderViewActivity);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Singleton.getInstance().setCurrentTable(position);
+            getActivity().startActivity(orderViewActivity);
+
 
         }
 

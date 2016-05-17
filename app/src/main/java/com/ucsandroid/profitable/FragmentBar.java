@@ -17,7 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import supportclasses.BasicRecyclerAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment implements View.OnClickListener {
@@ -91,7 +92,7 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
 
         RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
             @Override
-            public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
+            public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
                 Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
                 getActivity().startActivity(orderViewActivity);
             }
@@ -102,7 +103,7 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
+        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight),
                 clickListener);

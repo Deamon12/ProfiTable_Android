@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import supportclasses.BasicRecyclerAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.MyLinearLayoutManager;
 import supportclasses.RecyclerViewClickListener;
 
@@ -29,6 +29,7 @@ public class FragmentMenuItem extends Fragment {
         Bundle args = new Bundle();
         args.putInt("color",  color);
         args.putString("dataset", dataset.toString());
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,12 +58,12 @@ public class FragmentMenuItem extends Fragment {
      */
     private void initRecycler() {
 
-        JSONArray dataset = null;
+
         try {
-            dataset = new JSONArray(getArguments().getString("dataset"));
+            JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            BasicRecyclerAdapter mAdapter = new BasicRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
+            JSONArrayRecyclerAdapter mAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
 
             recyclerView.setAdapter(mAdapter);
 
@@ -80,8 +81,8 @@ public class FragmentMenuItem extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, JSONObject item) {
-            //TODO : change from String item to JSONObject item or MenuItem obj
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+
             FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
 
             if (orderFrag != null) {
@@ -91,8 +92,14 @@ public class FragmentMenuItem extends Fragment {
             FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
 
             if (amountFrag != null) {
-                amountFrag.addItem(5); //todo
+
+                try {
+                    amountFrag.addItem(item.getJsonItem().getInt("menuItemPrice")/100);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+
 
 
         }
