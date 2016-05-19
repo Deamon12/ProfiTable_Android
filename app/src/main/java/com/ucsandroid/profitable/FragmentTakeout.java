@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentTakeout extends Fragment {
@@ -70,16 +71,16 @@ public class FragmentTakeout extends Fragment {
             iconRowLength = 8;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.1);
-            //System.out.println("layoutHeight: "+layoutHeight);
-            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
+            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
             //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
 
         }else{
             iconRowLength = 9;
             layoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.2);
-            //System.out.println("layoutHeight: "+layoutHeight);
-            //System.out.println("layoutWidth: "+layoutWidth);
+            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
+            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
             //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
         }
 
@@ -89,18 +90,19 @@ public class FragmentTakeout extends Fragment {
             dataSet.add("Takeout "+a);
 
          clickListener = new RecyclerViewClickListener() {
-            @Override
-            public void recyclerViewListClicked(View v, int position) {
 
-                if(position == 0){
-                    mAdapter.dataSet.add(1, "New " + dataSet.size());
-                    mAdapter.notifyDataSetChanged();
-                }else{
-                    Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                    getActivity().startActivity(orderViewActivity);
-                }
+             @Override
+             public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+                 if(position == 0){
+                     mAdapter.dataSet.add(1, "New " + dataSet.size());
 
-            }
+                     mAdapter.notifyDataSetChanged();
+                 }else{
+                     Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                     getActivity().startActivity(orderViewActivity);
+                 }
+             }
+
         };
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
@@ -142,7 +144,7 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
         public void onClick(View v) {
 
             if (clickListener != null) {
-                clickListener.recyclerViewListClicked(v, getAdapterPosition());
+                clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), null);
             }
 
         }

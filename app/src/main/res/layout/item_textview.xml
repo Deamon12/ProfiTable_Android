@@ -10,20 +10,10 @@
             android:text="Item 1"
             android:textSize="16sp"
             android:gravity="center_vertical"
-            android:layout_toRightOf="@+id/tile_image"
-            android:lines="1"
+            android:layout_alignParentLeft="true"
+            android:maxLines="1"
             android:ellipsize="end" />
 
-
-        <ImageView
-            android:id="@+id/tile_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/tile_text"
-            android:layout_alignBottom="@+id/tile_text"
-            android:padding="3dp"
-            android:src="@drawable/ic_query_builder_black_18dp"
-            />
 
 
     </RelativeLayout>

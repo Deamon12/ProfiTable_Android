@@ -13,9 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import supportclasses.MyAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment implements View.OnClickListener {
@@ -71,25 +74,36 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
             layoutHeight = layoutWidth;
         }
 
-        ArrayList<String> dataSet = new ArrayList<>();
 
-        for(int a = 1; a <= 50; a++)
-            dataSet.add(""+a);
+
+        JSONArray dataSet = new JSONArray();
+
+        try {
+            for(int a = 1; a <= 35;a++){
+                JSONObject temp = new JSONObject();
+                temp.put("name", ""+a);
+                dataSet.put(temp);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
             @Override
-            public void recyclerViewListClicked(View v, int position) {
+            public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
                 Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
                 getActivity().startActivity(orderViewActivity);
             }
+
         };
 
         gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
+        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
                 layoutWidth,
                 layoutHeight),
                 clickListener);

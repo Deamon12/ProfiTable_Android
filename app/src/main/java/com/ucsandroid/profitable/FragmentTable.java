@@ -11,10 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import supportclasses.MyAdapter;
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
+import supportclasses.TableRecyclerAdapter;
 
 
 /**
@@ -24,11 +23,17 @@ import supportclasses.RecyclerViewClickListener;
 public class FragmentTable extends Fragment {
 
     private RecyclerView mRecyclerView;
-
+    private TableRecyclerAdapter mAdapter;
+    int iconRowLength;
+    int tileLayoutHeight, tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(getActivity());
+        }
 
         View view = inflater.inflate(R.layout.fragment_table, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
@@ -37,60 +42,68 @@ public class FragmentTable extends Fragment {
         return view;
     }
 
+
     private void initRecyclerView() {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int iconRowLength;
-        int layoutHeight, layoutWidth;
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             iconRowLength = 6;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutWidth = layoutHeight;
+            tileLayoutHeight = (int)(metrics.heightPixels*.1);
+            tileLayoutWidth = (int)(metrics.widthPixels*.1);
+            tileLayoutWidth = tileLayoutHeight;
 
 
         }else{
             iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutHeight = layoutWidth;
+            tileLayoutHeight = (int)(metrics.heightPixels*.1);
+            tileLayoutWidth = (int)(metrics.widthPixels*.1);
+            tileLayoutHeight = tileLayoutWidth;
         }
 
 
-        RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
-            @Override
-            public void recyclerViewListClicked(View v, int position) {
-                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                getActivity().startActivity(orderViewActivity);
-            }
-        };
-
-
-
-        ArrayList<String> dataSet = new ArrayList<>();
-
-        for(int a = 1; a <= 37; a++)
-            dataSet.add("Table "+a);
-
-
-        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), iconRowLength);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(gridLayout);
-
-        MyAdapter mAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_table, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight),
-                clickListener);
-        mRecyclerView.setAdapter(mAdapter);
+        getTableData();
 
 
     }
 
 
+    /**
+     * Volley call to acquire table data
+     */
+    private void getTableData() {
+
+        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), iconRowLength);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(gridLayout);
+
+        mAdapter = new TableRecyclerAdapter(getActivity(), Singleton.getInstance().getAllTables(), R.layout.tile_table, new ViewGroup.LayoutParams(
+                tileLayoutWidth,
+                tileLayoutHeight),
+                clickListener);
+        mRecyclerView.setAdapter(mAdapter);
+
+    }
+
+
+    /**
+     * Click interface for adapter
+     */
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+
+            Singleton.getInstance().setCurrentTable(position);
+            getActivity().startActivity(orderViewActivity);
+
+
+        }
+
+    };
 
 
 }

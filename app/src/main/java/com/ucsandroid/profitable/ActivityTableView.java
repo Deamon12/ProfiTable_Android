@@ -47,6 +47,9 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         setSupportActionBar(toolbar);
 
 
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(this);
+        }
 
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -172,7 +175,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             //bar showing, but takeout is gone: put takeout at bottom
             if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-                System.out.println("In if..." + tableFragContainer.getHeight());
+                //System.out.println("In if..." + tableFragContainer.getHeight());
 
                 if (tableFragContainer.getHeight() == 0) {
                     tableFragContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -192,21 +195,21 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             //bar and takeout gone
             else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-                System.out.println("In if else...");
+                //System.out.println("In if else...");
                 tableFragContainer.getLayoutParams().width = (int) (metrics.widthPixels * .85);
 
             } else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-                System.out.println("In vis if...");
+                //System.out.println("In vis if...");
                 barFragContainer.getLayoutParams().height = barFragHeight;
                 takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
             } else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-                System.out.println("In gone/vis if...");
+                //System.out.println("In gone/vis if...");
                 takeoutFragContainer.getLayoutParams().height = tableFragContainer.getHeight() - (barDivider.getHeight() * 2);
                 tableFragContainer.getLayoutParams().width = tableFragWidth;
             } else {
-                System.out.println("In else...");
+                //System.out.println("In else...");
                 tableFragContainer.getLayoutParams().width = tableFragWidth;
 
             }
@@ -222,7 +225,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
 
-                System.out.println("In gone if..."  );
+                //System.out.println("In gone if..."  );
                 //takeoutFragContainer.getLayoutParams().height = 0;
                 //tableFragContainer.getLayoutParams().height = (int) metrics.heightPixels - toolbar.getHeight() - (150*2);
             }
