@@ -69,16 +69,13 @@ public class FragmentOrderAmount extends Fragment {
     public void getPreviousOrders(){
 
         subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTable()).getTableCost();
-
         subTotal = (subTotal/100);
-
         updateUI();
     }
 
-    public void addItem(int amount){
+    public void addItem(double amount){
 
-        subTotal+=amount;
-
+        subTotal+=(amount/100);
         updateUI();
 
     }

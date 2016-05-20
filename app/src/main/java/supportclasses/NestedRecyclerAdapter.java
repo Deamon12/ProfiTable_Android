@@ -1,6 +1,8 @@
 package supportclasses;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 
 public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder> {
 
@@ -38,7 +41,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public TextView mTextView;
         public RecyclerView recyclerView;
@@ -54,6 +57,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             recyclerView.setHasFixedSize(false);
             recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
             cardView.setOnClickListener(this);
 
         }
@@ -85,6 +89,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+
+            //System.out.println("Clicked: " + getAdapterPosition());
+            showLongClickedCustomerDialog(getAdapterPosition());
+
+            return true;
+        }
     }
 
     /**
@@ -92,8 +104,15 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      */
     public void addCustomer() {
 
-        tableData.addOrder(new Order());
-        selectedPosition = 0;//getItemCount() - 1;
+        tableData.addCustomer(new Customer());
+        selectedPosition = 0;
+        notifyDataSetChanged();
+
+    }
+
+    public void removeCustomer(int position) {
+
+        tableData.removeCustomer(position);
         notifyDataSetChanged();
 
     }
@@ -118,7 +137,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        holder.mTextView.setText("Customer " + (position+1));
+        holder.mTextView.setText("Customer " + (getItemCount()-position));
 
 
         //initialize the last tile as selected
@@ -133,11 +152,11 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
 
         //Get menuItems from order object
-        //Table # from singleton, Order # = position
+        //Table # from singleton, Customer # = position
         //dataset input = Arraylist<MenuItems>
 
 
-        holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getOrder(position).getItems(), R.layout.item_textview, position, null,
+        holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview, position, null,
                 clickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
@@ -147,7 +166,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public int getItemCount() {
-        return tableData.getOrders().size();
+        return tableData.getCustomer().size();
     }
 
 
@@ -159,20 +178,23 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * Setter method to be accessed from the fragment that contains this adapter
      *
      * @param customerPosition the customer position in the array
-     * @param item             -  the food as a JSONObject
+     * @param item
      */
     public void addItemToCustomer(int customerPosition, MenuItem item) {
 
         if (selectedPosition != -1) {
 
-            tableData.getOrder(selectedPosition).addMenuItem(item);
-
+            tableData.getCustomer(selectedPosition).addMenuItem(item);
             notifyItemChanged(selectedPosition);
 
         }
 
     }
 
+    public MenuItem getItemFromCustomer(int customer, int position){
+
+        return tableData.getCustomer(customer).getItem(position);
+    }
 
     /**
      * Pass clicks from nested recyclerview through parent recyclerview, to fragment
@@ -197,5 +219,29 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     };
 
 
+    private void showLongClickedCustomerDialog(final int position) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("What to do...Customer "+(getItemCount()-position));
+
+        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                selectedPosition = position;
+                notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeCustomer(position);
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+    }
 
 }

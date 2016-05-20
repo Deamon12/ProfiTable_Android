@@ -8,13 +8,19 @@ import java.util.ArrayList;
 
 public class MenuItem {
 
-    private String name;
+    private String name = "";
     private JSONObject jsonItem;
     private ArrayList<String> attributes;
 
 
     public MenuItem(JSONObject menuItem){
         jsonItem = menuItem;
+        try {
+            if(menuItem.has("menuName"))
+                name = jsonItem.getString("menuName");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         attributes = new ArrayList<>();
     }
 
@@ -32,8 +38,9 @@ public class MenuItem {
     }
 
     public JSONObject getJsonItem() throws JSONException {
-        if(jsonItem != null)
+        if(jsonItem != null) {
             return jsonItem;
+        }
         else
             return new JSONObject("JSON NULL");
     }

@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.RecyclerViewCheckListener;
 
 public class DialogItemAttributes extends DialogFragment {
@@ -21,11 +22,11 @@ public class DialogItemAttributes extends DialogFragment {
     private RecyclerView addonsRecycler;
     private RecyclerView sidesRecycler;
 
-    static DialogItemAttributes newInstance(JSONObject item) { //TODO: array of assets or object id? who knows
+    static DialogItemAttributes newInstance(JSONObject item) {
         DialogItemAttributes f = new DialogItemAttributes();
 
         Bundle args = new Bundle();
-        //args.putInt("num", num);
+        args.putString("menuItem", item.toString());
         f.setArguments(args);
 
         return f;
@@ -34,7 +35,6 @@ public class DialogItemAttributes extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setStyle(DialogFragment.STYLE_NORMAL, 0);
     }
 
@@ -42,12 +42,13 @@ public class DialogItemAttributes extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getDialog().setTitle("Choose Extras");
+        getDialog().setTitle("Choose Addons");
+
+
 
         View v = inflater.inflate(R.layout.dialog_attributes, container, false);
         addonsRecycler = (RecyclerView) v.findViewById(R.id.addons_recycler);
         sidesRecycler = (RecyclerView) v.findViewById(R.id.sides_recycler);
-
 
         Button doneButton = (Button) v.findViewById(R.id.done_button);
         doneButton.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +60,7 @@ public class DialogItemAttributes extends DialogFragment {
         });
 
         initAddonsRecycler();
-        initSidesRecycler();
+        //initSidesRecycler();
 
 
         return v;
@@ -67,32 +68,50 @@ public class DialogItemAttributes extends DialogFragment {
 
     private void initAddonsRecycler() {
 
-        JSONArray dataSet = dataSet = new JSONArray();
+        JSONArray allAddons = new JSONArray();
 
         try {
 
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", "Addon "+a);
-                temp.put("checked", false);
-                dataSet.put(temp);
+            JSONObject item = new JSONObject(getArguments().getString("menuItem"));
+
+            JSONArray defaults = item.getJSONArray("defaultAdditions");
+            for(int a = 0; a < defaults.length();a++){
+                defaults.getJSONObject(a).put("checked", true);
+                allAddons.put(defaults.get(a));
             }
+            JSONArray optional = item.getJSONArray("optionalAdditions");
+            for(int a = 0; a < optional.length();a++){
+                optional.getJSONObject(a).put("checked", false);
+                allAddons.put(optional.get(a));
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
+        //System.out.println("Log: "+Math.log(allAddons.length()));
+        //System.out.println("rounded: "+Math.rint(Math.log(allAddons.length())));
+
+
+        int logValue = binlog(allAddons.length());
+        //Set span count to log2(
+        int spanCount = logValue >= 1 ? logValue : 1;
+
         addonsRecycler.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4, GridLayoutManager.HORIZONTAL, false);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
         addonsRecycler.setLayoutManager(gridLayoutManager);
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, addonsCheckListener);
+        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
 
         addonsRecycler.setAdapter(rcAdapter);
 
     }
 
+
+
     private void initSidesRecycler() {
+
 
         JSONArray dataSet = dataSet = new JSONArray();
 
@@ -130,6 +149,17 @@ public class DialogItemAttributes extends DialogFragment {
             System.out.println("Addons: " + position + " to " + isChecked);
         }
     };
+
+
+    public static int binlog( int bits ) // returns 0 for bits=0
+    {
+        int log = 0;
+        if( ( bits & 0xffff0000 ) != 0 ) { bits >>>= 16; log = 16; }
+        if( bits >= 256 ) { bits >>>= 8; log += 8; }
+        if( bits >= 16  ) { bits >>>= 4; log += 4; }
+        if( bits >= 4   ) { bits >>>= 2; log += 2; }
+        return log + ( bits >>> 1 );
+    }
 
 
 }

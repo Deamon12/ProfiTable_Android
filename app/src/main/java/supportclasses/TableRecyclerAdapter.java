@@ -95,7 +95,7 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        if(dataSet.get(position).hasOrders()){
+        if(dataSet.get(position).hasCustomer()){
             holder.mCardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
         }
 

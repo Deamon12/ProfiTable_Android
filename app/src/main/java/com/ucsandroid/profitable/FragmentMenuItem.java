@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.MenuItem;
+import supportclasses.MenuItemRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
 import supportclasses.RecyclerViewClickListener;
 
@@ -60,11 +61,11 @@ public class FragmentMenuItem extends Fragment {
 
 
         try {
+
             JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
             JSONArrayRecyclerAdapter mAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
-
             recyclerView.setAdapter(mAdapter);
 
 
@@ -94,7 +95,7 @@ public class FragmentMenuItem extends Fragment {
             if (amountFrag != null) {
 
                 try {
-                    amountFrag.addItem(item.getJsonItem().getInt("menuItemPrice")/100);
+                    amountFrag.addItem(item.getJsonItem().getDouble("menuItemPrice"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

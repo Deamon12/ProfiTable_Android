@@ -2,6 +2,7 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -49,6 +50,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
         if (!Singleton.hasBeenInitialized()) {
             Singleton.initialize(this);
+            //inits tables
         }
 
         metrics = new DisplayMetrics();

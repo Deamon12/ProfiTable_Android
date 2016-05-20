@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import supportclasses.MenuItem;
@@ -52,6 +53,10 @@ public class FragmentOrders extends Fragment {
         return view;
     }
 
+
+    /**
+     * Unregister Broadcast listener when this fragment gets detached, to prevent duplicate listeners.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -188,17 +193,28 @@ public class FragmentOrders extends Fragment {
     }
 
 
-    private void showEditDialog(final int parentPosition, final int subPosition) {
+    private void showEditDialog(int parentPosition, int subPosition) {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+
         if (prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
 
+        System.out.println(parentPosition +", "+subPosition);
+
+        System.out.println("Clicked: "+mAdapter.getItemFromCustomer(parentPosition, subPosition).getName());
+
+
         // Create and show the dialog.
-        DialogFragment newFragment = DialogItemAttributes.newInstance(new JSONObject());
+        DialogFragment newFragment = null;
+        try {
+            newFragment = DialogItemAttributes.newInstance(mAdapter.getItemFromCustomer(parentPosition, subPosition).getJsonItem());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         newFragment.show(ft, "dialog");
     }

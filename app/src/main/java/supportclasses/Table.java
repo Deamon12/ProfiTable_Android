@@ -10,11 +10,11 @@ public class Table {
 
     private String label;
 
-    private ArrayList<Order> orders; //customer
+    private ArrayList<Customer> customer; //customer
 
     public Table(){
-        orders = new ArrayList<>();
-        orders.add(new Order("Customer 1"));
+        customer = new ArrayList<>();
+        customer.add(new Customer("Customer 1"));
         label = "";
     }
 
@@ -26,26 +26,30 @@ public class Table {
         this.label = label;
     }
 
-    public Order getOrder(int position) {
-        return orders.get(position);
+    public Customer getCustomer(int position) {
+        return customer.get(position);
     }
 
-    public ArrayList<Order> getOrders() {
-        return orders;
+    public ArrayList<Customer> getCustomer() {
+        return customer;
     }
 
-    public void setOrders(ArrayList<Order> orders) {
-        this.orders = orders;
+    public void setCustomer(ArrayList<Customer> customer) {
+        this.customer = customer;
     }
 
-    public void addOrder(Order order){
-        orders.add(0, order);
+    public void addCustomer(Customer order){
+        customer.add(0, order);
     }
 
-    public boolean hasOrders(){
+    public void removeCustomer(int position){
+        customer.remove(position);
+    }
 
-        for(int a = 0; a < orders.size();a++){
-            if(orders.get(a).getCost() > 0){
+    public boolean hasCustomer(){
+
+        for(int a = 0; a < customer.size(); a++){
+            if(customer.get(a).getCost() > 0){
                 return true;
             }
         }
@@ -54,8 +58,8 @@ public class Table {
 
     public int getTableCost(){
         int total = 0;
-        for(int a = 0; a < orders.size();a++){
-            total += orders.get(a).getCost();
+        for(int a = 0; a < customer.size(); a++){
+            total += customer.get(a).getCost();
         }
         return total;
     }

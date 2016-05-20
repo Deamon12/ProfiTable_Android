@@ -42,6 +42,15 @@ public class FragmentTable extends Fragment {
         return view;
     }
 
+    /**
+     * Update tables depending on if they have any food charged to them.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("tables resumed");
+        mAdapter.notifyDataSetChanged();
+    }
 
     private void initRecyclerView() {
 

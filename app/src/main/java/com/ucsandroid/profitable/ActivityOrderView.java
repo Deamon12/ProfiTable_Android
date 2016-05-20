@@ -98,9 +98,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         }
         else {
 
-            custFragHeight = (int)(metrics.heightPixels*.5);
+            custFragHeight = (int)(metrics.heightPixels*.6);
             custFragWidth = (int)(metrics.widthPixels*.7);
-            menuItemsFragHeight = (int)(metrics.heightPixels*.4);
+            menuItemsFragHeight = (int)(metrics.heightPixels*.3);
             menuItemsFragWidth = (int)(metrics.widthPixels);
         }
 
