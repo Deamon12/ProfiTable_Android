@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -248,6 +249,10 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
         }
 
+        //BroadCast table frag width update
+        sendRemeasureTableWidthBroadcast();
+
+
     }
 
 
@@ -289,6 +294,11 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
     }
 
+    private void sendRemeasureTableWidthBroadcast() {
+        Intent intent = new Intent("tablefrag-measure");
+        intent.putExtra("tableWidth", tableFragContainer.getLayoutParams().width);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 
 
 }

@@ -1,15 +1,23 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 
 import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
@@ -22,9 +30,13 @@ import supportclasses.TableRecyclerAdapter;
  */
 public class FragmentTable extends Fragment {
 
+    private BroadcastReceiver mRemeasureFragReceiver;
+
+    private int mRecyclerViewWidth;
+    private DisplayMetrics metrics;
     private RecyclerView mRecyclerView;
     private TableRecyclerAdapter mAdapter;
-    int iconRowLength;
+    int spanCount;
     int tileLayoutHeight, tileLayoutWidth;
 
     @Override
@@ -43,59 +55,109 @@ public class FragmentTable extends Fragment {
     }
 
     /**
-     * Update tables depending on if they have any food charged to them.
+     * Use the recently checked table (via the Singleton) to see if the UI needs updating.
+     * The UI will update if a customer is currently at the table
      */
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTable());
+        if(mAdapter != null)
+            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTable());
 
+        initRemeasureFragListener();
     }
 
-    private void initRecyclerView() {
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mRemeasureFragReceiver);
+    }
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    private int getSpanCount(){
+
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 6;
-            tileLayoutHeight = (int)(metrics.heightPixels*.1);
-            tileLayoutWidth = (int)(metrics.widthPixels*.1);
-            tileLayoutWidth = tileLayoutHeight;
-
-
-        }else{
-            iconRowLength = 8;
-            tileLayoutHeight = (int)(metrics.heightPixels*.1);
-            tileLayoutWidth = (int)(metrics.widthPixels*.1);
-            tileLayoutHeight = tileLayoutWidth;
+        if (tabletSize) {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 7;
+            }else
+                return 8;
+        } else {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 4;
+            }else
+                return 5;
         }
 
 
-        getTableData();
+    }
 
+
+    private void initRecyclerView() {
+
+        spanCount = getSpanCount();
+
+        ViewTreeObserver vto = mRecyclerView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
+
+                int orientation = getResources().getConfiguration().orientation;
+
+                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    tileLayoutWidth = (mRecyclerViewWidth/spanCount);
+                    tileLayoutHeight = tileLayoutWidth;
+                }else{
+                    tileLayoutWidth = (mRecyclerViewWidth/spanCount);
+                    tileLayoutHeight = tileLayoutWidth;
+                }
+
+                getTableData();
+
+            }
+        });
 
     }
 
 
     /**
-     * Volley call to acquire table data
+     * TODO: Volley call to acquire table data
      */
     private void getTableData() {
 
-        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), iconRowLength);
+        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        mAdapter = new TableRecyclerAdapter(getActivity(), Singleton.getInstance().getAllTables(), R.layout.tile_table, new ViewGroup.LayoutParams(
-                tileLayoutWidth,
-                tileLayoutHeight),
+        mAdapter = new TableRecyclerAdapter(getActivity(),
+                Singleton.getInstance().getAllTables(),
+                R.layout.tile_table,
+                new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutHeight),
                 clickListener);
         mRecyclerView.setAdapter(mAdapter);
 
     }
 
+    private void updateUI(int tableFragWidth){
+
+        spanCount = getSpanCount();
+
+        int orientation = getResources().getConfiguration().orientation;
+
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            tileLayoutWidth = (tableFragWidth/spanCount);
+            tileLayoutHeight = tileLayoutWidth;
+        }else{
+            tileLayoutWidth = (tableFragWidth/spanCount);
+            tileLayoutHeight = tileLayoutWidth;
+        }
+
+        getTableData();
+    }
 
     /**
      * Click interface for adapter
@@ -112,6 +174,25 @@ public class FragmentTable extends Fragment {
         }
 
     };
+
+    /**
+     * Listen for UI changes. Visibility changes from other frags will allow this fragment to be
+     * larger or smaller
+     */
+    private void initRemeasureFragListener() {
+
+        mRemeasureFragReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if(intent.getIntExtra("tableWidth", 0) != -1 && getActivity() != null)
+                    updateUI(intent.getIntExtra("tableWidth", 0));
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mRemeasureFragReceiver,
+                new IntentFilter("tablefrag-measure"));
+    }
 
 
 }

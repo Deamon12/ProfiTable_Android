@@ -43,7 +43,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
             Singleton.initialize(getActivity());
         }
 
-
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recyclerview);
         mRecyclerView.setHasFixedSize(false);
@@ -56,7 +55,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
 
 
     /**
-     * Unregister Broadcast listener when this fragment gets detached, to prevent duplicate listeners.
+     * Unregister Broadcast listeners when this fragment gets detached, to prevent duplication
      */
     @Override
     public void onDetach() {
@@ -67,7 +66,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
     }
 
     /**
-     * Init recyclerview with tiles to hold customer and the orders that go with the customer
+     * Init recyclerview with tiles to hold customers and the orders that go with the customers
      */
     private void initRecyclerView() {
 

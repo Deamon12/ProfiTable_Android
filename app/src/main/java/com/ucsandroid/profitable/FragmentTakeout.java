@@ -73,7 +73,7 @@ public class FragmentTakeout extends Fragment {
             layoutWidth = (int)(metrics.widthPixels*.1);
             //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
             //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
-            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
+            //System.out.println("metrics.widthPixels/spanCount: "+metrics.widthPixels/spanCount);
 
         }else{
             iconRowLength = 9;
@@ -81,7 +81,7 @@ public class FragmentTakeout extends Fragment {
             layoutWidth = (int)(metrics.widthPixels*.2);
             //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
             //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
-            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
+            //System.out.println("metrics.widthPixels/spanCount: "+metrics.widthPixels/spanCount);
         }
 
         dataSet = new ArrayList<>();

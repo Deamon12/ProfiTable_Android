@@ -83,8 +83,8 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
         if (params == null) {
 
         } else {
-            //v.getLayoutParams().height = params.height;
-            //v.getLayoutParams().width = params.width;
+            v.getLayoutParams().height = params.height;
+            v.getLayoutParams().width = params.width;
         }
 
         ViewHolder vh = new ViewHolder(v);

@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/bar_frag_container"/>
+        android:layout_above="@+id/section_text_bar"/>
 
 
     <View
@@ -103,25 +103,4 @@
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         />
-
-    <!--
-    <FrameLayout
-        android:id="@+id/table_frag_container"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/bar_frag_container"/>
-
-    <FrameLayout
-        android:id="@+id/bar_frag_container"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_above="@+id/takeout_frag_container"/>
-
-    <FrameLayout
-        android:id="@+id/takeout_frag_container"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"/>
-    -->
 </RelativeLayout>
