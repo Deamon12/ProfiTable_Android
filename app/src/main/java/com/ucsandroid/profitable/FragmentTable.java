@@ -48,8 +48,8 @@ public class FragmentTable extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("tables resumed");
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTable());
+
     }
 
     private void initRecyclerView() {
@@ -108,7 +108,6 @@ public class FragmentTable extends Fragment {
 
             Singleton.getInstance().setCurrentTable(position);
             getActivity().startActivity(orderViewActivity);
-
 
         }
 

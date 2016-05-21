@@ -146,14 +146,14 @@ public class DialogItemAttributes extends DialogFragment{
     RecyclerViewCheckListener sidesCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-            System.out.println("Sides: " + position + " to " + isChecked);
+           // System.out.println("Sides: " + position + " to " + isChecked);
         }
     };
 
     RecyclerViewCheckListener addonsCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-            System.out.println("Addons: " + position + " to " + isChecked);
+            //System.out.println("Addons: " + position + " to " + isChecked);
         }
     };
 

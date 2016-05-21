@@ -187,9 +187,7 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
 
     @Override
     public int getItemCount() {
-
         return dataSet.length();
-
     }
 
     public JSONArray getDataSet(){

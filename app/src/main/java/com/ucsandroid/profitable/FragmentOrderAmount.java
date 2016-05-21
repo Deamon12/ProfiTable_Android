@@ -1,20 +1,30 @@
 package com.ucsandroid.profitable;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
+import supportclasses.MenuItem;
+
 public class FragmentOrderAmount extends Fragment {
 
+    private BroadcastReceiver mDoCalculationUpdate;
 
     private double taxRate = 7.5;
     private Locale currentLocale;
@@ -57,28 +67,44 @@ public class FragmentOrderAmount extends Fragment {
         discountText = (TextView) view.findViewById(R.id.discount_textview);
         amountDueText = (TextView) view.findViewById(R.id.amountdue_textview);
 
-        getPreviousOrders();
-
-
+        initUpdateAmountListener();
+        getOrders();
 
 
         return view;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mDoCalculationUpdate);
 
-    public void getPreviousOrders(){
+    }
 
+    //TODO: fix the flow to update more frequently, remove customers, add additions, remove items, etc
+    /**
+     * Loops through json
+     */
+    public void getOrders(){
         subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTable()).getTableCost();
         subTotal = (subTotal/100);
         updateUI();
     }
 
-    public void addItem(double amount){
+    /*
+    public void addItem(MenuItem item){
 
-        subTotal+=(amount/100);
+        double itemCost = 0;
+
+        try {
+            itemCost = item.getJsonItem().getDouble("menuItemPrice");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        subTotal += (itemCost/100);
         updateUI();
 
-    }
+    }*/
 
     private void updateUI(){
 
@@ -89,6 +115,27 @@ public class FragmentOrderAmount extends Fragment {
         taxText.setText(currencyFormatter.format(tax));
         discountText.setText(currencyFormatter.format(discount));
         amountDueText.setText(currencyFormatter.format(amountDue));
+    }
+
+    private void initUpdateAmountListener() {
+
+        mDoCalculationUpdate = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.hasExtra("tableNumber")){
+                    System.out.println("Amount frag received update broadcast for table: "+intent.getSerializableExtra("tableNumber"));
+                    getOrders();
+                }
+                else{
+                    System.out.println("Amount frag received update broadcast");
+                    getOrders();
+                }
+
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mDoCalculationUpdate,
+                new IntentFilter("update-amount"));
     }
 
 

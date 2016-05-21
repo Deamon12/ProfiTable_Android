@@ -1,7 +1,9 @@
 package com.ucsandroid.profitable;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +77,12 @@ public class FragmentMenuItem extends Fragment {
 
     }
 
+    private void sendAddItemToCustomerBroadcast(int customer, int position, MenuItem item) {
+        Intent intent = new Intent("add-item");
+        intent.putExtra("menuItem", item);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+    }
+
     /**
      * Recieves the clicked position from a menu category
      * Pass off an itemId from a MenuPage, to the OrderFragment to start the add item flow.
@@ -84,12 +92,17 @@ public class FragmentMenuItem extends Fragment {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
 
+
+            //TODO broadcast add item
+            sendAddItemToCustomerBroadcast(parentPosition, position, item);
+            /*
             FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
 
             if (orderFrag != null) {
                 orderFrag.addItem(item);
-            }
+            }*/
 
+            /*
             FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
 
             if (amountFrag != null) {
@@ -100,7 +113,7 @@ public class FragmentMenuItem extends Fragment {
                     e.printStackTrace();
                 }
             }
-
+*/
 
 
         }

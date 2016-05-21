@@ -44,6 +44,10 @@ public class Customer {
         items.add(item);
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCost()  {
         int total = 0;
         for(int a = 0; a < items.size();a++){

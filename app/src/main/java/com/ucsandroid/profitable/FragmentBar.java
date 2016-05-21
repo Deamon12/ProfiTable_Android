@@ -103,10 +103,14 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(gridLayout);
 
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight),
-                clickListener);
+        //new ViewGroup.LayoutParams( layoutWidth, layoutHeight)
+        JSONArrayRecyclerAdapter rcAdapter =
+                new JSONArrayRecyclerAdapter(
+                        getActivity(),
+                        dataSet,
+                        R.layout.tile_bar,
+                        null,
+                        clickListener);
 
         recyclerView.setAdapter(rcAdapter);
     }

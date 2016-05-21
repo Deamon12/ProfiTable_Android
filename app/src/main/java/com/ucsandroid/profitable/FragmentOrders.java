@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -20,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import supportclasses.DialogDismissListener;
 import supportclasses.MenuItem;
@@ -32,7 +29,8 @@ import supportclasses.Table;
 
 public class FragmentOrders extends Fragment implements DialogDismissListener{
 
-    private BroadcastReceiver mMessageReceiver;
+    private BroadcastReceiver mAddCustomerReceiver;
+    private BroadcastReceiver mAddItemToCustomerReceiver;
     private NestedRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
@@ -46,12 +44,12 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
         }
 
 
-
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recyclerview);
         mRecyclerView.setHasFixedSize(false);
         initRecyclerView();
         initAddCustomerListener();
+        initAddItemToCustomerListener();
 
         return view;
     }
@@ -63,7 +61,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
     @Override
     public void onDetach() {
         super.onDetach();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mAddCustomerReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mAddItemToCustomerReceiver);
+
     }
 
     /**
@@ -129,7 +129,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
      */
     private void initAddCustomerListener() {
 
-        mMessageReceiver = new BroadcastReceiver() {
+        mAddCustomerReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (mAdapter != null) {
@@ -139,16 +139,36 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
             }
         };
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddCustomerReceiver,
                 new IntentFilter("add-customer"));
+    }
 
 
+    /**
+     * Listen for add item requests from any other fragment
+     */
+    private void initAddItemToCustomerListener() {
+
+        mAddItemToCustomerReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (mAdapter != null) {
+                    addItem((MenuItem) intent.getSerializableExtra("menuItem"));
+                }
+
+                //Send broadcast to update amount calculation
+                sendUpdateAmountBroadcast();
+
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddItemToCustomerReceiver,
+                new IntentFilter("add-item"));
     }
 
     /**
-     * ItemId is passed from Menu Items Pager. Use this itemId to pull attributes from webservice.
-     * And begin add item dialog flow.
-     *
+     * MenuItem to be used to update amount of orders and orders UI
      * @param item
      */
     public void addItem(MenuItem item) {
@@ -178,6 +198,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 mAdapter.removeItemFromCustomer(customer, position);
+                sendUpdateAmountBroadcast();
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -222,9 +243,15 @@ public class FragmentOrders extends Fragment implements DialogDismissListener{
      */
     @Override
     public void dialogDismissListener(int customer, int position, JSONArray additions) {
-        System.out.println(additions);
+        //System.out.println(additions);
         mAdapter.setAdditionsForItem(customer, position, additions);
+        sendUpdateAmountBroadcast();
+    }
 
+
+    private void sendUpdateAmountBroadcast(){
+        Intent updateIntent = new Intent("update-amount");
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(updateIntent);
     }
 
 

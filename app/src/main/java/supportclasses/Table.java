@@ -14,7 +14,7 @@ public class Table {
 
     public Table(){
         customer = new ArrayList<>();
-        customer.add(new Customer("Customer 1"));
+        //customer.add(new Customer("Customer 1"));
         label = "";
     }
 
@@ -46,7 +46,7 @@ public class Table {
         customer.remove(position);
     }
 
-    public boolean hasCustomer(){
+    public boolean hasCost(){
 
         for(int a = 0; a < customer.size(); a++){
             if(customer.get(a).getCost() > 0){
@@ -54,6 +54,14 @@ public class Table {
             }
         }
         return false;
+    }
+
+    public boolean hasCustomer(){
+
+        if(customer != null & customer.size() > 0)
+            return true;
+        else
+            return false;
     }
 
     public int getTableCost(){

@@ -2,6 +2,8 @@ package supportclasses;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +30,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private RecyclerViewClickListener nestedClickListener;
     private RecyclerViewLongClickListener nestedLongClickListener;
 
-    private ViewHolder vh;
+
 
 
     public NestedRecyclerAdapter(Context context, Table dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
@@ -39,6 +41,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
+
+        if(!dataSet.hasCustomer()){
+            addCustomer();
+        }
 
     }
 
@@ -108,9 +114,13 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         notifyDataSetChanged();
     }
 
-    //Remove customer from table
+    /**
+     * Remove customer from table, update datastructure, update UI
+     * @param position
+     */
     public void removeCustomer(int position) {
         tableData.removeCustomer(position);
+        selectedPosition = -1;
         notifyDataSetChanged();
     }
 
@@ -123,7 +133,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             //v.getLayoutParams().height = layoutParams.height;
             v.getLayoutParams().width = layoutParams.width;
         }
-        vh = new ViewHolder(v);
+
+        ViewHolder vh = new ViewHolder(v);
 
         return vh;
     }
@@ -172,7 +183,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void addItemToCustomer(int customerPosition, MenuItem item) {
 
         if (selectedPosition != -1) {
-
             tableData.getCustomer(selectedPosition).addMenuItem(item);
             notifyItemChanged(selectedPosition);
 
@@ -232,6 +242,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 removeCustomer(position);
+                sendUpdateAmountBroadcast();
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -241,6 +252,11 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         });
 
         builder.show();
+    }
+
+    private void sendUpdateAmountBroadcast(){
+        Intent updateIntent = new Intent("update-amount");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(updateIntent);
     }
 
 }
