@@ -1,5 +1,6 @@
 package com.ucsandroid.profitable;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,20 +14,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import supportclasses.DialogDismissListener;
 import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.MenuItem;
 import supportclasses.RecyclerViewCheckListener;
 
-public class DialogItemAttributes extends DialogFragment {
+public class DialogItemAttributes extends DialogFragment{
 
+    private JSONArrayRecyclerAdapter mAdapter;
     private RecyclerView addonsRecycler;
     private RecyclerView sidesRecycler;
 
-    static DialogItemAttributes newInstance(JSONObject item) {
+    static DialogItemAttributes newInstance(int customer, int position, MenuItem item) {
         DialogItemAttributes f = new DialogItemAttributes();
 
         Bundle args = new Bundle();
-        args.putString("menuItem", item.toString());
+        args.putSerializable("menuItem", item);
+        args.putInt("customer", customer);
+        args.putInt("position", position);
         f.setArguments(args);
 
         return f;
@@ -42,9 +47,7 @@ public class DialogItemAttributes extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getDialog().setTitle("Choose Addons");
-
-
+        getDialog().setTitle("Choose Additions...");
 
         View v = inflater.inflate(R.layout.dialog_attributes, container, false);
         addonsRecycler = (RecyclerView) v.findViewById(R.id.addons_recycler);
@@ -54,7 +57,6 @@ public class DialogItemAttributes extends DialogFragment {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Save and dismiss
                 getDialog().dismiss();
             }
         });
@@ -66,23 +68,33 @@ public class DialogItemAttributes extends DialogFragment {
         return v;
     }
 
+
+    /**
+     * If this menuItem already has some selected additions, use them. The already selected additions
+     * will be in the MenuItem.attributes JSONArray
+     * Otherwise this item has not been adjust, so use the default additions.
+     */
     private void initAddonsRecycler() {
 
+        MenuItem menuItem = (MenuItem) getArguments().getSerializable("menuItem");
         JSONArray allAddons = new JSONArray();
 
         try {
 
-            JSONObject item = new JSONObject(getArguments().getString("menuItem"));
-
-            JSONArray defaults = item.getJSONArray("defaultAdditions");
-            for(int a = 0; a < defaults.length();a++){
-                defaults.getJSONObject(a).put("checked", true);
-                allAddons.put(defaults.get(a));
+            if(menuItem.getAdditions().length() > 0){
+                allAddons = menuItem.getAdditions();
             }
-            JSONArray optional = item.getJSONArray("optionalAdditions");
-            for(int a = 0; a < optional.length();a++){
-                optional.getJSONObject(a).put("checked", false);
-                allAddons.put(optional.get(a));
+            else{
+                JSONArray defaults = menuItem.getJsonItem().getJSONArray("defaultAdditions");
+                for(int a = 0; a < defaults.length();a++){
+                    defaults.getJSONObject(a).put("checked", true);
+                    allAddons.put(defaults.get(a));
+                }
+                JSONArray optional = menuItem.getJsonItem().getJSONArray("optionalAdditions");
+                for(int a = 0; a < optional.length();a++){
+                    optional.getJSONObject(a).put("checked", false);
+                    allAddons.put(optional.get(a));
+                }
             }
 
 
@@ -90,28 +102,23 @@ public class DialogItemAttributes extends DialogFragment {
             e.printStackTrace();
         }
 
-
-        //System.out.println("Log: "+Math.log(allAddons.length()));
-        //System.out.println("rounded: "+Math.rint(Math.log(allAddons.length())));
-
-
         int logValue = binlog(allAddons.length());
-        //Set span count to log2(
+
+        //Set span count to log of dataSet.length
         int spanCount = logValue >= 1 ? logValue : 1;
 
         addonsRecycler.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
         addonsRecycler.setLayoutManager(gridLayoutManager);
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
+        mAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
 
-        addonsRecycler.setAdapter(rcAdapter);
+        addonsRecycler.setAdapter(mAdapter);
 
     }
 
 
-
+    //TODO: not implemented, visibility GONE for now
     private void initSidesRecycler() {
-
 
         JSONArray dataSet = dataSet = new JSONArray();
 
@@ -150,7 +157,11 @@ public class DialogItemAttributes extends DialogFragment {
         }
     };
 
-
+    /**
+     * Method to acquire accurate log2() values - quickly
+     * @param bits
+     * @return
+     */
     public static int binlog( int bits ) // returns 0 for bits=0
     {
         int log = 0;
@@ -160,6 +171,20 @@ public class DialogItemAttributes extends DialogFragment {
         if( bits >= 4   ) { bits >>>= 2; log += 2; }
         return log + ( bits >>> 1 );
     }
+
+    /**
+     * Overridden onDismiss to communicate back to the interface attached to the calling fragment
+     * So that we the addition items can be passed back to update the UI and data structures
+     * @param dialog
+     */
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        int customer = getArguments().getInt("customer");
+        int position = getArguments().getInt("position");
+        ((DialogDismissListener)getTargetFragment()).dialogDismissListener(customer, position, mAdapter.getDataSet());
+    }
+
 
 
 }

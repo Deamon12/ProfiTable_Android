@@ -1,16 +1,17 @@
 package supportclasses;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class MenuItem {
+public class MenuItem implements Serializable {
 
     private String name = "";
     private JSONObject jsonItem;
-    private ArrayList<String> attributes;
+    private JSONArray additions = null;
 
 
     public MenuItem(JSONObject menuItem){
@@ -21,12 +22,12 @@ public class MenuItem {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        attributes = new ArrayList<>();
+        additions = new JSONArray();
     }
 
     public MenuItem(String name){
         this.name = name;
-        attributes = new ArrayList<>();
+        additions = new JSONArray();
     }
 
     public void setName(String name){
@@ -44,5 +45,14 @@ public class MenuItem {
         else
             return new JSONObject("JSON NULL");
     }
+
+    public void setAdditions(JSONArray additions){
+        this.additions = additions;
+    }
+
+    public JSONArray getAdditions(){
+        return additions;
+    }
+
 
 }

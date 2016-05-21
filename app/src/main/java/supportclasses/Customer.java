@@ -33,11 +33,7 @@ public class Customer {
     }
 
     public MenuItem getItem(int position){
-        System.out.println("getting: "+position + ", size: "+items.size());
-        //if(position <= items.size())
-            return items.get(position);
-        //else
-        //    return null;
+        return items.get(position);
     }
 
     public void setItems(ArrayList<MenuItem> items) {
@@ -60,5 +56,10 @@ public class Customer {
         }
         return total;
     }
+
+    public void removeItem(int position){
+        items.remove(position);
+    }
+
 
 }

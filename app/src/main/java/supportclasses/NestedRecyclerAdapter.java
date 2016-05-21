@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.Singleton;
 
+import org.json.JSONArray;
+
 public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder> {
 
     private int layout;
@@ -70,7 +72,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
          *
          * @param v
          */
-
         @Override
         public void onClick(View v) {
 
@@ -92,7 +93,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         @Override
         public boolean onLongClick(View v) {
 
-            //System.out.println("Clicked: " + getAdapterPosition());
             showLongClickedCustomerDialog(getAdapterPosition());
 
             return true;
@@ -103,18 +103,15 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * Add new order/customer to local data structure
      */
     public void addCustomer() {
-
         tableData.addCustomer(new Customer());
         selectedPosition = 0;
         notifyDataSetChanged();
-
     }
 
+    //Remove customer from table
     public void removeCustomer(int position) {
-
         tableData.removeCustomer(position);
         notifyDataSetChanged();
-
     }
 
     public NestedRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -128,7 +125,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
         vh = new ViewHolder(v);
 
-
         return vh;
     }
 
@@ -136,9 +132,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-
         holder.mTextView.setText("Customer " + (getItemCount()-position));
-
 
         //initialize the last tile as selected
         if (selectedPosition == -11 && position == (getItemCount() - 1)) {
@@ -151,18 +145,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        //Get menuItems from order object
+        //Get menuItems from customer object
         //Table # from singleton, Customer # = position
         //dataset input = Arraylist<MenuItems>
-
-
         holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview, position, null,
                 clickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
-
     }
-
 
     @Override
     public int getItemCount() {
@@ -176,7 +166,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     /**
      * Setter method to be accessed from the fragment that contains this adapter
-     *
      * @param customerPosition the customer position in the array
      * @param item
      */
@@ -188,11 +177,22 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             notifyItemChanged(selectedPosition);
 
         }
+    }
 
+    //Remove a specific item from the items list
+    public void removeItemFromCustomer(int customer, int position) {
+
+            tableData.getCustomer(customer).removeItem(position);
+            notifyItemChanged(customer);
+    }
+
+    //Update the additions to a specific item
+    public void setAdditionsForItem(int customer, int position, JSONArray additions) {
+        tableData.getCustomer(customer).getItem(position).setAdditions(additions);
+        notifyItemChanged(customer);
     }
 
     public MenuItem getItemFromCustomer(int customer, int position){
-
         return tableData.getCustomer(customer).getItem(position);
     }
 
@@ -200,7 +200,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * Pass clicks from nested recyclerview through parent recyclerview, to fragment
      */
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
-
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);

@@ -12,22 +12,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import supportclasses.DialogDismissListener;
 import supportclasses.MenuItem;
 import supportclasses.NestedRecyclerAdapter;
 import supportclasses.RecyclerViewClickListener;
 import supportclasses.RecyclerViewLongClickListener;
 import supportclasses.Table;
 
-public class FragmentOrders extends Fragment {
+public class FragmentOrders extends Fragment implements DialogDismissListener{
 
     private BroadcastReceiver mMessageReceiver;
     private NestedRecyclerAdapter mAdapter;
@@ -86,7 +89,6 @@ public class FragmentOrders extends Fragment {
 
     private void getOrders() {
 
-
         Table table = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTable());
 
         mAdapter = new NestedRecyclerAdapter(getActivity(), table,
@@ -104,8 +106,6 @@ public class FragmentOrders extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            //System.out.println("clicked: " + position + " on parent " + parentPosition);
-
             showEditDialog(parentPosition, position);
         }
     };
@@ -117,8 +117,6 @@ public class FragmentOrders extends Fragment {
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
         @Override
         public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
-            //System.out.println("long clicked: " + position + " on parent " + parentPosition);
-
             showLongClickedDialog(parentPosition, position);
         }
 
@@ -156,7 +154,6 @@ public class FragmentOrders extends Fragment {
     public void addItem(MenuItem item) {
 
         if (mAdapter.getSelectedPosition() > -1) {
-
             //System.out.println("Need to add item: " + item + " to customer " + (mAdapter.getSelectedPosition() + 1));
             mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), item); //TODO: start attribute flow if necessary
 
@@ -168,19 +165,19 @@ public class FragmentOrders extends Fragment {
     }
 
 
-    private void showLongClickedDialog(final int parentPosition, final int subPosition) {
+    private void showLongClickedDialog(final int customer, final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("What to do...");
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                showEditDialog(parentPosition, subPosition);
+                showEditDialog(customer, position);
             }
         });
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
+                mAdapter.removeItemFromCustomer(customer, position);
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -193,7 +190,13 @@ public class FragmentOrders extends Fragment {
     }
 
 
-    private void showEditDialog(int parentPosition, int subPosition) {
+    /**
+     * When an item is clicked from a particular customer, open a dialog for that specific item
+     * This dialog will allow for selecting or deselecting additions for that item
+     * @param parentPosition
+     * @param position
+     */
+    private void showEditDialog(int parentPosition, int position) {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
@@ -203,20 +206,25 @@ public class FragmentOrders extends Fragment {
         }
         ft.addToBackStack(null);
 
-        System.out.println(parentPosition +", "+subPosition);
-
-        System.out.println("Clicked: "+mAdapter.getItemFromCustomer(parentPosition, subPosition).getName());
-
-
         // Create and show the dialog.
-        DialogFragment newFragment = null;
-        try {
-            newFragment = DialogItemAttributes.newInstance(mAdapter.getItemFromCustomer(parentPosition, subPosition).getJsonItem());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        DialogFragment newFragment = DialogItemAttributes.newInstance(parentPosition, position, mAdapter.getItemFromCustomer(parentPosition, position));
+        newFragment.setTargetFragment(this, 0);
 
         newFragment.show(ft, "dialog");
+
+    }
+
+
+    /**
+     * The catching method that gets called when the additions dialog gets closed, dismissed, back buttoned.
+     * This method will receive the list of all additions, whether they are selected or not.
+     * @param additions
+     */
+    @Override
+    public void dialogDismissListener(int customer, int position, JSONArray additions) {
+        System.out.println(additions);
+        mAdapter.setAdditionsForItem(customer, position, additions);
+
     }
 
 

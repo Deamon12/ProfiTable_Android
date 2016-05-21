@@ -73,7 +73,6 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
         public ViewHolder(View v) {
             super(v);
 
-
             if(layout == R.layout.item_checkbox){
                 mCheckBox = (CheckBox) v.findViewById(R.id.checkbox);
                 mCheckBox.setOnCheckedChangeListener(this);
@@ -85,7 +84,6 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
             else{
                 mTextView = (TextView) v.findViewById(R.id.tile_text);
             }
-
 
             v.setOnClickListener(this);
 
@@ -103,7 +101,6 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
                     e.printStackTrace();
                 }
 
-
             }
         }
 
@@ -120,8 +117,6 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
         }
 
     }
-
-
 
 
 
@@ -197,6 +192,9 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
 
     }
 
+    public JSONArray getDataSet(){
+        return dataSet;
+    }
 
 
 }
