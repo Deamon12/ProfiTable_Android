@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
 
 import supportclasses.MenuItem;
 import supportclasses.RecyclerViewClickListener;
@@ -33,11 +29,10 @@ public class FragmentTable extends Fragment {
     private BroadcastReceiver mRemeasureFragReceiver;
 
     private int mRecyclerViewWidth;
-    private DisplayMetrics metrics;
     private RecyclerView mRecyclerView;
     private TableRecyclerAdapter mAdapter;
-    int spanCount;
-    int tileLayoutHeight, tileLayoutWidth;
+    private int spanCount;
+    private int tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,27 +68,6 @@ public class FragmentTable extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mRemeasureFragReceiver);
     }
 
-    private int getSpanCount(){
-
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        int orientation = getResources().getConfiguration().orientation;
-
-        if (tabletSize) {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                return 7;
-            }else
-                return 8;
-        } else {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                return 4;
-            }else
-                return 5;
-        }
-
-
-    }
-
-
     private void initRecyclerView() {
 
         spanCount = getSpanCount();
@@ -106,15 +80,7 @@ public class FragmentTable extends Fragment {
 
                 mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
 
-                int orientation = getResources().getConfiguration().orientation;
-
-                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                    tileLayoutWidth = (mRecyclerViewWidth/spanCount);
-                    tileLayoutHeight = tileLayoutWidth;
-                }else{
-                    tileLayoutWidth = (mRecyclerViewWidth/spanCount);
-                    tileLayoutHeight = tileLayoutWidth;
-                }
+                tileLayoutWidth = (mRecyclerViewWidth/spanCount);
 
                 getTableData();
 
@@ -136,7 +102,7 @@ public class FragmentTable extends Fragment {
         mAdapter = new TableRecyclerAdapter(getActivity(),
                 Singleton.getInstance().getAllTables(),
                 R.layout.tile_table,
-                new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutHeight),
+                new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -146,15 +112,7 @@ public class FragmentTable extends Fragment {
 
         spanCount = getSpanCount();
 
-        int orientation = getResources().getConfiguration().orientation;
-
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            tileLayoutWidth = (tableFragWidth/spanCount);
-            tileLayoutHeight = tileLayoutWidth;
-        }else{
-            tileLayoutWidth = (tableFragWidth/spanCount);
-            tileLayoutHeight = tileLayoutWidth;
-        }
+        tileLayoutWidth = (tableFragWidth/spanCount);
 
         getTableData();
     }
@@ -174,6 +132,25 @@ public class FragmentTable extends Fragment {
         }
 
     };
+
+    private int getSpanCount(){
+
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+        int orientation = getResources().getConfiguration().orientation;
+
+        if (tabletSize) {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 7;
+            }else
+                return 8;
+        } else {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 6;
+            }else
+                return 5;
+        }
+    }
+
 
     /**
      * Listen for UI changes. Visibility changes from other frags will allow this fragment to be

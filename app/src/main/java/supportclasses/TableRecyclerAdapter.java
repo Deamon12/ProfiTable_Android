@@ -104,7 +104,7 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
             holder.mCardView.setCardBackgroundColor(0);
         }
 
-        holder.mTextView.setText("Table "+(position+1));
+        holder.mTextView.setText(""+(position+1));
     }
 
     @Override

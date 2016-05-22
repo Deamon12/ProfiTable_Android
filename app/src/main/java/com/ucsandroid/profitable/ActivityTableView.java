@@ -25,7 +25,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
 
     private int tableFragWidth;
-    private int tableFragHeight, barFragHeight, takeoutFragHeight;
+    private int barFragHeight, takeoutFragHeight;
     private FrameLayout barFragContainer;
     private FrameLayout tableFragContainer;
     private FrameLayout takeoutFragContainer;
@@ -51,7 +51,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
         if (!Singleton.hasBeenInitialized()) {
             Singleton.initialize(this);
-            //inits tables
         }
 
         metrics = new DisplayMetrics();
@@ -81,16 +80,18 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             barFragHeight = (int)(metrics.heightPixels*.4);
             takeoutFragHeight = (int)(metrics.heightPixels*.4);
             barFragContainer.getLayoutParams().height = barFragHeight;
+            tableFragWidth = (int)(metrics.widthPixels*.5);
         }
         else{
-            tableFragHeight = (int)(metrics.heightPixels*.5);
             barFragHeight = (int)((metrics.heightPixels*.2));
             takeoutFragHeight = (int)(metrics.heightPixels*.2);
+            tableFragWidth = tableFragContainer.getLayoutParams().width;
         }
 
-        tableFragWidth = tableFragContainer.getLayoutParams().width;
 
-        //tableFragContainer.getLayoutParams().height = tableFragHeight;
+        tableFragContainer.getLayoutParams().width = tableFragWidth;
+
+
         barFragContainer.getLayoutParams().height = barFragHeight;
         takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
 
@@ -180,11 +181,12 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
                     takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
                 //System.out.println("In if..." + tableFragContainer.getHeight());
 
+
                 if (tableFragContainer.getHeight() == 0) {
                     tableFragContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            //tableFragContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            tableFragContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                             barFragContainer.getLayoutParams().height = tableFragContainer.getHeight() - (barDivider.getHeight() * 2);
                             tableFragContainer.getLayoutParams().width = tableFragWidth;
                         }
@@ -248,6 +250,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             }
 
         }
+
 
         //BroadCast table frag width update
         sendRemeasureTableWidthBroadcast();
