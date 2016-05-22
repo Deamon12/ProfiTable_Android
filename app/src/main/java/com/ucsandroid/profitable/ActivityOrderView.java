@@ -149,10 +149,16 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         else if(v == addCustomer){
             sendAddCustomerBroadcast();
         }
-        else if(v == addCustomer){
-            sendAddCustomerBroadcast();
+        else if(v == doCheckout){
+            doCheckOut();
         }
 
+    }
+
+    private void doCheckOut() {
+        Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
+        startActivity(intent);
+        //finish();
     }
 
     /**
