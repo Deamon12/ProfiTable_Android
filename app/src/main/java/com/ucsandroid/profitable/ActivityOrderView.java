@@ -156,7 +156,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     private void doCheckOut() {
         Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     /**
