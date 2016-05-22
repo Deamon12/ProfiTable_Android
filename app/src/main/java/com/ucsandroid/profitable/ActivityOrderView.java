@@ -40,7 +40,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         if (toolbar != null) {
-            toolbar.setTitle("Table "+Singleton.getInstance().getCurrentTable());
+
+            //TODO: This might not be a table, need bar, takeout
+            toolbar.setTitle("Table "+(Singleton.getInstance().getCurrentTable()+1));
             setSupportActionBar(toolbar);
         }
 

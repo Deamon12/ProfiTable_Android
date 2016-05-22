@@ -9,34 +9,33 @@
         android:id="@+id/subtotaltext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Subtotal : "
-        android:textSize="16sp"
+        android:text="Subtotal"
+        android:textSize="14sp"
+
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/subtotal_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/subtotaltext"
         android:text="$100.00"
-        android:id="@+id/subtotal_label"
         android:textSize="16sp"
-        android:layout_alignBottom="@+id/subtotaltext"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:gravity="right"/>
-
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/subtotaltext"/>
 
 
     <TextView
         android:id="@+id/taxtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tax (7.5%) : "
-        android:textSize="16sp"
-        android:layout_below="@+id/subtotaltext"
+        android:text="Tax (7.5%)"
+        android:textSize="14sp"
+        android:layout_below="@+id/subtotal_label"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,11 +43,8 @@
         android:text="$15.00"
         android:id="@+id/tax_textview"
         android:textSize="16sp"
-        android:layout_alignBottom="@+id/taxtext"
-        android:layout_toRightOf="@+id/taxtext"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:gravity="right"/>
+        android:layout_marginLeft="15dp"
+        android:layout_below="@+id/taxtext"/>
 
 
 
@@ -57,11 +53,12 @@
         android:id="@+id/discounttext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discount : "
-        android:textSize="16sp"
-        android:layout_below="@+id/taxtext"
+        android:text="Discount"
+        android:textSize="14sp"
+        android:layout_below="@+id/tax_textview"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:textStyle="italic" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,11 +66,8 @@
         android:text="$10.00"
         android:id="@+id/discount_textview"
         android:textSize="16sp"
-        android:layout_alignBottom="@+id/discounttext"
-        android:layout_toRightOf="@+id/discounttext"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:gravity="right"/>
+        android:layout_below="@+id/discounttext"
+        android:layout_marginLeft="15dp"/>
 
 <!--
 
@@ -94,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="2sp"
         android:background="@color/primary"
-        android:layout_below="@+id/discounttext"
+        android:layout_below="@+id/discount_textview"
         android:layout_margin="10dp"/>
 
     <TextView
