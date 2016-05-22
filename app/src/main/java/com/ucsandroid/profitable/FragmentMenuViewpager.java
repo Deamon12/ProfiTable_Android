@@ -1,7 +1,10 @@
 package com.ucsandroid.profitable;
 
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +29,7 @@ public class FragmentMenuViewpager extends Fragment {
     private ViewPager mViewPager;
     private View mView;
     private JSONArray mMenuItems;
+    private ProgressDialog progress;
 
 
     @Override
@@ -39,7 +43,9 @@ public class FragmentMenuViewpager extends Fragment {
         mView = inflater.inflate(R.layout.fragment_menu_items, container, false);
 
 
-        getMenu();
+        //TODO: make the call to get updates?
+        if(!hasMenu())
+            getMenu();
 
         return mView;
     }
@@ -47,14 +53,21 @@ public class FragmentMenuViewpager extends Fragment {
 
     /**
      * Create and execute a volley call to retrieve JSON data from the server
+     * Shows a progress dialog before beginning
      */
     private void getMenu() {
+
+
+        progress = new ProgressDialog(getActivity());
+        progress.isIndeterminate();
+        progress.setMessage("Retrieving Menu Items");
+        progress.show();
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("menu")
-                .appendPath("categories")
+                .appendPath("entire")
                 .appendQueryParameter("rest_id", "1");
         String myUrl = builder.build().toString();
 
@@ -71,6 +84,19 @@ public class FragmentMenuViewpager extends Fragment {
 
     }
 
+    private boolean hasMenu(){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if(settings.contains(getString(R.string.menu_jsonobject))){
+            try {
+                mMenuItems = new JSONArray(settings.getString(getString(R.string.menu_jsonobject), ""));
+                initViewPager();
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
     /**
      * Populate menu items in the viewpager
@@ -123,11 +149,6 @@ public class FragmentMenuViewpager extends Fragment {
                 e.printStackTrace();
             }
 
-            /*
-            Bundle args = new Bundle();
-            args.putInt("color", color);
-            args.putInt("position", position);
-            fragment.setArguments(args);*/
 
             return fragment;
         }
@@ -153,7 +174,6 @@ public class FragmentMenuViewpager extends Fragment {
 
         /**
          * Reduces the horizontal width of the fragments inside the viewpager
-         *
          * @param position
          * @return width size
          */
@@ -170,30 +190,39 @@ public class FragmentMenuViewpager extends Fragment {
         @Override
         public void onResponse(Object response) {
             System.out.println("Volley success: " + response);
-
+            progress.dismiss();
             try {
 
                 JSONObject theResponse = new JSONObject(response.toString());
-                if(theResponse.getBoolean("success") && !theResponse.has("message")){
+
+                //If successful retrieval, update saved menu
+                if(theResponse.getBoolean("success") && theResponse.has("result")){
+
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    SharedPreferences.Editor edit = settings.edit();
+                    edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
+                    edit.apply();
+
                     mMenuItems = theResponse.getJSONArray("result");
+
                     initViewPager();
                 }
                 else{
                     ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
                 }
 
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
 
         }
     };
 
     Response.ErrorListener errorListener = new Response.ErrorListener() {
+
         @Override
         public void onErrorResponse(VolleyError error) {
+            progress.dismiss();
             System.out.println("Volley error: " + error);
         }
     };
@@ -202,7 +231,7 @@ public class FragmentMenuViewpager extends Fragment {
 
 
 
-    /*TODO: EMPTY LISTENERS
+    /*TODO: EMPTY LISTENERS templates
     private Response.Listener successListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {

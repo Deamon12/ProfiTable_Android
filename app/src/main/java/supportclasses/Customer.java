@@ -5,17 +5,17 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class Order {
+public class Customer {
 
     private String name;
     private ArrayList<MenuItem> items;
 
-    public Order(){
+    public Customer(){
         name = "";
         items = new ArrayList<>();
     }
 
-    public Order(String name){
+    public Customer(String name){
         this.name = name;
         items = new ArrayList<>();
     }
@@ -32,6 +32,10 @@ public class Order {
         return items;
     }
 
+    public MenuItem getItem(int position){
+        return items.get(position);
+    }
+
     public void setItems(ArrayList<MenuItem> items) {
         this.items = items;
     }
@@ -40,6 +44,10 @@ public class Order {
         items.add(item);
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCost()  {
         int total = 0;
         for(int a = 0; a < items.size();a++){
@@ -52,5 +60,10 @@ public class Order {
         }
         return total;
     }
+
+    public void removeItem(int position){
+        items.remove(position);
+    }
+
 
 }

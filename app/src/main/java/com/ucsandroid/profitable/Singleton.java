@@ -25,6 +25,9 @@ public class Singleton {
 	private ImageLoader mImageLoader;
 
 	public static ArrayList<Table> mTables;	//demo variable for local storage of orders
+	public static ArrayList<Table> mBars;	//demo variable for local storage of orders
+	public static ArrayList<Table> mTakeouts;	//demo variable for local storage of orders
+
     private int currentTable;
 
 	/**
@@ -144,9 +147,6 @@ public class Singleton {
 
     }
 
-    public void setTable(int position, Table table){
-        mTables.add(position, table);
-    }
 
     public void setCurrentTable(int position){
         currentTable = position;
