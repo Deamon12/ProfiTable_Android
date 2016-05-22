@@ -28,14 +28,36 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     private NumberFormat currencyFormatter;
 
 
-    private ArrayList<MenuItem> dataSet;
-    private JSONArray jsonDataset;
+    private ArrayList<MenuItem> dataSet = null;
+    private JSONArray jsonDataset = null;
 
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
     private RecyclerViewLongClickListener longClickListener;
     private Context context;
     private int parentPosition = -1;
+
+
+    public MenuItemRecyclerAdapter(Context context, ArrayList<MenuItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
+                                   RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.parentPosition = parentPosition;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+        this.params = params;
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        String localeLang = settings.getString("locale_lang", "en");
+        String localeCountry = settings.getString("locale_country", "us");
+
+        currentLocale = new Locale(localeLang, localeCountry);
+        //currentCurrency = Currency.getInstance(currentLocale);
+        currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
+    }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
@@ -62,51 +84,28 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         public void onClick(View v) {
 
             if (clickListener != null) {
+
+                if(dataSet != null)
                     clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+                else if(jsonDataset != null) {
+                    try {
+                        clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), new MenuItem(jsonDataset.getJSONObject(getAdapterPosition())));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
             if(longClickListener != null)
-                    longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+                longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()));
 
             return true;
         }
     }
-
-    public MenuItemRecyclerAdapter(Context context, ArrayList<MenuItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
-                                   RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.parentPosition = parentPosition;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.params = params;
-
-    }
-
-    public MenuItemRecyclerAdapter(Context context, JSONArray dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
-                                   RecyclerViewClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
-        this.jsonDataset = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.parentPosition = parentPosition;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.params = params;
-
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        String localeLang = settings.getString("locale_lang", "en");
-        String localeCountry = settings.getString("locale_country", "us");
-
-        currentLocale = new Locale(localeLang, localeCountry);
-        currentCurrency = Currency.getInstance(currentLocale);
-        currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
-    }
-
 
     public MenuItemRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -131,12 +130,32 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        try {
-            holder.mTextView.setText(dataSet.get(position).getJsonItem().getString("menuName"));
+        String menuItemName = "";
+        String menuItemPrice = "---";
 
-            if(holder.mTextView2 != null && dataSet.get(position).getJsonItem().has("menuItemPrice")){
-                holder.mTextView2.setText((dataSet.get(position).getJsonItem().getInt("menuItemPrice")/100)+"");
+
+        try {
+
+
+            if(dataSet != null){
+                menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
+
+                if(dataSet.get(position).getJsonItem().has("menuItemPrice")){
+                    double tempMenuItemPrice = dataSet.get(position).getJsonItem().getDouble("menuItemPrice")/100;
+                    menuItemPrice = currencyFormatter.format(tempMenuItemPrice);
+                }
+
             }
+
+
+            holder.mTextView.setText(menuItemName);
+
+            if(holder.mTextView2 != null && !menuItemPrice.equalsIgnoreCase("")){
+                holder.mTextView2.setText(menuItemPrice+"");
+            }
+
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();

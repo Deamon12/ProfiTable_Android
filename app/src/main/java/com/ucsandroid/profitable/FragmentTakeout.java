@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,14 +24,15 @@ import supportclasses.RecyclerViewClickListener;
 
 public class FragmentTakeout extends Fragment {
 
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
     private GridLayoutManager gridLayout;
     private MyTakeoutAdapter mAdapter;
 
-    private ArrayList<String> dataSet;
-    int iconRowLength;
-    int layoutHeight, layoutWidth;
-    RecyclerViewClickListener clickListener;
+
+    private int mRecyclerViewWidth;
+    private int spanCount;
+    private int tileLayoutWidth;
+
 
 
     @Override
@@ -39,7 +41,7 @@ public class FragmentTakeout extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_takeout, container, false);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
 
         initRecyclerView();
 
@@ -59,64 +61,101 @@ public class FragmentTakeout extends Fragment {
 
     }
 
+
     private void initRecyclerView() {
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        spanCount = getSpanCount();
 
 
-        int orientation = getResources().getConfiguration().orientation;
 
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
-            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
-            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
 
-        }else{
-            iconRowLength = 9;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.2);
-            //System.out.println("tileLayoutHeight: "+tileLayoutHeight);
-            //System.out.println("tileLayoutWidth: "+tileLayoutWidth);
-            //System.out.println("metrics.widthPixels/iconRowLength: "+metrics.widthPixels/iconRowLength);
-        }
+        ViewTreeObserver vto = mRecyclerView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-        dataSet = new ArrayList<>();
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                int orientation = getResources().getConfiguration().orientation;
+
+                //Cant use the recycler width, because it may be set to GONE, which would be zero width
+                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    mRecyclerViewWidth  = (int) (metrics.widthPixels*.5);
+                }else{
+                    mRecyclerViewWidth  = (int) (metrics.widthPixels);
+                }
+
+                tileLayoutWidth = (mRecyclerViewWidth/spanCount);
+
+                getTableData();
+
+            }
+        });
+
+
+    }
+
+
+    private void getTableData() {
+
+
+        ArrayList<String> dataSet = new ArrayList<>();
 
         for(int a = 1; a <= 30; a++)
             dataSet.add("Takeout "+a);
 
-         clickListener = new RecyclerViewClickListener() {
 
-             @Override
-             public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-                 if(position == 0){
-                     mAdapter.dataSet.add(1, "New " + dataSet.size());
 
-                     mAdapter.notifyDataSetChanged();
-                 }else{
-                     Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                     getActivity().startActivity(orderViewActivity);
-                 }
-             }
+        gridLayout = new GridLayoutManager(getActivity(), spanCount);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(gridLayout);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        };
-
-        gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(gridLayout);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        mAdapter = new MyTakeoutAdapter(getActivity(), dataSet, R.layout.tile_takeout, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight),
+        mAdapter = new MyTakeoutAdapter(getActivity(),
+                dataSet,
+                R.layout.tile_takeout,
+                new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener);
-        recyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 
+
+    private int getSpanCount(){
+
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+        int orientation = getResources().getConfiguration().orientation;
+
+        if (tabletSize) {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 6;
+            }else
+                return 8;
+        } else {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+                return 4;
+            else
+                return 5;
+        }
+    }
+
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+            if(position == 0){
+
+                mAdapter.dataSet.add(1, "New " + (mAdapter.getItemCount()));
+                mAdapter.notifyDataSetChanged();
+            }else{
+                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+                getActivity().startActivity(orderViewActivity);
+            }
+        }
+    };
 
 
 }
@@ -174,8 +213,11 @@ class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder>
             v = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
         }
 
-        v.getLayoutParams().height = mParams.height;
-        v.getLayoutParams().width = mParams.width;
+        if(mParams != null){
+            v.getLayoutParams().height = mParams.height;
+            v.getLayoutParams().width = mParams.width;
+        }
+
 
         ViewHolder vh = new ViewHolder(v);
 

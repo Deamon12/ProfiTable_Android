@@ -1,6 +1,8 @@
 package supportclasses;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -95,11 +97,14 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        if(dataSet.get(position).hasOrders()){
-            holder.mCardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+        if(dataSet.get(position).hasCustomer()){
+            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+        }
+        else{
+            holder.mCardView.setCardBackgroundColor(0);
         }
 
-        holder.mTextView.setText("Table "+position);
+        holder.mTextView.setText(""+(position+1));
     }
 
     @Override

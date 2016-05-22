@@ -1,7 +1,9 @@
 package com.ucsandroid.profitable;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import org.json.JSONException;
 
 import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.MenuItem;
+import supportclasses.MenuItemRecyclerAdapter;
 import supportclasses.MyLinearLayoutManager;
 import supportclasses.RecyclerViewClickListener;
 
@@ -60,11 +63,11 @@ public class FragmentMenuItem extends Fragment {
 
 
         try {
+
             JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
 
             recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
             JSONArrayRecyclerAdapter mAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
-
             recyclerView.setAdapter(mAdapter);
 
 
@@ -72,6 +75,12 @@ public class FragmentMenuItem extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    private void sendAddItemToCustomerBroadcast(int customer, int position, MenuItem item) {
+        Intent intent = new Intent("add-item");
+        intent.putExtra("menuItem", item);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
     /**
@@ -83,23 +92,28 @@ public class FragmentMenuItem extends Fragment {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
 
+
+            //TODO broadcast add item
+            sendAddItemToCustomerBroadcast(parentPosition, position, item);
+            /*
             FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
 
             if (orderFrag != null) {
                 orderFrag.addItem(item);
-            }
+            }*/
 
+            /*
             FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
 
             if (amountFrag != null) {
 
                 try {
-                    amountFrag.addItem(item.getJsonItem().getInt("menuItemPrice")/100);
+                    amountFrag.addItem(item.getJsonItem().getDouble("menuItemPrice"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
+*/
 
 
         }

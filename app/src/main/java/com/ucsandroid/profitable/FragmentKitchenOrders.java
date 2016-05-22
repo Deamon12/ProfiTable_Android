@@ -2,6 +2,7 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,10 +20,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Random;
 
+import supportclasses.BasicRecyclerAdapter;
 import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.MyLinearLayoutManager;
+import supportclasses.RecyclerViewClickListener;
 
-public class FragmentKitchenOrders extends Fragment implements View.OnClickListener {
+public class FragmentKitchenOrders extends Fragment{
 
     private RecyclerView recyclerView;
 
@@ -81,21 +85,30 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         recyclerView.setLayoutManager(layoutManager);
 
 
-        KitchenOrdersAdapter rcAdapter = new KitchenOrdersAdapter(getActivity(), dataSet, R.layout.tile_kitchen_order,
-                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_kitchen_order,null, clickListener);
         recyclerView.setAdapter(rcAdapter);
     }
 
 
-    @Override
-    public void onClick(View v) {
+    /**
+     * Click interface for adapter
+     */
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+
+            Singleton.getInstance().setCurrentTable(position);
+            getActivity().startActivity(orderViewActivity);
 
 
+        }
 
-    }
+    };
 
 
-
+/*
     class KitchenOrdersAdapter extends RecyclerView.Adapter<KitchenOrdersAdapter.ViewHolder>  {
 
         private int mLayout;
@@ -196,6 +209,8 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         }
 
     }
+
+*/
 
 
 

@@ -70,24 +70,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int orientation = getResources().getConfiguration().orientation;
-        int smallestWidth;
-        if(metrics.widthPixels > metrics.heightPixels) {
-            smallestWidth = metrics.widthPixels;
-        }
-        else
-            smallestWidth = metrics.heightPixels;
 
-        if (smallestWidth > 720) {
-            //Device is a 10" tablet
-            //System.out.println("10 inch tablet");
-        }
-        else if (smallestWidth > 600) {
-            //Device is a 7" tablet
-            //System.out.println("7 inch tablet");
-        }
-        else{
-            //System.out.println("not a tablet: "+smallestWidth);
-        }
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
 
@@ -98,9 +81,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         }
         else {
 
-            custFragHeight = (int)(metrics.heightPixels*.5);
+            custFragHeight = (int)(metrics.heightPixels*.6);
             custFragWidth = (int)(metrics.widthPixels*.7);
-            menuItemsFragHeight = (int)(metrics.heightPixels*.4);
+            menuItemsFragHeight = (int)(metrics.heightPixels*.3);
             menuItemsFragWidth = (int)(metrics.widthPixels);
         }
 
