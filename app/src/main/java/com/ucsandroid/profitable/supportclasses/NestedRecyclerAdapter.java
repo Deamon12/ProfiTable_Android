@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +23,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     private int layout;
 
-    private Table tableData;
+    private Location tableData;
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
@@ -34,8 +34,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
 
 
-
-    public NestedRecyclerAdapter(Context context, Table dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
+    public NestedRecyclerAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
         this.tableData = dataSet;
         this.context = context;
@@ -193,7 +192,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
 
         //Get menuItems from customer object
-        //Table # from singleton, Customer # = position
+        //Location # from singleton, Customer # = position
         //dataset input = Arraylist<MenuItems>
         holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview_textview2, position, null,
                 clickListener, longClickListener);

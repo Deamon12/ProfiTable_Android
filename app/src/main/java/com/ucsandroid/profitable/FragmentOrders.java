@@ -20,14 +20,13 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
-import supportclasses.DialogDismissListener;
-import supportclasses.MenuItem;
-import supportclasses.NestedRecyclerAdapter;
-import supportclasses.RecyclerViewClickListener;
-import supportclasses.RecyclerViewLongClickListener;
-import supportclasses.Table;
+import com.ucsandroid.profitable.supportclasses.DialogDismissListener;
+import com.ucsandroid.profitable.supportclasses.Location;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.NestedRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewLongClickListener;
 
 public class FragmentOrders extends Fragment implements DialogDismissListener, View.OnClickListener {
 
@@ -97,9 +96,11 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
     private void getOrders() {
 
-        Table table = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTableNumber());
+        //Location location = Singleton.getInstance().getCurrentLocation();
 
-        mAdapter = new NestedRecyclerAdapter(getActivity(), table,
+        //System.out.println("location: "+location.toString());
+
+        mAdapter = new NestedRecyclerAdapter(getActivity(), Singleton.getInstance().getCurrentLocation(),
                 R.layout.tile_customer_order, null, clickListener, longClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
@@ -231,7 +232,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      * Hide sendToKitchenButton, if the table has no orders for it
      */
     private void checkSendToKitchenVisibility(){
-        if(!Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTableNumber()).hasCost()){
+
+        if(!Singleton.getInstance().getCurrentLocation().hasCost()){
             sendToKitchenButton.setVisibility(View.GONE);
         }
         else{

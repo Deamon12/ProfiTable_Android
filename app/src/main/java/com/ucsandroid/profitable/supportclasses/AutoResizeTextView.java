@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.annotation.TargetApi;
 import android.content.Context;

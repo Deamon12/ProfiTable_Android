@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="server_url">http://52.38.148.241:8080/com.ucsandroid.profitable/rest/serviceclass/</string>
+    <string name="menu_jsonobject">menu_jsonobject</string>
+    <string name="locations_jsonobject">locations_jsonobject</string>
     <bool name="isTablet">true</bool>
 </resources>

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +22,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ActivityTableView extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -33,6 +43,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
     private TextView barDivider, takeoutDivider, tableDivider;
     private ImageView barArrow, takeoutArrow;
 
+    private ProgressDialog progressDialog;
 
     private DisplayMetrics metrics;
     private int orientation;
@@ -90,18 +101,57 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
 
         tableFragContainer.getLayoutParams().width = tableFragWidth;
-
-
         barFragContainer.getLayoutParams().height = barFragHeight;
         takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
 
-        initFragments();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+
+        if(settings.getString(getString(R.string.locations_jsonobject), "").equalsIgnoreCase("")) {
+            System.out.println("getting tables data");
+            getTablesData();
+        }
+        else if(!Singleton.getInstance().hasLocationData()){
+            System.out.println("setting tables data");
+            setLocationsFromPrefs();
+        }
+        else{ //use local data
+            System.out.println("using tables data");
+            initFragments();
+        }
+
     }
 
 
+    private void getTablesData() {
+
+        //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/location?rest_id=1
+        progressDialog = new ProgressDialog(this);
+        progressDialog.isIndeterminate();
+        progressDialog.setMessage("Retrieving Menu Items");
+        progressDialog.show();
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("location")
+                .appendQueryParameter("rest_id", "1");
+        String myUrl = builder.build().toString();
+
+        //System.out.println("url: " + myUrl);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                successListener, errorListener);
+
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+    }
+
 
     private void initFragments() {
-
 
         Fragment tableFrag = new FragmentTable();
         Fragment barFrag = new FragmentBar();
@@ -120,6 +170,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
     }
 
 
+    //TODO: use listener
     /**
      * Hide or show bar section fragment container
      */
@@ -142,10 +193,12 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         edit.putBoolean("barFragShown", show);
         edit.apply();
 
-        checkVisibility();
+
+            checkVisibility();
 
     }
 
+    //TODO: use listener
     public void toggleTakeoutSection(boolean show){
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -172,6 +225,9 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
      * Enlarge table view if bar and takeout are hidden
      */
     private void checkVisibility() {
+        if(barFragContainer.findViewById(R.id.the_relative) == null || takeoutFragContainer.findViewById(R.id.the_relative) == null)
+            return;
+
         orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -292,15 +348,65 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         else if(v == takeoutDivider || v == takeoutArrow){
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             toggleTakeoutSection(!settings.getBoolean("takeoutFragShown", false));
-
         }
-
     }
 
     private void sendRemeasureTableWidthBroadcast() {
         Intent intent = new Intent("tablefrag-measure");
         intent.putExtra("tableWidth", tableFragContainer.getLayoutParams().width);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+    private Response.Listener successListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            //System.out.println("Volley success: " + response);
+            progressDialog.dismiss();
+            try {
+
+
+                JSONObject theResponse = new JSONObject(response.toString());
+
+                //If successful retrieval, update saved menu
+                if(theResponse.getBoolean("success") && theResponse.has("result")){
+
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                    SharedPreferences.Editor edit = settings.edit();
+                    edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
+                    edit.apply();
+
+                    setLocationsFromPrefs();
+                }
+                else{
+                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            progressDialog.dismiss();
+            ///TODO Connect/server error
+            System.out.println("Volley error: " + error);
+        }
+    };
+
+    private void setLocationsFromPrefs() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+        try {
+            Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
+            initFragments();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 

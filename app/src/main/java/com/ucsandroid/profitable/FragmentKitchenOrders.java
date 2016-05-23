@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import supportclasses.BasicRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.MyLinearLayoutManager;
-import supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.supportclasses.BasicRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 
 public class FragmentKitchenOrders extends Fragment{
 
@@ -68,7 +68,7 @@ public class FragmentKitchenOrders extends Fragment{
         ArrayList<String> dataSet = new ArrayList<>();
 
         for(int a = 1; a <= 10; a++)
-            dataSet.add("Table "+a);
+            dataSet.add("Location "+a);
 
         MyLinearLayoutManager layoutManager
                 = new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -91,7 +91,7 @@ public class FragmentKitchenOrders extends Fragment{
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
 
-            Singleton.getInstance().setCurrentTableNumber(position);
+            Singleton.getInstance().setCurrentLocationPosition(position);
             getActivity().startActivity(orderViewActivity);
 
 

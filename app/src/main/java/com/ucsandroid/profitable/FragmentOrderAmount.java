@@ -82,7 +82,8 @@ public class FragmentOrderAmount extends Fragment {
      * Loops through json
      */
     public void getOrders(){
-        subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTableNumber()).getTableCost();
+        subTotal = Singleton.getInstance().getCurrentLocation().getTableCost();
+        //subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentLocationPosition()).getTableCost();
         subTotal = (subTotal/100);
         updateUI();
     }

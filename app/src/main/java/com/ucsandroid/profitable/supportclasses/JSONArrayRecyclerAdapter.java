@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;

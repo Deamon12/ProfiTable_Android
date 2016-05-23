@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 
 public class AddonItem {

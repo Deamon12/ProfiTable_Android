@@ -14,10 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import supportclasses.DialogDismissListener;
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.supportclasses.DialogDismissListener;
+import com.ucsandroid.profitable.supportclasses.JSONArrayRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewCheckListener;
 
 public class DialogItemAttributes extends DialogFragment{
 

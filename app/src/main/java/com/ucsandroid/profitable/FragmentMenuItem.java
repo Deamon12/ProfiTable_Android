@@ -12,11 +12,10 @@ import android.view.ViewGroup;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.MenuItemRecyclerAdapter;
-import supportclasses.MyLinearLayoutManager;
-import supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.supportclasses.JSONArrayRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 
 /**
  * Dynamically build food category fragments
@@ -48,7 +47,6 @@ public class FragmentMenuItem extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu_page, container, false);
         rootView.setBackgroundResource(getArguments().getInt("color"));
         recyclerView = (RecyclerView) rootView.findViewById(R.id.menu_page_recyclerview);
-
 
         initRecycler();
 
@@ -92,29 +90,8 @@ public class FragmentMenuItem extends Fragment {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
 
-
             //TODO broadcast add item
             sendAddItemToCustomerBroadcast(parentPosition, position, item);
-            /*
-            FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
-
-            if (orderFrag != null) {
-                orderFrag.addItem(item);
-            }*/
-
-            /*
-            FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
-
-            if (amountFrag != null) {
-
-                try {
-                    amountFrag.addItem(item.getJsonItem().getDouble("menuItemPrice"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-*/
-
 
         }
     };

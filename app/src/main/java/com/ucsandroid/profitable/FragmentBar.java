@@ -18,12 +18,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.supportclasses.JSONArrayRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment {
 
+    private LocationRecyclerAdapter mAdapter;
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
     private int spanCount;
@@ -50,6 +52,12 @@ public class FragmentBar extends Fragment {
         if(!shown)
             ((ActivityTableView)getActivity()).toggleBarSection(false);
 
+        if(mAdapter != null && Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR) {
+            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+        }
+        else{
+            System.out.println("adapter is null");
+        }
 
     }
 
@@ -75,14 +83,12 @@ public class FragmentBar extends Fragment {
                     mRecyclerViewWidth  = (int) (metrics.widthPixels);
                 }
 
-
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
 
                 getTableData();
 
             }
         });
-
 
     }
 
@@ -93,26 +99,15 @@ public class FragmentBar extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        JSONArray dataSet = new JSONArray();
 
-        try {
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", ""+a);
-                dataSet.put(temp);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(
+        mAdapter = new LocationRecyclerAdapter(
                         getActivity(),
-                        dataSet,
+                        Singleton.getInstance().getBars(),
                         R.layout.tile_bar,
                         new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                         clickListener);
 
-        mRecyclerView.setAdapter(rcAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
 
     }
@@ -138,9 +133,16 @@ public class FragmentBar extends Fragment {
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-            getActivity().startActivity(orderViewActivity);
+            Singleton.getInstance().setLocationType(Singleton.TYPE_BAR);
+            Singleton.getInstance().setCurrentLocationPosition(position);
+            goToOrder();
         }
 
     };
+
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
+    }
+
 }

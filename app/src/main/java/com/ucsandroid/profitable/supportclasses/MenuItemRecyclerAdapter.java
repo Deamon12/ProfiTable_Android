@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
-import com.ucsandroid.profitable.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewClickListener;
-import supportclasses.TableRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 
 
 /**
@@ -30,7 +30,7 @@ public class FragmentTable extends Fragment {
 
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
-    private TableRecyclerAdapter mAdapter;
+    private LocationRecyclerAdapter mAdapter;
     private int spanCount;
     private int tileLayoutWidth;
 
@@ -51,13 +51,21 @@ public class FragmentTable extends Fragment {
 
     /**
      * Use the recently checked table (via the Singleton) to see if the UI needs updating.
-     * The UI will update if a customer is currently at the table
+     * The UI will update if a customer is currently at the table.
+     * Also, reinitialize the Measuring listener
      */
     @Override
     public void onResume() {
         super.onResume();
-        if(mAdapter != null)
-            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTableNumber());
+
+        if(mAdapter != null) {
+            if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TABLE){
+                mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+            }
+        }
+        else{
+            System.out.println("adapter is null");
+        }
 
         initRemeasureFragListener();
     }
@@ -99,11 +107,12 @@ public class FragmentTable extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        mAdapter = new TableRecyclerAdapter(getActivity(),
-                Singleton.getInstance().getAllTables(),
+        mAdapter = new LocationRecyclerAdapter(getActivity(),
+                Singleton.getInstance().getTables(),
                 R.layout.tile_table,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener);
+
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -124,14 +133,17 @@ public class FragmentTable extends Fragment {
 
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-
-            Singleton.getInstance().setCurrentTableNumber(position);
-            getActivity().startActivity(orderViewActivity);
-
+            Singleton.getInstance().setLocationType(Singleton.TYPE_TABLE);
+            Singleton.getInstance().setCurrentLocationPosition(position);
+            goToOrder();
         }
 
     };
+
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
+    }
 
     private int getSpanCount(){
 

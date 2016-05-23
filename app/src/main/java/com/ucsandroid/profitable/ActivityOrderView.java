@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -38,13 +40,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_view);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
-        if (toolbar != null) {
-
-            //TODO: This might not be a table, need bar, takeout
-            toolbar.setTitle("Table "+(Singleton.getInstance().getCurrentTableNumber()+1));
-            setSupportActionBar(toolbar);
-        }
+        initToolbar();
 
         customerFragContainer = (FrameLayout) findViewById(R.id.orders_frag_container);
         amountFragContainter = (FrameLayout) findViewById(R.id.amounts_frag_container);
@@ -70,16 +66,14 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
         int orientation = getResources().getConfiguration().orientation;
-
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
 
             custFragHeight = (int)(metrics.heightPixels*.6);
             custFragWidth = (int)(metrics.widthPixels*.7);
             menuItemsFragHeight = (int)(metrics.heightPixels*.3);
-            menuItemsFragWidth = (int)(metrics.widthPixels);
+            menuItemsFragWidth = (metrics.widthPixels);
         }
         else {
 
@@ -99,6 +93,32 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     }
 
+
+    private void initToolbar(){
+
+        System.out.println("location: "+Singleton.getInstance().getCurrentLocation().toString());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
+
+        if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TABLE){
+            toolbar.setTitle("Table " + (Singleton.getInstance().getCurrentLocationPosition() + 1));
+        }
+        else if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR){
+            toolbar.setTitle("Bar " + (Singleton.getInstance().getCurrentLocationPosition() + 1));
+        }
+        else if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TAKEOUT){
+            toolbar.setTitle("New Takeout");
+            try {
+                toolbar.setTitle(Singleton.getInstance().getCurrentLocation().getJsonLocation().getString("locationName"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        setSupportActionBar(toolbar);
+
+    }
 
     /**
      * Basic fragment initialization
@@ -155,10 +175,10 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     }
 
+    //TODO: split bills dialog
     private void doCheckOut() {
         Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
         startActivity(intent);
-        //finish();
     }
 
     /**

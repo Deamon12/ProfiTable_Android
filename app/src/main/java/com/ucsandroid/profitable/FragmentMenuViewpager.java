@@ -29,7 +29,7 @@ public class FragmentMenuViewpager extends Fragment {
     private ViewPager mViewPager;
     private View mView;
     private JSONArray mMenuItems;
-    private ProgressDialog progress;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -43,7 +43,7 @@ public class FragmentMenuViewpager extends Fragment {
         mView = inflater.inflate(R.layout.fragment_menu_items, container, false);
 
 
-        //TODO: make the call to get updates?
+        //TODO: make the call to get updated menu? Could be push notified
         if(!hasMenu())
             getMenu();
 
@@ -53,15 +53,15 @@ public class FragmentMenuViewpager extends Fragment {
 
     /**
      * Create and execute a volley call to retrieve JSON data from the server
-     * Shows a progress dialog before beginning
+     * Shows a progressDialog dialog before beginning
      */
     private void getMenu() {
 
 
-        progress = new ProgressDialog(getActivity());
-        progress.isIndeterminate();
-        progress.setMessage("Retrieving Menu Items");
-        progress.show();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.isIndeterminate();
+        progressDialog.setMessage("Retrieving Menu Items");
+        progressDialog.show();
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
@@ -78,7 +78,7 @@ public class FragmentMenuViewpager extends Fragment {
                 (JSONObject) null,
                 successListener, errorListener);
 
-        // Access the RequestQueue through your singleton class.
+        // Access the RequestQueue through singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
@@ -163,6 +163,7 @@ public class FragmentMenuViewpager extends Fragment {
 
             String category = "Category " + (position + 1);
             try {
+                System.out.println("dataSet.getJSONObject(position): "+dataSet.getJSONObject(position));
                 category = dataSet.getJSONObject(position).getString("categoryName");
             } catch (JSONException e) {
                 System.out.println("Error using category from menu dataSet");
@@ -190,7 +191,7 @@ public class FragmentMenuViewpager extends Fragment {
         @Override
         public void onResponse(Object response) {
             System.out.println("Volley success: " + response);
-            progress.dismiss();
+            progressDialog.dismiss();
             try {
 
                 JSONObject theResponse = new JSONObject(response.toString());
@@ -222,7 +223,7 @@ public class FragmentMenuViewpager extends Fragment {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            progress.dismiss();
+            progressDialog.dismiss();
             System.out.println("Volley error: " + error);
         }
     };

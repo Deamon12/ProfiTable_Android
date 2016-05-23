@@ -1,20 +1,34 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by deamon on 5/17/16.
- */
-public class Table {
+public class Location {
 
 
     private boolean isSentToKitchen = false;
     private String label;
     private ArrayList<Customer> customer;
+    private JSONObject jsonLocation;
 
-    public Table(){
+
+    public Location(JSONObject jsonTable){
         customer = new ArrayList<>();
         label = "";
+        this.jsonLocation = jsonTable;
+    }
+
+    public Location(String label){
+        customer = new ArrayList<>();
+        this.label = label;
+        jsonLocation = new JSONObject();
+    }
+
+    public Location(){
+        customer = new ArrayList<>();
+        label = "";
+        jsonLocation = new JSONObject();
     }
 
     public String getLabel() {
@@ -79,5 +93,22 @@ public class Table {
         isSentToKitchen = bool;
     }
 
+    public void setJsonLocation(JSONObject jsonLocation){
+        this.jsonLocation = jsonLocation;
+    }
 
+    public JSONObject getJsonLocation(){
+        return jsonLocation;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "isSentToKitchen=" + isSentToKitchen +
+                ", label='" + label + '\'' +
+                ", customer=" + customer +
+                ", jsonLocation=" + jsonLocation +
+                '}';
+    }
 }

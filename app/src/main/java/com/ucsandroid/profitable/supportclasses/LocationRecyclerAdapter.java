@@ -1,7 +1,6 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,18 +10,29 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdapter.ViewHolder> {
+public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecyclerAdapter.ViewHolder> {
 
     private int layout;
-    private ArrayList<Table> dataSet;
+    private ArrayList<Location> dataSet;
 
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
-    private RecyclerViewCheckListener checkListener;
     private Context context;
+
+
+    public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.params = params;
+        this.clickListener = clickListener;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -39,7 +49,6 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
 
         }
 
-
         @Override
         public void onClick(View v) {
 
@@ -51,32 +60,7 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
     }
 
 
-    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewCheckListener checkListener) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.params = params;
-        this.checkListener = checkListener;
-    }
-
-    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.params = params;
-        this.clickListener = clickListener;
-    }
-
-
-    public TableRecyclerAdapter(Context context, ArrayList<Table> dataSet, int layout) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        params = null;
-    }
-
-
-    public TableRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LocationRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -104,14 +88,14 @@ public class TableRecyclerAdapter extends RecyclerView.Adapter<TableRecyclerAdap
             holder.mCardView.setCardBackgroundColor(0);
         }
 
+
         holder.mTextView.setText(""+(position+1));
+
     }
 
     @Override
     public int getItemCount() {
         return dataSet.size();
     }
-
-
 
 }
