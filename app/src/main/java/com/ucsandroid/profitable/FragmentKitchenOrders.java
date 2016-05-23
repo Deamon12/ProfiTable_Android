@@ -2,6 +2,7 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,13 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-import supportclasses.MyAdapter;
+import supportclasses.BasicRecyclerAdapter;
+import supportclasses.JSONArrayRecyclerAdapter;
+import supportclasses.MenuItem;
 import supportclasses.MyLinearLayoutManager;
+import supportclasses.RecyclerViewClickListener;
 
-public class FragmentKitchenOrders extends Fragment implements View.OnClickListener {
+public class FragmentKitchenOrders extends Fragment{
 
     private RecyclerView recyclerView;
 
@@ -54,13 +62,13 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         int orientation = getResources().getConfiguration().orientation;
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            //layoutHeight = (int)(metrics.heightPixels);
+            //tileLayoutHeight = (int)(metrics.heightPixels);
             layoutWidth = (int)(metrics.widthPixels*.3);
 
         }else{
-            //layoutHeight = (int)(metrics.heightPixels*.1);
+            //tileLayoutHeight = (int)(metrics.heightPixels*.1);
             layoutWidth = (int)(metrics.widthPixels*.4);
-            //layoutHeight = layoutWidth;
+            //tileLayoutHeight = tileLayoutWidth;
         }
 
 
@@ -77,21 +85,30 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         recyclerView.setLayoutManager(layoutManager);
 
 
-        KitchenOrdersAdapter rcAdapter = new KitchenOrdersAdapter(getActivity(), dataSet, R.layout.tile_kitchen_order,
-                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+        BasicRecyclerAdapter rcAdapter = new BasicRecyclerAdapter(getActivity(), dataSet, R.layout.tile_kitchen_order,null, clickListener);
         recyclerView.setAdapter(rcAdapter);
     }
 
 
-    @Override
-    public void onClick(View v) {
+    /**
+     * Click interface for adapter
+     */
+    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+
+            Singleton.getInstance().setCurrentTable(position);
+            getActivity().startActivity(orderViewActivity);
 
 
+        }
 
-    }
+    };
 
 
-
+/*
     class KitchenOrdersAdapter extends RecyclerView.Adapter<KitchenOrdersAdapter.ViewHolder>  {
 
         private int mLayout;
@@ -164,12 +181,21 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
                 holder.mTextView.setText(mDataset.get(position));
 
             int count = new Random().nextInt(10);
-            itemSet = new ArrayList<>();
-            for(int a = 1; a <= count; a++)
-                itemSet.add(""+a);
+            JSONArray dataSet = new JSONArray();
+            try {
+                for(int a = 1; a <= count;a++){
+                    JSONObject temp = new JSONObject();
+                    temp.put("name", ""+a);
+                    dataSet.put(temp);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
-            MyAdapter rcAdapter = new MyAdapter(mContext, itemSet, R.layout.item_textview_imageview);
+            //TODO : structure may change
+            JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(mContext, dataSet, R.layout.item_textview_imageview);
 
             holder.recyclerView.setAdapter(rcAdapter);
 
@@ -183,6 +209,8 @@ public class FragmentKitchenOrders extends Fragment implements View.OnClickListe
         }
 
     }
+
+*/
 
 
 

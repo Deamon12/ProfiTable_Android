@@ -10,6 +10,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import java.util.ArrayList;
+
+import supportclasses.Table;
+
 
 public class Singleton {
 
@@ -20,13 +24,19 @@ public class Singleton {
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
 
+	public static ArrayList<Table> mTables;	//demo variable for local storage of orders
+	public static ArrayList<Table> mBars;	//demo variable for local storage of orders
+	public static ArrayList<Table> mTakeouts;	//demo variable for local storage of orders
+
+    private int currentTable;
+
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
 	 */
-
 	public static void initialize(Context ctx) {
 		mContext = ctx;
+        initTables();
 	}
 
 
@@ -37,7 +47,6 @@ public class Singleton {
 	 */
 	public static boolean hasBeenInitialized() {
 		return mContext != null;
-
 	}
 
 	/**
@@ -116,6 +125,40 @@ public class Singleton {
 		}
 	}
 
+
+    public static void initTables(){
+        mTables = new ArrayList<>(30);
+        for(int a = 0; a < 30; a++ ){
+            mTables.add(new Table());
+        }
+    }
+
+    public Table getTable(int position) {
+
+		if(mTables == null){
+            mTables = new ArrayList<>(30);
+            mTables.add(position, new Table());
+        }
+        else if(mTables.get(position) == null){
+            mTables.add(position, new Table());
+        }
+
+        return mTables.get(position);
+
+    }
+
+
+    public void setCurrentTable(int position){
+        currentTable = position;
+    }
+
+    public int getCurrentTable(){
+        return currentTable;
+    }
+
+    public ArrayList<Table> getAllTables(){
+        return mTables;
+    }
 
 
 }

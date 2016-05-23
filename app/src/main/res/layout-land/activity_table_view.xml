@@ -13,7 +13,7 @@
 
     <FrameLayout
         android:id="@+id/table_frag_container"
-        android:layout_width="500dp"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/the_toolbar"/>
 
