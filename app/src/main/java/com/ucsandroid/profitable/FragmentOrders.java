@@ -273,41 +273,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     public void dialogDismissListener(int customer, int position, JSONArray additions) {
 
         mAdapter.setAdditionsForItem(customer, position, additions);
-/*
-        try {
-
-            JSONArray defaults = Singleton.getInstance().getCurrentTable().getCustomer(customer).getItem(position).getJsonItem().getJSONArray("defaultAdditions");
-            //System.out.println("_____Defaults____");
-            for(int a = 0;a < additions.length();a++){
-                boolean found = false;
-                //System.out.println(defaults.getJSONObject(a).getString("foodAdditionName"));
-
-                for(int aa = 0;aa < defaults.length();aa++){
-
-                    if(defaults.getJSONObject(aa).getString("foodAdditionName").equalsIgnoreCase(additions.getJSONObject(a).getString("foodAdditionName"))){
-                        if(additions.getJSONObject(a).getBoolean("checked")){
-                            System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                        }
-                        else{
-                            System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" : no");
-                        }
-                        found = true;
-                    }
-
-                }
-
-                //If we get here we have an item that is not a default, and might be checked>?
-                if(!found && additions.getJSONObject(a).getBoolean("checked")){
-                    System.out.println("not default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                }
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
 
         sendUpdateAmountBroadcast();
     }
