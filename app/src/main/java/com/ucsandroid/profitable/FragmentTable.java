@@ -57,7 +57,7 @@ public class FragmentTable extends Fragment {
     public void onResume() {
         super.onResume();
         if(mAdapter != null)
-            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTable());
+            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTableNumber());
 
         initRemeasureFragListener();
     }
@@ -126,7 +126,7 @@ public class FragmentTable extends Fragment {
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
 
-            Singleton.getInstance().setCurrentTable(position);
+            Singleton.getInstance().setCurrentTableNumber(position);
             getActivity().startActivity(orderViewActivity);
 
         }

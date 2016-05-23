@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <RelativeLayout
         android:id="@+id/sendToKitchen"
@@ -10,14 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:background="@drawable/square_rounded_edge">
+        android:background="@drawable/square_rounded_edge"
+        >
 
         <TextView
             android:id="@+id/sendToKitchen_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send to Kitchen"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:layout_toRightOf="@+id/sendToKitchen_image"/>
 
         <ImageView

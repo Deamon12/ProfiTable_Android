@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ucsandroid.profitable.FragmentOrders;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.Singleton;
 
@@ -121,7 +122,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void removeCustomer(int position) {
         tableData.removeCustomer(position);
         selectedPosition = -1;
+        sendUpdateAmountBroadcast();
         notifyDataSetChanged();
+
+
     }
 
     public NestedRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -159,7 +163,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         //Get menuItems from customer object
         //Table # from singleton, Customer # = position
         //dataset input = Arraylist<MenuItems>
-        holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview, position, null,
+        holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview_textview2, position, null,
                 clickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
@@ -242,7 +246,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 removeCustomer(position);
-                sendUpdateAmountBroadcast();
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {

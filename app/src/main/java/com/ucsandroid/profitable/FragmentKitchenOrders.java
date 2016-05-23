@@ -1,7 +1,6 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,17 +10,10 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import supportclasses.BasicRecyclerAdapter;
-import supportclasses.JSONArrayRecyclerAdapter;
 import supportclasses.MenuItem;
 import supportclasses.MyLinearLayoutManager;
 import supportclasses.RecyclerViewClickListener;
@@ -99,7 +91,7 @@ public class FragmentKitchenOrders extends Fragment{
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
 
-            Singleton.getInstance().setCurrentTable(position);
+            Singleton.getInstance().setCurrentTableNumber(position);
             getActivity().startActivity(orderViewActivity);
 
 

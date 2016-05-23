@@ -42,7 +42,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         if (toolbar != null) {
 
             //TODO: This might not be a table, need bar, takeout
-            toolbar.setTitle("Table "+(Singleton.getInstance().getCurrentTable()+1));
+            toolbar.setTitle("Table "+(Singleton.getInstance().getCurrentTableNumber()+1));
             setSupportActionBar(toolbar);
         }
 
