@@ -9,6 +9,7 @@ public class Customer {
 
     private String name;
     private ArrayList<MenuItem> items;
+    private String comment = "";
 
     public Customer(){
         name = "";
@@ -65,5 +66,12 @@ public class Customer {
         items.remove(position);
     }
 
+    public String getComment(){
+        return comment;
+    }
+
+    public void setComment(String comment){
+        this.comment = comment;
+    }
 
 }

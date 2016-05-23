@@ -8,13 +8,12 @@ import java.util.ArrayList;
 public class Table {
 
 
+    private boolean isSentToKitchen = false;
     private String label;
-
-    private ArrayList<Customer> customer; //customer
+    private ArrayList<Customer> customer;
 
     public Table(){
         customer = new ArrayList<>();
-        //customer.add(new Customer("Customer 1"));
         label = "";
     }
 
@@ -71,5 +70,14 @@ public class Table {
         }
         return total;
     }
+
+    public boolean isSentToKitchen(){
+        return isSentToKitchen;
+    }
+
+    public void sentToKitchen(boolean bool){
+        isSentToKitchen = bool;
+    }
+
 
 }
