@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,9 +70,10 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
-            if(layout == R.layout.item_textview_textview){
+            if(layout == R.layout.item_textview_textview || layout == R.layout.item_textview_textview2){
                 mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
             }
+
 
 
             v.setOnClickListener(this);
@@ -132,26 +134,75 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
         String menuItemName = "";
         String menuItemPrice = "---";
-
+        String additionsString = "";
 
         try {
 
 
-            if(dataSet != null){
-                menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
+            JSONArray defaults = dataSet.get(position).getJsonItem().getJSONArray("defaultAdditions");
+            JSONArray additions = dataSet.get(position).getAdditions();
 
-                if(dataSet.get(position).getJsonItem().has("menuItemPrice")){
-                    double tempMenuItemPrice = dataSet.get(position).getJsonItem().getDouble("menuItemPrice")/100;
-                    menuItemPrice = currencyFormatter.format(tempMenuItemPrice);
+            for(int a = 0;a < additions.length();a++){
+                boolean found = false;
+                //System.out.println(defaults.getJSONObject(a).getString("foodAdditionName"));
+
+                for(int aa = 0;aa < defaults.length();aa++){
+
+                    if(defaults.getJSONObject(aa).getString("foodAdditionName").equalsIgnoreCase(additions.getJSONObject(a).getString("foodAdditionName"))){
+                        if(additions.getJSONObject(a).getBoolean("checked")){
+                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
+                        }
+                        else{
+                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" : no");
+                            additionsString = additionsString + " / no "+additions.getJSONObject(a).getString("foodAdditionName");
+                        }
+                        found = true;
+                    }
+
+                }
+
+                //If we get here we have an item that is not a default, and might be checked>?
+                if(!found && additions.getJSONObject(a).getBoolean("checked")){
+                    //System.out.println("not default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
+                    additionsString = additionsString + " / "+additions.getJSONObject(a).getString("foodAdditionName");
                 }
 
             }
 
 
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+        if(!additionsString.equalsIgnoreCase(""))
+            additionsString = additionsString.substring(3);
+
+
+
+
+        try {
+
+            //MenuItem name
+            menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
             holder.mTextView.setText(menuItemName);
 
-            if(holder.mTextView2 != null && !menuItemPrice.equalsIgnoreCase("")){
-                holder.mTextView2.setText(menuItemPrice+"");
+            //MenuItem with price (menuItemViewpager)
+            if(layout == R.layout.item_textview_textview){
+
+                if (dataSet.get(position).getJsonItem().has("menuItemPrice")) {
+                    double tempMenuItemPrice = dataSet.get(position).getJsonItem().getDouble("menuItemPrice") / 100;
+                    menuItemPrice = currencyFormatter.format(tempMenuItemPrice);
+                    holder.mTextView2.setText(menuItemPrice+"");
+                }
+
+            }//MenuItem with attributes (orderView)
+            else if(layout == R.layout.item_textview_textview2){
+                holder.mTextView2.setText(additionsString);
+
+
             }
 
 

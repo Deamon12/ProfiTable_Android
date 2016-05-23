@@ -40,7 +40,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         if (toolbar != null) {
-            toolbar.setTitle("Table "+Singleton.getInstance().getCurrentTable());
+
+            //TODO: This might not be a table, need bar, takeout
+            toolbar.setTitle("Table "+(Singleton.getInstance().getCurrentTableNumber()+1));
             setSupportActionBar(toolbar);
         }
 
@@ -147,10 +149,16 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         else if(v == addCustomer){
             sendAddCustomerBroadcast();
         }
-        else if(v == addCustomer){
-            sendAddCustomerBroadcast();
+        else if(v == doCheckout){
+            doCheckOut();
         }
 
+    }
+
+    private void doCheckOut() {
+        Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
+        startActivity(intent);
+        //finish();
     }
 
     /**

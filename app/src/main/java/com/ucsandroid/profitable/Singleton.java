@@ -28,7 +28,7 @@ public class Singleton {
 	public static ArrayList<Table> mBars;	//demo variable for local storage of orders
 	public static ArrayList<Table> mTakeouts;	//demo variable for local storage of orders
 
-    private int currentTable;
+    private int currentTableNumber = -1;
 
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
@@ -148,13 +148,20 @@ public class Singleton {
     }
 
 
-    public void setCurrentTable(int position){
-        currentTable = position;
+    public void setCurrentTableNumber(int position){
+        currentTableNumber = position;
     }
 
-    public int getCurrentTable(){
-        return currentTable;
+    public int getCurrentTableNumber(){
+        return currentTableNumber;
     }
+
+	public Table getCurrentTable(){
+		if(currentTableNumber > -1)
+			return mTables.get(currentTableNumber);
+		else
+			return null;
+	}
 
     public ArrayList<Table> getAllTables(){
         return mTables;

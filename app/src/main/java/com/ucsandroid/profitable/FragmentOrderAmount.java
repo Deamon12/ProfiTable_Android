@@ -14,13 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
-
-import supportclasses.MenuItem;
 
 public class FragmentOrderAmount extends Fragment {
 
@@ -86,25 +82,10 @@ public class FragmentOrderAmount extends Fragment {
      * Loops through json
      */
     public void getOrders(){
-        subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTable()).getTableCost();
+        subTotal = Singleton.getInstance().getTable(Singleton.getInstance().getCurrentTableNumber()).getTableCost();
         subTotal = (subTotal/100);
         updateUI();
     }
-
-    /*
-    public void addItem(MenuItem item){
-
-        double itemCost = 0;
-
-        try {
-            itemCost = item.getJsonItem().getDouble("menuItemPrice");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        subTotal += (itemCost/100);
-        updateUI();
-
-    }*/
 
     private void updateUI(){
 
@@ -123,11 +104,11 @@ public class FragmentOrderAmount extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.hasExtra("tableNumber")){
-                    System.out.println("Amount frag received update broadcast for table: "+intent.getSerializableExtra("tableNumber"));
+                    //System.out.println("Amount frag received update broadcast for table: "+intent.getSerializableExtra("tableNumber"));
                     getOrders();
                 }
                 else{
-                    System.out.println("Amount frag received update broadcast");
+                    //System.out.println("Amount frag received update broadcast");
                     getOrders();
                 }
 
