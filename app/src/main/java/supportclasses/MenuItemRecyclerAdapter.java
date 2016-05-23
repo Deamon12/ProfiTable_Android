@@ -154,7 +154,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
                         }
                         else{
                             //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" : no");
-                            additionsString = additionsString + " / no_"+additions.getJSONObject(a).getString("foodAdditionName");
+                            additionsString = additionsString + " / no "+additions.getJSONObject(a).getString("foodAdditionName");
                         }
                         found = true;
                     }

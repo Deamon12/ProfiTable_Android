@@ -7,14 +7,15 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ucsandroid.profitable.FragmentOrders;
 import com.ucsandroid.profitable.R;
-import com.ucsandroid.profitable.Singleton;
 
 import org.json.JSONArray;
 
@@ -52,6 +53,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
+        public ImageView mCommentImageView;
+        public ImageView mSettingsButton;
+        public TextView mCommentTextView;
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
@@ -60,6 +64,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         public ViewHolder(View v) {
             super(v);
 
+            mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
+            mCommentImageView = (ImageView) v.findViewById(R.id.comment_image);
+            mSettingsButton = (ImageView) v.findViewById(R.id.settings);
             mTextView = (TextView) v.findViewById(R.id.tile_name_text);
             cardView = (CardView) v.findViewById(R.id.the_cardview);
             recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
@@ -67,7 +74,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
+            mCommentImageView.setOnClickListener(this);
             cardView.setOnClickListener(this);
+            mSettingsButton.setOnClickListener(this);
 
         }
 
@@ -82,25 +91,39 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         @Override
         public void onClick(View v) {
 
-            if (selectedPosition == getAdapterPosition()) {
-                lastClickedItem = selectedPosition;
-                selectedPosition = -1;
-            } else {
-                lastClickedItem = selectedPosition;
-                selectedPosition = getAdapterPosition();
+
+            if(v == mCommentImageView){
+                showCustomerCommentDialog(getAdapterPosition());
+            }
+            else if(v == mSettingsButton){
+                showCustomerEditDialog(getAdapterPosition());
+            }
+            else{
+
+                if (selectedPosition == getAdapterPosition()) {
+                    lastClickedItem = selectedPosition;
+                    selectedPosition = -1;
+                } else {
+                    lastClickedItem = selectedPosition;
+                    selectedPosition = getAdapterPosition();
+                }
+
+                if (lastClickedItem != -1)
+                    notifyItemChanged(lastClickedItem);
+                if (selectedPosition != -1)
+                    notifyItemChanged(selectedPosition);
+
+
             }
 
-            if (lastClickedItem != -1)
-                notifyItemChanged(lastClickedItem);
-            if (selectedPosition != -1)
-                notifyItemChanged(selectedPosition);
+
 
         }
 
         @Override
         public boolean onLongClick(View v) {
 
-            showLongClickedCustomerDialog(getAdapterPosition());
+            showCustomerEditDialog(getAdapterPosition());
 
             return true;
         }
@@ -146,6 +169,15 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
+
+        if(!tableData.getCustomer(position).getComment().equalsIgnoreCase("")){
+            holder.mCommentTextView.setVisibility(View.VISIBLE);
+            holder.mCommentTextView.setText(tableData.getCustomer(position).getComment());
+        }
+        else{
+            holder.mCommentTextView.setVisibility(View.GONE);
+        }
 
         holder.mTextView.setText("Customer " + (getItemCount()-position));
 
@@ -232,7 +264,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     };
 
 
-    private void showLongClickedCustomerDialog(final int position) {
+    private void showCustomerEditDialog(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("What to do...Customer "+(getItemCount()-position));
@@ -260,6 +292,39 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private void sendUpdateAmountBroadcast(){
         Intent updateIntent = new Intent("update-amount");
         LocalBroadcastManager.getInstance(context).sendBroadcast(updateIntent);
+    }
+
+
+    private void showCustomerCommentDialog(final int position){
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+        final EditText edittext = new EditText(context);
+        edittext.setPadding(20,10,20,10);
+        edittext.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        edittext.setSingleLine(false);
+        dialog.setTitle("Add comment");
+
+
+        edittext.setText(tableData.getCustomer(position).getComment());
+        dialog.setView(edittext);
+
+        dialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //What ever you want to do with the value
+                String commentText = edittext.getText().toString();
+                tableData.getCustomer(position).setComment(commentText);
+                notifyItemChanged(position);
+            }
+        });
+
+        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+            }
+        });
+
+        dialog.show();
     }
 
 }

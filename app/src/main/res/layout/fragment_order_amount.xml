@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="$100.00"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/subtotaltext"/>
 
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:text="$15.00"
         android:id="@+id/tax_textview"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/taxtext"/>
 
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:text="$10.00"
         android:id="@+id/discount_textview"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:layout_below="@+id/discounttext"
         android:layout_marginLeft="15dp"/>
 
@@ -96,8 +96,7 @@
         android:layout_height="wrap_content"
         android:text="$10.00"
         android:id="@+id/amountdue_textview"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="30sp"
         android:layout_below="@+id/divider"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
