@@ -75,6 +75,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     private void checkOrGetTabId() {
 
+/*
         try {
             JSONObject thisLocation = Singleton.getInstance().getCurrentLocation().getJsonLocation();
             int locationId = thisLocation.getInt("locationId");
@@ -90,7 +91,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+*/
     }
 
     private void createTabForThisLocation(int locationId){
@@ -171,11 +172,12 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         }
         else if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TAKEOUT){
             toolbar.setTitle("New Takeout");
+            /*
             try {
                 toolbar.setTitle(Singleton.getInstance().getCurrentLocation().getJsonLocation().getString("locationName"));
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
 
         setSupportActionBar(toolbar);

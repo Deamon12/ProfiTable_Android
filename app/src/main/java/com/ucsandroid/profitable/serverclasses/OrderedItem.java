@@ -1,20 +1,21 @@
 package com.ucsandroid.profitable.serverclasses;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderedItem {
+public class OrderedItem implements Serializable {
 
     private int orderedItemId;
     private String orderedItemNotes;
     private String orderedItemStatus;
     private boolean bringFirst;
-    private ServerMenuItem menuItem;
+    private MenuItem menuItem;
     private List<FoodAddition> additions;
 
     public OrderedItem(int orderedItemId, String orderedItemNotes,
                        String orderedItemStatus, boolean bringFirst,
-                       ServerMenuItem menuItem, List<FoodAddition> additions) {
+                       MenuItem menuItem, List<FoodAddition> additions) {
         super();
         this.orderedItemId = orderedItemId;
         this.orderedItemNotes = orderedItemNotes;
@@ -83,10 +84,19 @@ public class OrderedItem {
     public void addAddition(FoodAddition fa){
         this.additions.add(fa);
     }
-    public ServerMenuItem getMenuItem() {
+    public MenuItem getMenuItem() {
         return menuItem;
     }
-    public void setMenuItem(ServerMenuItem menuItem) {
+    public void setMenuItem(MenuItem menuItem) {
         this.menuItem = menuItem;
     }
+
+    public double getAdditionsCost(){
+        double cost = 0;
+        for(int a = 0;a < additions.size(); a++){
+            cost += additions.get(a).getPrice();
+        }
+        return cost;
+    }
+
 }

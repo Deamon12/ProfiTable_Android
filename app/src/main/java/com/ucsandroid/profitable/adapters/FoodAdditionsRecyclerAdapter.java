@@ -14,15 +14,17 @@ import android.widget.TextView;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
-public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecyclerAdapter.ViewHolder> {
+public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAdditionsRecyclerAdapter.ViewHolder> {
 
     private double taxRate = 7.5;
     private Locale currentLocale;
@@ -30,23 +32,23 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
     private NumberFormat currencyFormatter;
 
     private int layout;
-    private JSONArray dataSet;
+    private List<FoodAddition> additionList;
 
     private ViewGroup.LayoutParams params;
     private RecyclerViewClickListener clickListener;
     private RecyclerViewCheckListener checkListener;
     private Context context;
 
-    public JSONArrayRecyclerAdapter(Context context, JSONArray dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewCheckListener checkListener) {
-        this.dataSet = dataSet;
+    public FoodAdditionsRecyclerAdapter(Context context, List<FoodAddition> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewCheckListener checkListener) {
+        additionList = dataSet;
         this.context = context;
         this.layout = layout;
         this.params = params;
         this.checkListener = checkListener;
     }
 
-    public JSONArrayRecyclerAdapter(Context context, JSONArray dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
-        this.dataSet = dataSet;
+    public FoodAdditionsRecyclerAdapter(Context context, List<FoodAddition> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+        additionList = dataSet;
         this.context = context;
         this.layout = layout;
         this.params = params;
@@ -109,11 +111,7 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            try {
-                dataSet.getJSONObject(getAdapterPosition()).put("checked", isChecked);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            additionList.get(getAdapterPosition()).setChecked(isChecked);
 
             checkListener.recyclerViewListChecked(buttonView, -1, getAdapterPosition(), isChecked);
         }
@@ -122,7 +120,7 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
 
 
 
-    public JSONArrayRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FoodAdditionsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -144,56 +142,30 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if(layout == R.layout.item_checkbox){
-            try {
-                holder.mCheckBox.setText(dataSet.getJSONObject(position).getString("foodAdditionName"));
-                holder.mCheckBox.setChecked(dataSet.getJSONObject(position).getBoolean("checked"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
+            holder.mCheckBox.setText(additionList.get(position).getName());
+            holder.mCheckBox.setChecked(additionList.get(position).isChecked());
+
         }
         else if(layout == R.layout.item_textview_textview){
 
-            try {
+            holder.mTextView.setText(additionList.get(position).getName());
 
-                if(dataSet.getJSONObject(position).has("name")){
-                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("name"));
-                }
-                if(dataSet.getJSONObject(position).has("menuName")){
-                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("menuName"));
-                }
-                if(dataSet.getJSONObject(position).has("menuItemPrice")){
-                    double menuItemPrice = dataSet.getJSONObject(position).getDouble("menuItemPrice")/100;
-                    holder.mTextView2.setText(currencyFormatter.format(menuItemPrice));
-                }
+            double additionPrice = additionList.get(position).getPrice()/100;
+            holder.mTextView2.setText(currencyFormatter.format(additionPrice));
 
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
-        else {
 
-            try {
-                if(dataSet.getJSONObject(position).has("name")){
-                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("name"));
-                }
-                else{
-                    holder.mTextView.setText(dataSet.getJSONObject(position).getString("menuName"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
     }
 
     @Override
     public int getItemCount() {
-        return dataSet.length();
+        return additionList.size();
     }
 
-    public JSONArray getDataSet(){
-        return dataSet;
+    public List<FoodAddition> getDataSet(){
+        return additionList;
     }
 
 

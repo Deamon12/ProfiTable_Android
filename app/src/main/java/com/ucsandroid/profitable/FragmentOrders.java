@@ -31,14 +31,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ucsandroid.profitable.listeners.DialogDismissListener;
-import com.ucsandroid.profitable.serverclasses.ServerCustomer;
+import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
+import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.Location;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
-import com.ucsandroid.profitable.serverclasses.ServerMenuItem;
-import com.ucsandroid.profitable.supportclasses.Location;
-import com.ucsandroid.profitable.supportclasses.MenuItem;
 import com.ucsandroid.profitable.adapters.NestedRecyclerAdapter;
-import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     private BroadcastReceiver mDoCalculationUpdate;
     private BroadcastReceiver mAddCustomerReceiver;
     private BroadcastReceiver mAddItemToCustomerReceiver;
-    private NestedRecyclerAdapter mAdapter;
+    private NestedRecyclerAdapter nestedRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private RelativeLayout sendToKitchenButton;
 
@@ -112,10 +111,10 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     //TODO: either pull data locally, or get from server
     private void getOrders() {
 
-        mAdapter = new NestedRecyclerAdapter(getActivity(), Singleton.getInstance().getCurrentLocation(),
+        nestedRecyclerAdapter = new NestedRecyclerAdapter(getActivity(), Singleton.getInstance().getCurrentLocation(),
                 R.layout.tile_customer_order, null, clickListener, longClickListener);
 
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(nestedRecyclerAdapter);
 
     }
 
@@ -124,9 +123,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      * Click listener for inner nested recyclerview. Pair this result with the current adapter position
      * to understand what customer and what item has been clicked.
      */
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    OrderedItemClickListener clickListener = new OrderedItemClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
             showEditDialog(parentPosition, position);
         }
     };
@@ -153,8 +152,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         mAddCustomerReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (mAdapter != null) {
-                    mAdapter.addCustomer();
+                if (nestedRecyclerAdapter != null) {
+                    nestedRecyclerAdapter.addCustomer();
                     mRecyclerView.scrollToPosition(0);
                 }
             }
@@ -174,8 +173,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (mAdapter != null) {
-                    addItem((MenuItem) intent.getSerializableExtra("menuItem"));
+                if (nestedRecyclerAdapter != null) {
+                    //TODO menuItem or orderedItem?
+                    //addItem((MenuItem) intent.getSerializableExtra("menuItem"));
                 }
 
                 //Send broadcast to update amount calculation
@@ -189,14 +189,15 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
     /**
-     * ServerMenuItem to be used to update amount of orders and orders UI
+     * MenuItem to be used to update amount of orders and orders UI
      * @param item
      */
-    public void addItem(MenuItem item) {
+    public void addItem(OrderedItem item) {
 
-        if (mAdapter.getSelectedPosition() > -1) {
-            //System.out.println("Need to add item: " + item + " to customer " + (mAdapter.getSelectedPosition() + 1));
-            mAdapter.addItemToCustomer(mAdapter.getSelectedPosition(), item); //TODO: start attribute flow if necessary
+        //TODO notify server after send to kitchen click
+        if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
+            //System.out.println("Need to add item: " + item + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
+            nestedRecyclerAdapter.addItemToCustomer(nestedRecyclerAdapter.getSelectedPosition(), item); //TODO: start attribute flow if necessary
             checkSendToKitchenVisibility();
 
         } else { //No customer is selected
@@ -234,7 +235,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
 
     private void removeItem(int customer, int position){
-        mAdapter.removeItemFromCustomer(customer, position);
+        nestedRecyclerAdapter.removeItemFromCustomer(customer, position);
         sendUpdateAmountBroadcast();
         checkSendToKitchenVisibility();
     }
@@ -244,35 +245,35 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     private void checkSendToKitchenVisibility(){
 
-        if(!Singleton.getInstance().getCurrentLocation().hasCost()){
-            sendToKitchenButton.setVisibility(View.GONE);
+        if(Singleton.getInstance().getCurrentLocation().hasCost()){
+            sendToKitchenButton.setVisibility(View.VISIBLE);
         }
         else{
-            sendToKitchenButton.setVisibility(View.VISIBLE);
+            sendToKitchenButton.setVisibility(View.GONE);
         }
     }
 
     /**
      * When an item is clicked from a particular customer, open a dialog for that specific item
      * This dialog will allow for selecting or deselecting additions for that item
-     * @param parentPosition
+     * @param customerPosition
      * @param position
      */
-    private void showEditDialog(int parentPosition, int position) {
+    private void showEditDialog(int customerPosition, int position) {
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 
         if (prev != null) {
-            ft.remove(prev);
+            fragmentTransaction.remove(prev);
         }
-        ft.addToBackStack(null);
+        fragmentTransaction.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = DialogItemAttributes.newInstance(parentPosition, position, mAdapter.getItemFromCustomer(parentPosition, position));
+        DialogFragment newFragment = DialogItemAttributes.newInstance(customerPosition, position, nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position));
         newFragment.setTargetFragment(this, 0);
 
-        newFragment.show(ft, "dialog");
+        newFragment.show(fragmentTransaction, "dialog");
 
     }
 
@@ -285,7 +286,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void dialogDismissListener(int customer, int position, JSONArray additions) {
 
-        mAdapter.setAdditionsForItem(customer, position, additions);
+        //TODO nestedRecyclerAdapter.setAdditionsForItem(customer, position, additions);
 
         sendUpdateAmountBroadcast();
     }
@@ -300,11 +301,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void onClick(View v) {
         if(v == sendToKitchenButton){
-
             uploadOrder();
-
         }
-
     }
 
     private void initUpdateAmountListener() {
@@ -324,23 +322,27 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     /**
      * CRAZY PARSING
      */
+    //TODO update
     private void uploadOrder(){
 
-        Location thisLocation = Singleton.getInstance().getCurrentLocation();
+        //Location thisLocation = Singleton.getInstance().getCurrentLocation();
 
         //Add customer to list
-        List<ServerCustomer> customerList = new ArrayList();
-        ArrayList<com.ucsandroid.profitable.supportclasses.Customer> customers = thisLocation.getCustomers();
+        //List<Customer> customerList = new ArrayList();
+        //ArrayList<Customer> customers = thisLocation.getCustomers();
 
+         /*
         try {
 
-            //ServerCustomer Loop
+
+
+            //Customer Loop
             for (int a = 0; a < customers.size(); a++) {
 
-                System.out.println("ServerCustomer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
+                System.out.println("Customer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
 
 
-                ServerCustomer newCust = new ServerCustomer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
+                Customer newCust = new Customer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
 
                 //OrderedItems includes menuItem along with other details
                 List<OrderedItem> orderedItems = new ArrayList<>();
@@ -371,7 +373,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
                                     itemComment,
                                     status,
                                     bringFirst,
-                                    new ServerMenuItem(menuItemId, menuName),
+                                    new MenuItem(menuItemId, menuName),
                                     foodAdds);
 
 
@@ -384,12 +386,13 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         } catch (JSONException e) {
             e.printStackTrace();
         }
+*/
 
 
 
         Gson gson = new GsonBuilder().create();
 
-        String customerslist = gson.toJson(customerList);
+        String customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
 
         System.out.println("GSON customer: "+ customerslist);
 
@@ -425,25 +428,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         public void onResponse(Object response) {
             System.out.println("Volley success: " + response);
 
-            //progressDialog.dismiss();
-            /*
-            try {
-
-
-                JSONObject theResponse = new JSONObject(response.toString());
-
-                //If successful retrieval, update saved menu
-                if(theResponse.getBoolean("success") && theResponse.has("result")){
-
-
-                }
-                else{
-                    //TODO:Results Error
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
 
         }
     };

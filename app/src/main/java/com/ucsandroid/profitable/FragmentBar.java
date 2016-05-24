@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
-import com.ucsandroid.profitable.supportclasses.MenuItem;
-import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentBar extends Fragment {
 
@@ -125,9 +125,9 @@ public class FragmentBar extends Fragment {
         }
     }
 
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    LocationClickListener clickListener = new LocationClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
             Singleton.getInstance().setLocationType(Singleton.TYPE_BAR);
             Singleton.getInstance().setCurrentLocationPosition(position);
             goToOrder();

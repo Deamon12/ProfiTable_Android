@@ -11,9 +11,10 @@ import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.MenuItemClickListener;
-import com.ucsandroid.profitable.serverclasses.FoodAddition;
-import com.ucsandroid.profitable.serverclasses.MenuItem;
+import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
-public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecyclerAdapter.ViewHolder> {
+public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItemRecyclerAdapter.ViewHolder> {
 
     private int layout;
 
@@ -30,18 +31,18 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     private NumberFormat currencyFormatter;
 
 
-    private ArrayList<MenuItem> menuItemsData;
+    private List<OrderedItem> orderedItems;
 
     private ViewGroup.LayoutParams params;
-    private MenuItemClickListener clickListener;
+    private OrderedItemClickListener clickListener;
     private RecyclerViewLongClickListener longClickListener;
     private Context context;
     private int parentPosition = -1;
 
 
-    public MenuItemRecyclerAdapter(Context context, ArrayList<MenuItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
-                                   MenuItemClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
-        this.menuItemsData = dataSet;
+    public OrderedItemRecyclerAdapter(Context context, List<OrderedItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
+                                      OrderedItemClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
+        this.orderedItems = dataSet;
         this.context = context;
         this.layout = layout;
         this.parentPosition = parentPosition;
@@ -87,7 +88,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
             if (clickListener != null) {
 
-                clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), menuItemsData.get(getAdapterPosition()));
+                clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), orderedItems.get(getAdapterPosition()));
 
             }
         }
@@ -102,7 +103,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         }
     }
 
-    public MenuItemRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OrderedItemRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -129,8 +130,8 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         String menuItemPrice = "---";
         String additionsString = "";
 
-        List<FoodAddition> defaults = menuItemsData.get(position).getDefaultAdditions();
-        List<FoodAddition> optionals = menuItemsData.get(position).getOptionalAdditions();
+        //List<FoodAddition> defaults = orderedItems.get(position).getDefaultAdditions();
+        //List<FoodAddition> optionals = orderedItems.get(position).getOptionalAdditions();
 
         //TODO addition UI details
         /*
@@ -215,7 +216,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
     @Override
     public int getItemCount() {
-        return menuItemsData.size();
+        return orderedItems.size();
     }
 
 

@@ -15,9 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 import com.ucsandroid.profitable.adapters.TakeoutRecyclerAdapter;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentTakeout extends Fragment {
 
@@ -94,13 +95,6 @@ public class FragmentTakeout extends Fragment {
 
 
     private void getTableData() {
-/*
-
-        ArrayList<String> dataSet = new ArrayList<>();
-        for(int a = 1; a <= 30; a++)
-            dataSet.add("Takeout "+a);
-        */
-
 
         gridLayout = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setHasFixedSize(true);
@@ -136,11 +130,11 @@ public class FragmentTakeout extends Fragment {
     }
 
 
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    LocationClickListener clickListener = new LocationClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
             if (position == 0) {
-                addTakeoutItem();
+                //TODO add with server first ---> addTakeoutItem();
             } else {
                 Singleton.getInstance().setLocationType(Singleton.TYPE_TAKEOUT);
                 Singleton.getInstance().setCurrentLocationPosition(position);

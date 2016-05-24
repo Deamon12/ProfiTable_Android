@@ -26,6 +26,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.ucsandroid.profitable.serverclasses.Category;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,7 +133,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             initFragments();
             getTablesData(); //progress?
         }
-
 
 
     }
@@ -386,6 +387,8 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
                     String newData = theResponse.getJSONArray("result").toString();
                     String localData = settings.getString(getString(R.string.locations_jsonobject), "");
 
+
+
                     //IF results are different than local data, update local data
                     if(!newData.equalsIgnoreCase(localData)){
                         //System.out.println("updating local locations");
@@ -424,6 +427,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
         try {
             Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
+
 
             initFragments();
         } catch (JSONException e) {

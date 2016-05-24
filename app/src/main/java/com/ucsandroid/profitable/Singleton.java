@@ -12,11 +12,11 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import com.ucsandroid.profitable.supportclasses.Location;
+import com.google.gson.Gson;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 
 public class Singleton {
@@ -145,6 +145,7 @@ public class Singleton {
      */
 	public void setLocations(JSONArray locations) throws JSONException {
 
+
         for(int a = 0; a < locations.length(); a++){
 
             if(locations.getJSONObject(a).getInt("locationCategoryId") == TYPE_TABLE){
@@ -197,9 +198,16 @@ public class Singleton {
 
     //Table calls
     public void setTables(JSONArray locations) throws JSONException {
+
+        System.out.println("locations: "+locations);
+
         mTables = new ArrayList<>();
         for(int a = 0; a < locations.length(); a++){
-            mTables.add(new Location(locations.getJSONObject(a)));
+            Gson gson = new Gson();
+            Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
+            System.out.println("location: "+location.getName());
+            mTables.add(location);
+            //mTables.add(new Location(locations.getJSONObject(a)));
         }
     }
 
@@ -217,7 +225,11 @@ public class Singleton {
     public void setBars(JSONArray locations) throws JSONException {
         mBars = new ArrayList<>();
         for(int a = 0; a < locations.length(); a++){
-            mBars.add(new Location(locations.getJSONObject(a)));
+            Gson gson = new Gson();
+            Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
+            System.out.println("location: "+location.getName());
+            mBars.add(location);
+            //mBars.add(new Location(locations.getJSONObject(a)));
         }
     }
 
@@ -228,7 +240,11 @@ public class Singleton {
         mTakeouts = new ArrayList<>();
         mTakeouts.add(new Location());              //plus button holder
         for(int a = 0; a < locations.length(); a++){
-            mTakeouts.add(new Location(locations.getJSONObject(a)));
+            Gson gson = new Gson();
+            Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
+            System.out.println("location: "+location.getName());
+            mTakeouts.add(location);
+            //mTakeouts.add(new Location(locations.getJSONObject(a)));
         }
     }
 

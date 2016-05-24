@@ -10,10 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
-import com.ucsandroid.profitable.supportclasses.Location;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -23,11 +22,11 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     private ArrayList<Location> dataSet;
 
     private ViewGroup.LayoutParams params;
-    private RecyclerViewClickListener clickListener;
+    private LocationClickListener clickListener;
     private Context context;
 
 
-    public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
+    public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, LocationClickListener clickListener) {
         this.dataSet = dataSet;
         this.context = context;
         this.layout = layout;
@@ -85,20 +84,13 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         holder.mTextView.setText(""+(position+1));
 
-        try {
-            //System.out.println(position+" : "+dataSet.get(position).getJsonLocation().getString("locationStatus"));
-            //System.out.println(position+" : "+dataSet.get(position).getJsonLocation().has("currentTab"));
-            if(dataSet.get(position).getJsonLocation().getJSONObject("currentTab").getInt("tabId") != 0){
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
-            }
-            else{
-                holder.mCardView.setCardBackgroundColor(0);
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(dataSet.get(position).getCurrentTab().getTabId() != 0){ //TODO change to status
+            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
         }
+        else{
+            holder.mCardView.setCardBackgroundColor(0);
+        }
+
 
     }
 

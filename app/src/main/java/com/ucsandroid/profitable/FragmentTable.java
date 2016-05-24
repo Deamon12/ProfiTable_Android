@@ -16,8 +16,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
-import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 
 /**
@@ -129,10 +130,10 @@ public class FragmentTable extends Fragment {
     /**
      * Click interface for adapter
      */
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    LocationClickListener clickListener = new LocationClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location location) {
             Singleton.getInstance().setLocationType(Singleton.TYPE_TABLE);
             Singleton.getInstance().setCurrentLocationPosition(position);
             goToOrder();

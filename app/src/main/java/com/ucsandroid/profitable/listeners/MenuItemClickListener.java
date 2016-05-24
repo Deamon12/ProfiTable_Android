@@ -4,7 +4,7 @@ import android.view.View;
 
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 
-public interface RecyclerViewClickListener {
+public interface MenuItemClickListener {
 
     /**
      *  Clicke interface to pass into recycler adapters to register clicks in calling frag/activity

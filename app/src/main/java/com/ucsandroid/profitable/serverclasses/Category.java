@@ -7,7 +7,7 @@ public class Category {
 
     private String categoryName;
     private int categoryId;
-    private List<ServerMenuItem> menuItems;
+    private List<MenuItem> menuItems;
 
     public Category() {
         super();
@@ -17,10 +17,10 @@ public class Category {
         super();
         this.categoryName = name;
         this.categoryId = id;
-        this.menuItems = new ArrayList<ServerMenuItem>();
+        this.menuItems = new ArrayList<MenuItem>();
     }
 
-    public Category(String name, int id, List<ServerMenuItem> menuItems) {
+    public Category(String name, int id, List<MenuItem> menuItems) {
         super();
         this.categoryName = name;
         this.categoryId = id;
@@ -39,13 +39,13 @@ public class Category {
     public void setId(int id) {
         this.categoryId = id;
     }
-    public List<ServerMenuItem> getMenuItems() {
+    public List<MenuItem> getMenuItems() {
         return menuItems;
     }
-    public void setMenuItems(List<ServerMenuItem> menuItems) {
+    public void setMenuItems(List<MenuItem> menuItems) {
         this.menuItems = menuItems;
     }
-    public void addToCategory(ServerMenuItem mi) {
+    public void addToCategory(MenuItem mi) {
         menuItems.add(mi);
     }
 }

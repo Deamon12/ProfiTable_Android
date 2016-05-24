@@ -3,27 +3,28 @@ package com.ucsandroid.profitable.serverclasses;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerCustomer {
+public class Customer {
 
     private int customerId;
     private int tabId;
     private List<OrderedItem> order;
+    private String customerNotes = "";
 
-    public ServerCustomer(int id, int tabId) {
+    public Customer(int id, int tabId) {
         super();
         this.customerId = id;
         this.tabId = tabId;
         this.order = new ArrayList();
     }
 
-    public ServerCustomer(int customerId, int tabId, List<OrderedItem> order) {
+    public Customer(int customerId, int tabId, List<OrderedItem> order) {
         super();
         this.customerId = customerId;
         this.tabId = tabId;
         this.order = order;
     }
 
-    public ServerCustomer() {
+    public Customer() {
         super();
         this.order = new ArrayList();
     }
@@ -49,4 +50,26 @@ public class ServerCustomer {
     public void addItem(OrderedItem oi) {
         this.order.add(oi);
     }
+    public String getCustomerNotes(){
+        return customerNotes;
+    }
+    public void setCustomerNotes(String notes){
+        customerNotes = notes;
+    }
+    public void removeItem(int position){
+        if(position <= order.size()-1)
+            order.remove(position);
+    }
+
+    public double getCustomerCost(){
+        double cost = 0;
+        for(int a = 0; a < order.size();a++){
+            cost += order.get(a).getMenuItem().getPrice();
+            cost += order.get(a).getAdditionsCost();
+        }
+        return cost;
+
+    }
+
+
 }

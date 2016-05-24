@@ -72,4 +72,6 @@ public class FoodAddition {
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
+
 }

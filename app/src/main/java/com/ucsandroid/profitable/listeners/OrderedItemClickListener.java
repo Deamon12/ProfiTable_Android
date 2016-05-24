@@ -2,9 +2,9 @@ package com.ucsandroid.profitable.listeners;
 
 import android.view.View;
 
-import com.ucsandroid.profitable.serverclasses.MenuItem;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
-public interface RecyclerViewClickListener {
+public interface OrderedItemClickListener {
 
     /**
      *  Clicke interface to pass into recycler adapters to register clicks in calling frag/activity
@@ -13,5 +13,5 @@ public interface RecyclerViewClickListener {
      * @param position
      * @param item
      */
-    void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item);
+    void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item);
 }

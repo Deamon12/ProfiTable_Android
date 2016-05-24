@@ -10,12 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
-import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
-import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.google.gson.Gson;
+import com.ucsandroid.profitable.adapters.CategoryRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.MenuItemClickListener;
+import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
-import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 
 public class FragmentMenuItem extends Fragment {
@@ -27,6 +28,19 @@ public class FragmentMenuItem extends Fragment {
         Bundle args = new Bundle();
         args.putInt("color",  color);
         args.putString("dataset", dataset.toString());
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static FragmentMenuItem newInstance(int color, Category dataset) {
+        FragmentMenuItem fragment = new FragmentMenuItem();
+        Bundle args = new Bundle();
+        args.putInt("color",  color);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(dataset);
+        args.putString("dataset", json);
 
         fragment.setArguments(args);
         return fragment;
@@ -54,19 +68,16 @@ public class FragmentMenuItem extends Fragment {
      */
     private void initRecycler() {
 
+        Gson gson = new Gson();
+        Category category = gson.fromJson(getArguments().getString("dataset"), Category.class);
 
-        try {
+        //System.out.println("dataset: "+getArguments().getString("dataset"));
+        //JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
 
-            JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
+        CategoryRecyclerAdapter mAdapter = new CategoryRecyclerAdapter(getActivity(), category, R.layout.item_textview_textview, null, clickListener);
+        recyclerView.setAdapter(mAdapter);
 
-            recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            JSONArrayRecyclerAdapter mAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
-            recyclerView.setAdapter(mAdapter);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -80,7 +91,7 @@ public class FragmentMenuItem extends Fragment {
      * Recieves the clicked position from a menu category
      * Pass off an item from a MenuPage, to the OrderFragment to start the add item flow.
      */
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    MenuItemClickListener clickListener = new MenuItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
             sendAddItemToCustomerBroadcast(parentPosition, position, item);

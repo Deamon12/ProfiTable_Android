@@ -16,8 +16,11 @@ import org.json.JSONObject;
 
 import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.DialogDismissListener;
-import com.ucsandroid.profitable.supportclasses.MenuItem;
 import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
+
+import java.util.List;
 
 public class DialogItemAttributes extends DialogFragment{
 
@@ -25,11 +28,11 @@ public class DialogItemAttributes extends DialogFragment{
     private RecyclerView addonsRecycler;
     private RecyclerView sidesRecycler;
 
-    static DialogItemAttributes newInstance(int customer, int position, MenuItem item) {
+    static DialogItemAttributes newInstance(int customer, int position, OrderedItem item) {
         DialogItemAttributes f = new DialogItemAttributes();
 
         Bundle args = new Bundle();
-        args.putSerializable("menuItem", item);
+        args.putSerializable("orderedItem", item);
         args.putInt("customer", customer);
         args.putInt("position", position);
         f.setArguments(args);
@@ -71,14 +74,26 @@ public class DialogItemAttributes extends DialogFragment{
 
     /**
      * If this menuItem already has some selected additions, use them. The already selected additions
-     * will be in the ServerMenuItem.attributes JSONArray
+     * will be in the MenuItem.attributes JSONArray
      * Otherwise this item has not been adjust, so use the default additions.
      */
     private void initAddonsRecycler() {
 
-        MenuItem menuItem = (MenuItem) getArguments().getSerializable("menuItem");
-        JSONArray allAddons = new JSONArray();
 
+        //TODO
+
+        OrderedItem orderedItem = (OrderedItem) getArguments().getSerializable("orderedItem");
+        //JSONArray allAddons = new JSONArray();
+
+
+
+        List<FoodAddition> defaults = orderedItem.getMenuItem().getDefaultAdditions();
+        List<FoodAddition> optionals = orderedItem.getMenuItem().getOptionalAdditions();
+
+        System.out.println("Addition defaults: "+defaults.toString());
+        System.out.println("Addition optionals: "+optionals.toString());
+
+        /*
         try {
 
             if(menuItem.getAdditions().length() > 0){
@@ -100,9 +115,10 @@ public class DialogItemAttributes extends DialogFragment{
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        int logValue = binlog(allAddons.length());
+        int logValue = 8;//binlog(allAddons.length());
+
 
         //Set span count to log of dataSet.length
         int spanCount = logValue >= 1 ? logValue : 1;
@@ -110,7 +126,7 @@ public class DialogItemAttributes extends DialogFragment{
         addonsRecycler.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
         addonsRecycler.setLayoutManager(gridLayoutManager);
-        mAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
+        //mAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
 
         addonsRecycler.setAdapter(mAdapter);
 
