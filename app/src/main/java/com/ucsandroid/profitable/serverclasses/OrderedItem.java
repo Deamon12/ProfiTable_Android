@@ -9,12 +9,12 @@ public class OrderedItem {
     private String orderedItemNotes;
     private String orderedItemStatus;
     private boolean bringFirst;
-    private MenuItem menuItem;
+    private ServerMenuItem menuItem;
     private List<FoodAddition> additions;
 
     public OrderedItem(int orderedItemId, String orderedItemNotes,
                        String orderedItemStatus, boolean bringFirst,
-                       MenuItem menuItem, List<FoodAddition> additions) {
+                       ServerMenuItem menuItem, List<FoodAddition> additions) {
         super();
         this.orderedItemId = orderedItemId;
         this.orderedItemNotes = orderedItemNotes;
@@ -83,10 +83,10 @@ public class OrderedItem {
     public void addAddition(FoodAddition fa){
         this.additions.add(fa);
     }
-    public MenuItem getMenuItem() {
+    public ServerMenuItem getMenuItem() {
         return menuItem;
     }
-    public void setMenuItem(MenuItem menuItem) {
+    public void setMenuItem(ServerMenuItem menuItem) {
         this.menuItem = menuItem;
     }
 }

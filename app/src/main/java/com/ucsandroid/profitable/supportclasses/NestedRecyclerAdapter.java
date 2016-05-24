@@ -202,7 +202,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public int getItemCount() {
-        return tableData.getCustomer().size();
+        return tableData.getCustomers().size();
     }
 
 

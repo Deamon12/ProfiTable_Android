@@ -3,7 +3,7 @@ package com.ucsandroid.profitable.serverclasses;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuItem {
+public class ServerMenuItem {
 
     private int	menuItemId;
     private String menuName;
@@ -13,13 +13,13 @@ public class MenuItem {
     private List<FoodAddition> defaultAdditions;
     private List<FoodAddition> optionalAdditions;
 
-    public MenuItem() {
+    public ServerMenuItem() {
         super();
         this.defaultAdditions = new ArrayList<FoodAddition>();
         this.optionalAdditions = new ArrayList<FoodAddition>();
     }
 
-    public MenuItem(int menu_id, String menu_name) {
+    public ServerMenuItem(int menu_id, String menu_name) {
         super();
         this.menuItemId = menu_id;
         this.menuName = menu_name;
@@ -27,7 +27,7 @@ public class MenuItem {
         this.optionalAdditions = new ArrayList<FoodAddition>();
     }
 
-    public MenuItem(int menuItemId, String menu_name, boolean available) {
+    public ServerMenuItem(int menuItemId, String menu_name, boolean available) {
         super();
         this.menuItemId = menuItemId;
         this.menuName = menu_name;
@@ -36,8 +36,8 @@ public class MenuItem {
         this.optionalAdditions = new ArrayList<FoodAddition>();
     }
 
-    public MenuItem(int menuItemId, String menu_name,
-                    int price, boolean available) {
+    public ServerMenuItem(int menuItemId, String menu_name,
+                          int price, boolean available) {
         super();
         this.menuItemId = menuItemId;
         this.menuName = menu_name;
@@ -47,10 +47,10 @@ public class MenuItem {
         this.optionalAdditions = new ArrayList<FoodAddition>();
     }
 
-    public MenuItem(int menuItemId, String menu_name,
-                    String menuItemdescription, int menuItemPrice,
-                    boolean available, List<FoodAddition> defaultAdditions,
-                    List<FoodAddition> optionalAdditions) {
+    public ServerMenuItem(int menuItemId, String menu_name,
+                          String menuItemdescription, int menuItemPrice,
+                          boolean available, List<FoodAddition> defaultAdditions,
+                          List<FoodAddition> optionalAdditions) {
         super();
         this.menuItemId = menuItemId;
         this.menuName = menu_name;
@@ -61,7 +61,7 @@ public class MenuItem {
         this.optionalAdditions = optionalAdditions;
     }
 
-    public MenuItem(int menu_id, String menu_name, String description, int price) {
+    public ServerMenuItem(int menu_id, String menu_name, String description, int price) {
         super();
         this.menuItemId = menu_id;
         this.menuName = menu_name;
@@ -71,9 +71,9 @@ public class MenuItem {
         this.optionalAdditions = new ArrayList<FoodAddition>();
     }
 
-    public MenuItem(int menu_id, String menu_name, String description,
-                    int price, List<FoodAddition> defaultAdditions,
-                    List<FoodAddition> optionalAdditions) {
+    public ServerMenuItem(int menu_id, String menu_name, String description,
+                          int price, List<FoodAddition> defaultAdditions,
+                          List<FoodAddition> optionalAdditions) {
         super();
         this.menuItemId = menu_id;
         this.menuName = menu_name;
@@ -83,9 +83,9 @@ public class MenuItem {
         this.optionalAdditions = optionalAdditions;
     }
 
-    public MenuItem(int menuItemId, String menuName,
-                    String menuItemdescription, int menuItemPrice,
-                    boolean available) {
+    public ServerMenuItem(int menuItemId, String menuName,
+                          String menuItemdescription, int menuItemPrice,
+                          boolean available) {
         super();
         this.menuItemId = menuItemId;
         this.menuName = menuName;

@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="This will be a comment for this customer"
+            android:text="This will be a comment for this customers"
             android:layout_below="@+id/item_recycler"
             android:layout_margin="10dp"/>
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,13 +21,32 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ucsandroid.profitable.serverclasses.Customer;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
+import com.ucsandroid.profitable.serverclasses.ServerMenuItem;
 import com.ucsandroid.profitable.supportclasses.DialogDismissListener;
 import com.ucsandroid.profitable.supportclasses.Location;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
 import com.ucsandroid.profitable.supportclasses.NestedRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 import com.ucsandroid.profitable.supportclasses.RecyclerViewLongClickListener;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentOrders extends Fragment implements DialogDismissListener, View.OnClickListener {
 
@@ -177,7 +197,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
     /**
-     * MenuItem to be used to update amount of orders and orders UI
+     * ServerMenuItem to be used to update amount of orders and orders UI
      * @param item
      */
     public void addItem(MenuItem item) {
@@ -289,8 +309,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void onClick(View v) {
         if(v == sendToKitchenButton){
-            //TODO: upload orders
-            System.out.println("Send to kitchen....or something");
+
+            uploadOrder();
+
         }
 
     }
@@ -307,6 +328,152 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mDoCalculationUpdate,
                 new IntentFilter("update-amount"));
     }
+
+
+    /**
+     * CRAZY PARSING
+     */
+    private void uploadOrder(){
+
+        //System.out.println("Customers to send: "+Singleton.getInstance().getCurrentLocation().toString());
+        Location thisLocation = Singleton.getInstance().getCurrentLocation();
+
+        //Add customer to list
+        List<Customer> custo = new ArrayList<Customer>();
+        ArrayList<com.ucsandroid.profitable.supportclasses.Customer> customers = thisLocation.getCustomers();
+
+        try {
+
+            //Customer Loop
+            for (int a = 0; a < customers.size(); a++) {
+                System.out.println("Customer " + a + " : " + customers.get(a));
+                custo.add(a, new Customer(a, thisLocation.getJsonLocation().getInt("locationId")));
+
+                ArrayList menuItems = customers.get(a).getItems();
+                //MenuItems Loop
+                for(int b = 0; b < menuItems.size(); b++){
+
+
+                }//End menuitem
+
+            }//End customer
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Customers for table
+        Customer c1 = new Customer();
+        c1.setTabId(1); //TODO get TabID
+
+        //Customers for table
+        OrderedItem o1 = new OrderedItem();
+        o1.setBringFirst(true);
+        o1.setOrderedItemNotes("");
+        o1.setOrderedItemStatus("");
+
+        //MenuItem for Customer
+        ServerMenuItem m1 = new ServerMenuItem();
+        m1.setId(3);
+        o1.setMenuItem(m1);
+
+
+        //Additions for MenuItem
+        FoodAddition f1 = new FoodAddition("", 0, 3);
+        FoodAddition f2 = new FoodAddition("", 0, 1);
+        FoodAddition f3 = new FoodAddition("", 0, 2);
+        List<FoodAddition> fs1 = new ArrayList<FoodAddition>();
+        fs1.add(f1);
+        fs1.add(f2);
+        fs1.add(f3);
+
+        //Set Additions to order
+        o1.setAdditions(fs1);
+
+
+        List<OrderedItem> os1 = new ArrayList<OrderedItem>();
+        os1.add(o1);
+
+        //Add order to customer
+        c1.setOrder(os1);
+
+
+
+
+
+
+
+        Gson gson = new GsonBuilder().create();
+
+        String customerslist = gson.toJson(custo);
+
+        //System.out.println("GSON customer: "+ customers);
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                //.appendPath("parseTest")
+                .appendQueryParameter("customers", customerslist);
+
+        String myUrl = builder.build().toString();
+
+
+        //String workingURL = "http://52.38.148.241:8080/com.ucsandroid.profitable/rest/orders/parseTest?customers=[{%22order%22:[{%22additions%22:[{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:3,%22foodAdditionPrice%22:0,%22restaurantId%22:0},{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:1,%22foodAdditionPrice%22:0,%22restaurantId%22:0},{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:2,%22foodAdditionPrice%22:0,%22restaurantId%22:0}],%22menuItem%22:{%22defaultAdditions%22:[],%22optionalAdditions%22:[],%22available%22:false,%22menuItemId%22:3,%22menuItemPrice%22:0},%22orderedItemNotes%22:%22%22,%22orderedItemStatus%22:%22%22,%22bringFirst%22:true,%22orderedItemId%22:0}],%22customerId%22:0,%22tabId%22:1}]";
+
+        System.out.println("myUrl: " + myUrl);
+
+        /**
+         * JSONObject/Array requests were giving errors, F it. This will work for now.
+         */
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+                myUrl,
+                (JSONObject) null,
+                successListener,
+                errorListener);
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+    private Response.Listener successListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            System.out.println("Volley success: " + response);
+
+            //progressDialog.dismiss();
+            /*
+            try {
+
+
+                JSONObject theResponse = new JSONObject(response.toString());
+
+                //If successful retrieval, update saved menu
+                if(theResponse.getBoolean("success") && theResponse.has("result")){
+
+
+                }
+                else{
+                    //TODO:Results Error
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }*/
+
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+            ///TODO Connect/server error
+            System.out.println("Volley error: " + error.networkResponse);
+        }
+    };
+
 
 
 }

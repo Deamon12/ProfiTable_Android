@@ -71,7 +71,7 @@ public class DialogItemAttributes extends DialogFragment{
 
     /**
      * If this menuItem already has some selected additions, use them. The already selected additions
-     * will be in the MenuItem.attributes JSONArray
+     * will be in the ServerMenuItem.attributes JSONArray
      * Otherwise this item has not been adjust, so use the default additions.
      */
     private void initAddonsRecycler() {

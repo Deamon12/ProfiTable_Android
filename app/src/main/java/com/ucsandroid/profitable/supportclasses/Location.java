@@ -9,60 +9,48 @@ public class Location {
 
     private boolean isSentToKitchen = false;
     private String label;
-    private ArrayList<Customer> customer;
+    private ArrayList<Customer> customers;
     private JSONObject jsonLocation;
 
 
     public Location(JSONObject jsonTable){
-        customer = new ArrayList<>();
+        customers = new ArrayList<>();
         label = "";
         this.jsonLocation = jsonTable;
     }
 
     public Location(String label){
-        customer = new ArrayList<>();
+        customers = new ArrayList<>();
         this.label = label;
         jsonLocation = new JSONObject();
     }
 
     public Location(){
-        customer = new ArrayList<>();
+        customers = new ArrayList<>();
         label = "";
         jsonLocation = new JSONObject();
     }
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public Customer getCustomer(int position) {
-        return customer.get(position);
+        return customers.get(position);
     }
 
-    public ArrayList<Customer> getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(ArrayList<Customer> customer) {
-        this.customer = customer;
+    public ArrayList<Customer> getCustomers() {
+        return customers;
     }
 
     public void addCustomer(Customer order){
-        customer.add(0, order);
+        customers.add(0, order);
     }
 
     public void removeCustomer(int position){
-        customer.remove(position);
+        customers.remove(position);
     }
 
     public boolean hasCost(){
 
-        for(int a = 0; a < customer.size(); a++){
-            if(customer.get(a).getCost() > 0){
+        for(int a = 0; a < customers.size(); a++){
+            if(customers.get(a).getCost() > 0){
                 return true;
             }
         }
@@ -71,7 +59,7 @@ public class Location {
 
     public boolean hasCustomer(){
 
-        if(customer != null & customer.size() > 0)
+        if(customers != null & customers.size() > 0)
             return true;
         else
             return false;
@@ -79,8 +67,8 @@ public class Location {
 
     public int getTableCost(){
         int total = 0;
-        for(int a = 0; a < customer.size(); a++){
-            total += customer.get(a).getCost();
+        for(int a = 0; a < customers.size(); a++){
+            total += customers.get(a).getCost();
         }
         return total;
     }
@@ -89,7 +77,7 @@ public class Location {
         return isSentToKitchen;
     }
 
-    public void sentToKitchen(boolean bool){
+    public void sendToKitchen(boolean bool){
         isSentToKitchen = bool;
     }
 
@@ -107,7 +95,7 @@ public class Location {
         return "Location{" +
                 "isSentToKitchen=" + isSentToKitchen +
                 ", label='" + label + '\'' +
-                ", customer=" + customer +
+                ", customers=" + customers +
                 ", jsonLocation=" + jsonLocation +
                 '}';
     }

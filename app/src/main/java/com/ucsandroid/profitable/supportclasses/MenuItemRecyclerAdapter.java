@@ -184,11 +184,11 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
         try {
 
-            //MenuItem name
+            //ServerMenuItem name
             menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
             holder.mTextView.setText(menuItemName);
 
-            //MenuItem with price (menuItemViewpager)
+            //ServerMenuItem with price (menuItemViewpager)
             if(layout == R.layout.item_textview_textview){
 
                 if (dataSet.get(position).getJsonItem().has("menuItemPrice")) {
@@ -197,7 +197,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
                     holder.mTextView2.setText(menuItemPrice+"");
                 }
 
-            }//MenuItem with attributes (orderView)
+            }//ServerMenuItem with attributes (orderView)
             else if(layout == R.layout.item_textview_textview2){
                 holder.mTextView2.setText(additionsString);
 
