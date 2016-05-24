@@ -32,9 +32,9 @@ public class Singleton {
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
 
-	private ArrayList<Location> mTables;	//demo variable for local storage of orders
-    private ArrayList<Location> mBars;	//demo variable for local storage of orders
-    private ArrayList<Location> mTakeouts;	//demo variable for local storage of orders
+	private ArrayList<Location> mTables;	    //local storage of orders
+    private ArrayList<Location> mBars;	        //local storage of orders
+    private ArrayList<Location> mTakeouts;	    //local storage of orders
 
     private int currentLocationPosition = -1;
     private int currentLocationType = -1;
@@ -45,9 +45,7 @@ public class Singleton {
 	 */
 	public static void initialize(Context ctx) {
 		mContext = ctx;
-        //initTables();
 	}
-
 
 	/**
 	 * Check if the class has been initialized
@@ -201,31 +199,13 @@ public class Singleton {
     public void setTables(JSONArray locations) throws JSONException {
         mTables = new ArrayList<>();
         for(int a = 0; a < locations.length(); a++){
-            addTable(locations.getJSONObject(a));
+            mTables.add(new Location(locations.getJSONObject(a)));
         }
     }
-
-    private void addTable(JSONObject table){
-        System.out.println("adding location with: "+table);
-        mTables.add(new Location(table));
-    }
-
-    /*
-    public Location getTable(int position) {
-		if(mTables == null){
-            mTables = new ArrayList();
-            mTables.add(position, new Location());
-        }
-        else if(mTables.get(position) == null){
-            mTables.add(position, new Location());
-        }
-        return mTables.get(position);
-    }*/
 
     public ArrayList<Location> getTables(){
         return mTables;
     }
-
 
 
     //Bar calls
@@ -233,28 +213,11 @@ public class Singleton {
         return mBars;
     }
 
-    public void addBar(JSONObject bar){
-        if(mBars == null){
-            mBars = new ArrayList();
-        }
-        mBars.add(new Location(bar));
-    }
-
-    public Location getBar(int position) {
-        if(mBars == null){
-            mBars = new ArrayList();
-            mBars.add(position, new Location());
-        }
-        else if(mBars.get(position) == null){
-            mBars.add(position, new Location());
-        }
-        return mBars.get(position);
-    }
 
     public void setBars(JSONArray locations) throws JSONException {
         mBars = new ArrayList<>();
         for(int a = 0; a < locations.length(); a++){
-            addBar(locations.getJSONObject(a));
+            mBars.add(new Location(locations.getJSONObject(a)));
         }
     }
 
@@ -265,31 +228,12 @@ public class Singleton {
         mTakeouts = new ArrayList<>();
         mTakeouts.add(new Location());              //plus button holder
         for(int a = 0; a < locations.length(); a++){
-            addTakeout(locations.getJSONObject(a));
+            mTakeouts.add(new Location(locations.getJSONObject(a)));
         }
     }
 
     public ArrayList<Location> getTakeouts(){
         return mTakeouts;
-    }
-
-    public void addTakeout(JSONObject takeout){
-        if(mTakeouts == null){
-            mTakeouts = new ArrayList();
-            mTakeouts.add(new Location());          //plus button holder
-        }
-        mTakeouts.add(new Location(takeout));
-    }
-
-    public Location getTakeout(int position) {
-        if(mTakeouts == null){
-            mTakeouts = new ArrayList();
-            mTakeouts.add(position, new Location());//plus button holder
-        }
-        else if(mTakeouts.get(position) == null){
-            mTakeouts.add(position, new Location());
-        }
-        return mTakeouts.get(position);
     }
 
 
