@@ -14,14 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.ucsandroid.profitable.supportclasses.JSONArrayRecyclerAdapter;
-import com.ucsandroid.profitable.supportclasses.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 public class FragmentBar extends Fragment {
 
@@ -56,7 +51,7 @@ public class FragmentBar extends Fragment {
             mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
         }
         else{
-            System.out.println("adapter is null");
+            //System.out.println("bar adapter is null");
         }
 
     }

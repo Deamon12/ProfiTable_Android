@@ -1,4 +1,4 @@
-package com.ucsandroid.profitable.supportclasses;
+package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;

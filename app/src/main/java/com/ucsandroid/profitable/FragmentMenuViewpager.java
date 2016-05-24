@@ -18,10 +18,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.ServerMenuItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentMenuViewpager extends Fragment {
 
@@ -29,6 +35,9 @@ public class FragmentMenuViewpager extends Fragment {
     private ViewPager mViewPager;
     private View mView;
     private JSONArray mMenuItems;
+
+    private List<Category> mCategories;
+    private List<ServerMenuItem> mTheMenuItems;
     private ProgressDialog progressDialog;
 
 
@@ -44,7 +53,7 @@ public class FragmentMenuViewpager extends Fragment {
 
 
         //TODO: make the call to get updated menu? Could be push notified
-        if(!hasMenu())
+        //if(!hasMenu())
             getMenu();
 
         return mView;
@@ -163,7 +172,7 @@ public class FragmentMenuViewpager extends Fragment {
 
             String category = "Category " + (position + 1);
             try {
-                System.out.println("dataSet.getJSONObject(position): "+dataSet.getJSONObject(position));
+                System.out.println("Menu category: "+dataSet.getJSONObject(position));
                 category = dataSet.getJSONObject(position).getString("categoryName");
             } catch (JSONException e) {
                 System.out.println("Error using category from menu dataSet");
@@ -190,7 +199,7 @@ public class FragmentMenuViewpager extends Fragment {
     private Response.Listener successListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            System.out.println("Volley success: " + response);
+            //System.out.println("Volley success: " + response);
             progressDialog.dismiss();
             try {
 
@@ -204,8 +213,26 @@ public class FragmentMenuViewpager extends Fragment {
                     edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
                     edit.apply();
 
-                    mMenuItems = theResponse.getJSONArray("result");
+                    //String jsonInString = theResponse.getJSONArray("result").getJSONObject(0).getJSONArray("menuItems").getJSONObject(0).toString();
 
+                    //System.out.println("list of cats: "+theResponse.getJSONArray("result"));
+
+
+                    mCategories = new ArrayList<>();
+                    Gson gson = new Gson();
+                    Category category;
+                    for(int a = 0; a < theResponse.getJSONArray("result").length(); a++){
+                        category = gson.fromJson(theResponse.getJSONArray("result").getJSONObject(a).toString(), Category.class);
+                        //System.out.println("Categ: "+category.getMenuItems());
+                        mCategories.add(category);
+                    }
+
+                    System.out.println(mCategories.size());
+
+                    //mMenuItems = theResponse.getJSONArray("result");
+
+
+                    //TODO: if not same, update
                     initViewPager();
                 }
                 else{
@@ -228,25 +255,6 @@ public class FragmentMenuViewpager extends Fragment {
         }
     };
 
-
-
-
-
-    /*TODO: EMPTY LISTENERS templates
-    private Response.Listener successListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
-            System.out.println("Volley success: " + response);
-        }
-    };
-
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("Volley error: " + error);
-        }
-    };
-*/
 
 
 

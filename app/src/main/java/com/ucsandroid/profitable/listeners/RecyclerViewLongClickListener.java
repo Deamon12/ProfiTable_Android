@@ -1,6 +1,8 @@
-package com.ucsandroid.profitable.supportclasses;
+package com.ucsandroid.profitable.listeners;
 
 import android.view.View;
+
+import com.ucsandroid.profitable.supportclasses.MenuItem;
 
 public interface RecyclerViewLongClickListener {
 

@@ -12,14 +12,10 @@ import android.view.ViewGroup;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.ucsandroid.profitable.supportclasses.JSONArrayRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
-
-/**
- * Dynamically build food category fragments
- */
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 
 public class FragmentMenuItem extends Fragment {
@@ -37,7 +33,6 @@ public class FragmentMenuItem extends Fragment {
     }
 
     public FragmentMenuItem() {
-        // Required empty public constructor
     }
 
     @Override
@@ -83,16 +78,12 @@ public class FragmentMenuItem extends Fragment {
 
     /**
      * Recieves the clicked position from a menu category
-     * Pass off an itemId from a MenuPage, to the OrderFragment to start the add item flow.
+     * Pass off an item from a MenuPage, to the OrderFragment to start the add item flow.
      */
     RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
-
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-
-            //TODO broadcast add item
             sendAddItemToCustomerBroadcast(parentPosition, position, item);
-
         }
     };
 

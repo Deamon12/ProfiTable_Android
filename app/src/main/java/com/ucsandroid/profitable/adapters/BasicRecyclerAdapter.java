@@ -1,4 +1,4 @@
-package com.ucsandroid.profitable.supportclasses;
+package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 import java.util.ArrayList;
 

@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import com.ucsandroid.profitable.supportclasses.BasicRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.BasicRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 public class FragmentKitchenOrders extends Fragment{
 

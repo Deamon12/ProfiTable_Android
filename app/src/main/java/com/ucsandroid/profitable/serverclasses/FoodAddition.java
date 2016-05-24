@@ -9,6 +9,8 @@ public class FoodAddition {
     private int foodAdditionId;
     private int restaurantId;
 
+    private boolean isChecked;
+
     public FoodAddition(String foodAdditionName, int foodAdditionPrice,
                         int foodAdditionId) {
         super();
@@ -64,5 +66,10 @@ public class FoodAddition {
     public void setRestaurant(int restaurant) {
         this.restaurantId = restaurant;
     }
-
+    public boolean isChecked() {
+        return isChecked;
+    }
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 }

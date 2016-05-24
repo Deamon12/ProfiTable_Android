@@ -3,27 +3,27 @@ package com.ucsandroid.profitable.serverclasses;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customer {
+public class ServerCustomer {
 
     private int customerId;
     private int tabId;
     private List<OrderedItem> order;
 
-    public Customer(int id, int tabId) {
+    public ServerCustomer(int id, int tabId) {
         super();
         this.customerId = id;
         this.tabId = tabId;
         this.order = new ArrayList();
     }
 
-    public Customer(int customerId, int tabId, List<OrderedItem> order) {
+    public ServerCustomer(int customerId, int tabId, List<OrderedItem> order) {
         super();
         this.customerId = customerId;
         this.tabId = tabId;
         this.order = order;
     }
 
-    public Customer() {
+    public ServerCustomer() {
         super();
         this.order = new ArrayList();
     }

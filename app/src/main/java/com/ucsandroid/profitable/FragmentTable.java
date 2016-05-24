@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import com.ucsandroid.profitable.supportclasses.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 
 /**

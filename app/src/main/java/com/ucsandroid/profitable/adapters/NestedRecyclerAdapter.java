@@ -1,4 +1,4 @@
-package com.ucsandroid.profitable.supportclasses;
+package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.supportclasses.Customer;
+import com.ucsandroid.profitable.supportclasses.Location;
+import com.ucsandroid.profitable.supportclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
 import org.json.JSONArray;
 
@@ -42,10 +48,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
 
-        /*
-        if(!dataSet.hasCustomer()){
-            addCustomer();
-        }*/
+
+        //TODO: compare local data to server data
 
     }
 
@@ -175,7 +179,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             holder.mCommentTextView.setVisibility(View.GONE);
         }
 
-        holder.mTextView.setText("Customer " + (getItemCount()-position));
+        holder.mTextView.setText("ServerCustomer " + (getItemCount()-position));
 
         //initialize the last tile as selected
         if (selectedPosition == -11 && position == (getItemCount() - 1)) {
@@ -260,7 +264,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private void showCustomerEditDialog(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("What to do...Customer "+(getItemCount()-position));
+        builder.setTitle("What to do...ServerCustomer "+(getItemCount()-position));
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

@@ -30,16 +30,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ucsandroid.profitable.serverclasses.Customer;
+import com.ucsandroid.profitable.listeners.DialogDismissListener;
+import com.ucsandroid.profitable.serverclasses.ServerCustomer;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.serverclasses.ServerMenuItem;
-import com.ucsandroid.profitable.supportclasses.DialogDismissListener;
 import com.ucsandroid.profitable.supportclasses.Location;
 import com.ucsandroid.profitable.supportclasses.MenuItem;
-import com.ucsandroid.profitable.supportclasses.NestedRecyclerAdapter;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
-import com.ucsandroid.profitable.supportclasses.RecyclerViewLongClickListener;
+import com.ucsandroid.profitable.adapters.NestedRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,7 +203,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             //System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
         }
 
-
     }
 
 
@@ -330,18 +329,18 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         Location thisLocation = Singleton.getInstance().getCurrentLocation();
 
         //Add customer to list
-        List<Customer> customerList = new ArrayList();
+        List<ServerCustomer> customerList = new ArrayList();
         ArrayList<com.ucsandroid.profitable.supportclasses.Customer> customers = thisLocation.getCustomers();
 
         try {
 
-            //Customer Loop
+            //ServerCustomer Loop
             for (int a = 0; a < customers.size(); a++) {
 
-                System.out.println("Customer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
+                System.out.println("ServerCustomer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
 
 
-                Customer newCust = new Customer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
+                ServerCustomer newCust = new ServerCustomer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
 
                 //OrderedItems includes menuItem along with other details
                 List<OrderedItem> orderedItems = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.ucsandroid.profitable.supportclasses;
+package com.ucsandroid.profitable.adapters;
 
 
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.supportclasses.Location;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 import org.json.JSONException;
 
