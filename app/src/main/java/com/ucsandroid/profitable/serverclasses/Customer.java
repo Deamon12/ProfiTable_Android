@@ -13,7 +13,7 @@ public class Customer {
         super();
         this.customerId = id;
         this.tabId = tabId;
-        this.order = new ArrayList<OrderedItem>();
+        this.order = new ArrayList();
     }
 
     public Customer(int customerId, int tabId, List<OrderedItem> order) {
@@ -25,7 +25,7 @@ public class Customer {
 
     public Customer() {
         super();
-        this.order = new ArrayList<OrderedItem>();
+        this.order = new ArrayList();
     }
 
     public int getTabId() {

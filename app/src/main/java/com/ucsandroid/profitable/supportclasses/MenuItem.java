@@ -12,6 +12,7 @@ public class MenuItem implements Serializable {
     private String name = "";
     private JSONObject jsonItem;
     private JSONArray additions = null;
+    private String comment = "";
 
 
     public MenuItem(JSONObject menuItem){
@@ -53,6 +54,15 @@ public class MenuItem implements Serializable {
     public JSONArray getAdditions(){
         return additions;
     }
+
+    public void setComment(String comment){
+        this.comment = comment;
+    }
+
+    public String getComment(){
+        return comment;
+    }
+
 
 
 }

@@ -33,7 +33,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private RecyclerViewLongClickListener nestedLongClickListener;
 
 
-
     public NestedRecyclerAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
         this.tableData = dataSet;
@@ -43,9 +42,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
 
+        /*
         if(!dataSet.hasCustomer()){
             addCustomer();
-        }
+        }*/
 
     }
 
@@ -112,10 +112,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
                 if (selectedPosition != -1)
                     notifyItemChanged(selectedPosition);
 
-
             }
-
-
 
         }
 
@@ -191,9 +188,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        //Get menuItems from customer object
-        //Location # from singleton, Customer # = position
-        //dataset input = Arraylist<MenuItems>
         holder.rcAdapter = new MenuItemRecyclerAdapter(context, tableData.getCustomer(position).getItems(), R.layout.item_textview_textview2, position, null,
                 clickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);

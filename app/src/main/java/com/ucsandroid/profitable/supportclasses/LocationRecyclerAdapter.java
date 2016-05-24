@@ -81,15 +81,23 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        if(dataSet.get(position).hasCustomer()){
-            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
-        }
-        else{
-            holder.mCardView.setCardBackgroundColor(0);
-        }
-
 
         holder.mTextView.setText(""+(position+1));
+
+        try {
+            //System.out.println(position+" : "+dataSet.get(position).getJsonLocation().getString("locationStatus"));
+            //System.out.println(position+" : "+dataSet.get(position).getJsonLocation().has("currentTab"));
+            if(dataSet.get(position).getJsonLocation().getJSONObject("currentTab").getInt("tabId") != 0){
+                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+            }
+            else{
+                holder.mCardView.setCardBackgroundColor(0);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 

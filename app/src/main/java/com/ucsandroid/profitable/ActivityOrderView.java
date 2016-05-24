@@ -1,8 +1,11 @@
 package com.ucsandroid.profitable;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +18,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +40,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     private FloatingActionButton addCustomer;
     private FloatingActionButton doCheckout;
     private View menuDivider;
-    private DisplayMetrics metrics;
+
 
     int custFragHeight, custFragWidth;
     int menuItemsFragHeight, menuItemsFragWidth;
@@ -54,17 +64,71 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
+        //All orders need a tab assigned to them.
+        checkOrGetTabId();
+
         dynamicallySizeContainers();
 
         initFragments();
     }
+
+
+    private void checkOrGetTabId() {
+
+        try {
+            JSONObject thisLocation = Singleton.getInstance().getCurrentLocation().getJsonLocation();
+            int locationId = thisLocation.getInt("locationId");
+
+            //TabId does not exist, this is an empty table
+            if(thisLocation.getJSONObject("currentTab").getInt("tabId") == 0){
+                createTabForThisLocation(locationId);
+            }
+            else{//This table has orders, check locally and server
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void createTabForThisLocation(int locationId){
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("seat")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", settings.getString(getString(R.string.employee_id), "1"));
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+                myUrl,
+                (JSONObject) null,
+                createTabSuccessListener,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
 
     /**
      * Use screen metrics to adjust the sizing of fragment containers.
      */
     private void dynamicallySizeContainers() {
 
-        metrics = new DisplayMetrics();
+        DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int orientation = getResources().getConfiguration().orientation;
 
@@ -94,9 +158,8 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    private void initToolbar(){
 
-        System.out.println("location: "+Singleton.getInstance().getCurrentLocation().toString());
+    private void initToolbar(){
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
 
@@ -114,7 +177,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         }
-
 
         setSupportActionBar(toolbar);
 
@@ -193,9 +255,31 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     //TODO: change to snackbar
     public void showErrorSnackbar(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    private Response.Listener createTabSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            System.out.println("Volley success: " + response);
+
+            try {
+                JSONObject theResponse = new JSONObject(response.toString());
+
+                //If successful retrieval, update saved menu
+                if(theResponse.getBoolean("success") && theResponse.has("result")){
+                    sendAddCustomerBroadcast();
+                }
+                else{
+                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
 
 
 }

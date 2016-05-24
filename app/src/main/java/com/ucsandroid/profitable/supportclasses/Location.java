@@ -11,6 +11,7 @@ public class Location {
     private String label;
     private ArrayList<Customer> customers;
     private JSONObject jsonLocation;
+    private int tabId = -1;
 
 
     public Location(JSONObject jsonTable){
@@ -89,6 +90,13 @@ public class Location {
         return jsonLocation;
     }
 
+    public void setTabId(int tabId){
+        this.tabId = tabId;
+    }
+
+    public int getTabId(){
+        return tabId;
+    }
 
     @Override
     public String toString() {

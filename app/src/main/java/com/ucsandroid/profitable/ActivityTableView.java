@@ -74,7 +74,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         takeoutFragContainer = (FrameLayout) findViewById(R.id.takeout_frag_container);
 
 
-
         barDivider = (TextView) findViewById(R.id.section_text_bar);
         barDivider.setOnClickListener(this);
 
@@ -104,6 +103,18 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         barFragContainer.getLayoutParams().height = barFragHeight;
         takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
 
+        evaluateLocationData();
+
+
+    }
+
+
+    /**
+     * Compare local location data, initiate volley call, if necessary.
+     * todo: push notify to perform this
+     */
+    private void evaluateLocationData() {
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
 
         if(settings.getString(getString(R.string.locations_jsonobject), "").equalsIgnoreCase("")) {
@@ -113,13 +124,18 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         else if(!Singleton.getInstance().hasLocationData()){
             System.out.println("setting tables data");
             setLocationsFromPrefs();
+            getTablesData(); //todo:progress?
         }
         else{ //use local data
             System.out.println("using tables data");
             initFragments();
+            getTablesData(); //progress?
         }
 
+
+
     }
+
 
 
     private void getTablesData() {
@@ -136,8 +152,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
                 .appendPath("location")
                 .appendQueryParameter("rest_id", "1");
         String myUrl = builder.build().toString();
-
-        //System.out.println("url: " + myUrl);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
@@ -165,7 +179,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
         // Commit the transaction
         transaction.commit();
-
 
     }
 
@@ -214,7 +227,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             ((ImageView) findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
             takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
 
-
         }
         edit.putBoolean("takeoutFragShown", show);
         edit.apply();
@@ -222,7 +234,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * Enlarge table view if bar and takeout are hidden
+     * The main logic that resizes Bar and Takeout fragments depending on what views are toggled
      */
     private void checkVisibility() {
         if(barFragContainer.findViewById(R.id.the_relative) == null || takeoutFragContainer.findViewById(R.id.the_relative) == null)
@@ -364,19 +376,28 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             //System.out.println("Volley success: " + response);
             progressDialog.dismiss();
             try {
-
-
                 JSONObject theResponse = new JSONObject(response.toString());
 
                 //If successful retrieval, update saved menu
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
-                    SharedPreferences.Editor edit = settings.edit();
-                    edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
-                    edit.apply();
 
-                    setLocationsFromPrefs();
+                    String newData = theResponse.getJSONArray("result").toString();
+                    String localData = settings.getString(getString(R.string.locations_jsonobject), "");
+
+                    //IF results are different than local data, update local data
+                    if(!newData.equalsIgnoreCase(localData)){
+                        //System.out.println("updating local locations");
+                        SharedPreferences.Editor edit = settings.edit();
+                        edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
+                        edit.apply();
+                        setLocationsFromPrefs();
+                    }
+                    else if(newData.equalsIgnoreCase(localData)){
+                        //System.out.println("Local locations are the same as new locations. Not updating data or UI");
+                    }
+
                 }
                 else{
                     //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
@@ -403,6 +424,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
         try {
             Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
+
             initFragments();
         } catch (JSONException e) {
             e.printStackTrace();

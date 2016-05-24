@@ -27,9 +27,7 @@ import org.json.JSONObject;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ucsandroid.profitable.serverclasses.Customer;
@@ -43,8 +41,6 @@ import com.ucsandroid.profitable.supportclasses.NestedRecyclerAdapter;
 import com.ucsandroid.profitable.supportclasses.RecyclerViewClickListener;
 import com.ucsandroid.profitable.supportclasses.RecyclerViewLongClickListener;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +56,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
 
         if (!Singleton.hasBeenInitialized()) {
             Singleton.initialize(getActivity());
@@ -114,11 +109,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
 
+    //TODO: either pull data locally, or get from server
     private void getOrders() {
-
-        //Location location = Singleton.getInstance().getCurrentLocation();
-
-        //System.out.println("location: "+location.toString());
 
         mAdapter = new NestedRecyclerAdapter(getActivity(), Singleton.getInstance().getCurrentLocation(),
                 R.layout.tile_customer_order, null, clickListener, longClickListener);
@@ -335,85 +327,78 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     private void uploadOrder(){
 
-        //System.out.println("Customers to send: "+Singleton.getInstance().getCurrentLocation().toString());
         Location thisLocation = Singleton.getInstance().getCurrentLocation();
 
         //Add customer to list
-        List<Customer> custo = new ArrayList<Customer>();
+        List<Customer> customerList = new ArrayList();
         ArrayList<com.ucsandroid.profitable.supportclasses.Customer> customers = thisLocation.getCustomers();
 
         try {
 
             //Customer Loop
             for (int a = 0; a < customers.size(); a++) {
-                System.out.println("Customer " + a + " : " + customers.get(a));
-                custo.add(a, new Customer(a, thisLocation.getJsonLocation().getInt("locationId")));
 
-                ArrayList menuItems = customers.get(a).getItems();
-                //MenuItems Loop
+                System.out.println("Customer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
+
+
+                Customer newCust = new Customer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
+
+                //OrderedItems includes menuItem along with other details
+                List<OrderedItem> orderedItems = new ArrayList<>();
+                ArrayList<MenuItem> menuItems = customers.get(a).getItems();
+                //MenuItems Loop - (OrderedItem on server) CHANGE?
                 for(int b = 0; b < menuItems.size(); b++){
 
+                    String itemComment = menuItems.get(b).getComment();
+                    String status = "";
+                    boolean bringFirst = false;
+                    List<FoodAddition> foodAdds = new ArrayList<>();
+                    JSONArray additions = menuItems.get(b).getAdditions();
+                    for(int c = 0; c < additions.length(); c++){
 
+                        String foodAdditionName = additions.getJSONObject(c).getString("foodAdditionName");
+                        int foodAdditionPrice = additions.getJSONObject(c).getInt("foodAdditionPrice");
+                        boolean available = additions.getJSONObject(c).getBoolean("available");
+                        int foodAdditionId = additions.getJSONObject(c).getInt("foodAdditionId");
+
+                        foodAdds.add(new FoodAddition(foodAdditionName, foodAdditionPrice,available,foodAdditionId));
+                    }
+
+                    int menuItemId = menuItems.get(b).getJsonItem().getInt("menuItemId");
+                    String menuName = menuItems.get(b).getJsonItem().getString("menuName");
+
+                    OrderedItem orderedItem =
+                            new OrderedItem(b,
+                                    itemComment,
+                                    status,
+                                    bringFirst,
+                                    new ServerMenuItem(menuItemId, menuName),
+                                    foodAdds);
+
+
+                    newCust.addItem(orderedItem);
                 }//End menuitem
 
+                customerList.add(newCust);
             }//End customer
-
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //Customers for table
-        Customer c1 = new Customer();
-        c1.setTabId(1); //TODO get TabID
-
-        //Customers for table
-        OrderedItem o1 = new OrderedItem();
-        o1.setBringFirst(true);
-        o1.setOrderedItemNotes("");
-        o1.setOrderedItemStatus("");
-
-        //MenuItem for Customer
-        ServerMenuItem m1 = new ServerMenuItem();
-        m1.setId(3);
-        o1.setMenuItem(m1);
-
-
-        //Additions for MenuItem
-        FoodAddition f1 = new FoodAddition("", 0, 3);
-        FoodAddition f2 = new FoodAddition("", 0, 1);
-        FoodAddition f3 = new FoodAddition("", 0, 2);
-        List<FoodAddition> fs1 = new ArrayList<FoodAddition>();
-        fs1.add(f1);
-        fs1.add(f2);
-        fs1.add(f3);
-
-        //Set Additions to order
-        o1.setAdditions(fs1);
-
-
-        List<OrderedItem> os1 = new ArrayList<OrderedItem>();
-        os1.add(o1);
-
-        //Add order to customer
-        c1.setOrder(os1);
-
-
-
-
 
 
 
         Gson gson = new GsonBuilder().create();
 
-        String customerslist = gson.toJson(custo);
+        String customerslist = gson.toJson(customerList);
 
-        //System.out.println("GSON customer: "+ customers);
+        System.out.println("GSON customer: "+ customerslist);
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("orders")
-                //.appendPath("parseTest")
+                .appendPath("parseTest")
                 .appendQueryParameter("customers", customerslist);
 
         String myUrl = builder.build().toString();
