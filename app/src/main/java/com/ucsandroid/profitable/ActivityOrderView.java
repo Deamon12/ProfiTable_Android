@@ -239,6 +239,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+
     private Response.Listener getOrderSuccesListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
@@ -248,18 +249,17 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                 JSONObject theResponse = new JSONObject(response.toString());
 
                 //If successful retrieval, update Singleton
-                if(theResponse.getBoolean("success") && theResponse.has("result")){
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
                     Gson gson = new Gson();
-                   Location  mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
+                    Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
 
                     Singleton.getInstance().updateCurrentLocation(mLocation);
 
                     sendLocationUpdateBroadcast();
 
-                }
-                else{
-                    if(theResponse.has("message")){
+                } else {
+                    if (theResponse.has("message")) {
                         showErrorSnackbar(theResponse.getString("message"));
                     }
                 }

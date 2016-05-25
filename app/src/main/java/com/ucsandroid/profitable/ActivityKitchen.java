@@ -56,9 +56,7 @@ public class ActivityKitchen extends AppCompatActivity {
         //Fragment quantityFrag = new FragmentBar();
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
         transaction.replace(R.id.kitchen_items_frag_container, ordersFrag);
-        //transaction.replace(R.id.bar_frag_container, barFrag);
 
         transaction.commit();
 

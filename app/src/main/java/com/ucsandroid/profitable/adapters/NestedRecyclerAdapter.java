@@ -75,7 +75,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
             mCommentImageView = (ImageView) v.findViewById(R.id.comment_image);
             mSettingsButton = (ImageView) v.findViewById(R.id.settings);
-            mTextView = (TextView) v.findViewById(R.id.tile_name_text);
+            mTextView = (TextView) v.findViewById(R.id.tile_text);
             cardView = (CardView) v.findViewById(R.id.the_cardview);
             recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
             recyclerView.setHasFixedSize(false);

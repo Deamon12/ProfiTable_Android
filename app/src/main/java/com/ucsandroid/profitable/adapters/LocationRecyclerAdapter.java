@@ -45,6 +45,13 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             mCardView = (CardView) v.findViewById(R.id.the_cardview);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
+            if(layout == R.layout.tile_kitchen_order){
+
+            }else{
+
+            }
+
+
             v.setOnClickListener(this);
 
         }
@@ -64,9 +71,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if (params == null) {
-
-        } else {
+        if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
         }
@@ -82,14 +87,23 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        holder.mTextView.setText(""+(position+1));
+        if(layout == R.layout.tile_kitchen_order){
+            holder.mTextView.setText(dataSet.get(position).getName());
 
-        if(dataSet.get(position).getCurrentTab().getTabId() != 0){ //TODO change to status
-            holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+
         }
         else{
-            holder.mCardView.setCardBackgroundColor(0);
+            holder.mTextView.setText(""+(position+1));
+
+            if(dataSet.get(position).getCurrentTab().getTabId() != 0){ //TODO change to status
+                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+            }
+            else{
+                holder.mCardView.setCardBackgroundColor(0);
+            }
+
         }
+
 
 
     }
