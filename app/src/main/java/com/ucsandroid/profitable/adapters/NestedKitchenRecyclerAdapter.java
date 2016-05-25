@@ -40,12 +40,6 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
 
-
-        for(Tab item : dataSet){
-            System.out.println("Item: "+item.getTabId());
-        }
-
-
     }
 
 
@@ -55,7 +49,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
-        //TabRecyclerAdapter mAdapter;
+        private TabRecyclerAdapter mAdapter;
 
         public ViewHolder(View v) {
             super(v);
@@ -121,10 +115,13 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
 
 
-        //holder.mTextView.setText("Customer " + (getItemCount()-position));
+        holder.mCommentTextView.setText(tabData.get(position).getTabStatus());
+
+        holder.mTextView.setText("Table " + (position+1));
 
 
-        TabRecyclerAdapter mAdapter = new TabRecyclerAdapter(context,
+
+        holder.mAdapter = new TabRecyclerAdapter(context,
                 tabData.get(position).getCustomers(),
                 R.layout.item_textview_textview2,
                 position,
@@ -132,7 +129,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
                 null,
                 null);
 
-        holder.recyclerView.setAdapter(mAdapter);
+        holder.recyclerView.setAdapter(holder.mAdapter);
 
 
     }

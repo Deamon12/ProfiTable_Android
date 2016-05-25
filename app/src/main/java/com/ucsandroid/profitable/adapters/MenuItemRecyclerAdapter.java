@@ -29,8 +29,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     private Currency currentCurrency;
     private NumberFormat currencyFormatter;
 
-
-    private ArrayList<MenuItem> menuItemsData;
+    private List<MenuItem> menuItemsData;
 
     private ViewGroup.LayoutParams params;
     private MenuItemClickListener clickListener;
@@ -39,7 +38,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     private int parentPosition = -1;
 
 
-    public MenuItemRecyclerAdapter(Context context, ArrayList<MenuItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
+    public MenuItemRecyclerAdapter(Context context, List<MenuItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
                                    MenuItemClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
         this.menuItemsData = dataSet;
         this.context = context;
@@ -59,7 +58,6 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     }
 
 
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public TextView mTextView;
@@ -73,6 +71,10 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
             if(layout == R.layout.item_textview_textview || layout == R.layout.item_textview_textview2){
                 mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
             }
+            else if(layout == R.layout.tile_kitchen_amount){
+                mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
+            }
+
 
 
 
@@ -106,14 +108,10 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-
-        if (params == null) {
-
-        } else {
+        if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
         }
-
 
         ViewHolder vh = new ViewHolder(v);
 
@@ -125,91 +123,11 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String menuItemName = "";
-        String menuItemPrice = "---";
-        String additionsString = "";
-
-        List<FoodAddition> defaults = menuItemsData.get(position).getDefaultAdditions();
-        List<FoodAddition> optionals = menuItemsData.get(position).getOptionalAdditions();
-
-        //TODO addition UI details
-        /*
-        try {
-
-
-
-
-            //JSONArray defaults = dataSet.get(position).getJsonItem().getJSONArray("defaultAdditions");
-            //JSONArray additions = dataSet.get(position).getAdditions();
-
-
-            for(int a = 0;a < additions.length();a++){
-                boolean found = false;
-                //System.out.println(defaults.getJSONObject(a).getString("foodAdditionName"));
-
-                for(int aa = 0;aa < defaults.length();aa++){
-
-                    if(defaults.getJSONObject(aa).getString("foodAdditionName").equalsIgnoreCase(additions.getJSONObject(a).getString("foodAdditionName"))){
-                        if(additions.getJSONObject(a).getBoolean("checked")){
-                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                        }
-                        else{
-                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" : no");
-                            additionsString = additionsString + " / no "+additions.getJSONObject(a).getString("foodAdditionName");
-                        }
-                        found = true;
-                    }
-
-                }
-
-                //If we get here we have an item that is not a default, and might be checked>?
-                if(!found && additions.getJSONObject(a).getBoolean("checked")){
-                    //System.out.println("not default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                    additionsString = additionsString + " / "+additions.getJSONObject(a).getString("foodAdditionName");
-                }
-
-            }
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(layout == R.layout.tile_kitchen_amount){
+            holder.mTextView.setText(menuItemsData.get(position).getName());
+            holder.mTextView2.setText(menuItemsData.get(position).getQuantity()+"");
         }
 
-
-
-        if(!additionsString.equalsIgnoreCase(""))
-            additionsString = additionsString.substring(3);
-*/
-
-
-/* TODO wtf is this VVV
-        try {
-
-            //MenuItem name
-            menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
-            holder.mTextView.setText(menuItemName);
-
-            //MenuItem with price (menuItemViewpager)
-            if(layout == R.layout.item_textview_textview){
-
-                if (dataSet.get(position).getJsonItem().has("menuItemPrice")) {
-                    double tempMenuItemPrice = dataSet.get(position).getJsonItem().getDouble("menuItemPrice") / 100;
-                    menuItemPrice = currencyFormatter.format(tempMenuItemPrice);
-                    holder.mTextView2.setText(menuItemPrice+"");
-                }
-
-            }//MenuItem with attributes (orderView)
-            else if(layout == R.layout.item_textview_textview2){
-                holder.mTextView2.setText(additionsString);
-
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
 
     }
 

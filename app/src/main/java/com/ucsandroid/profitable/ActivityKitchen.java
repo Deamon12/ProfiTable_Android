@@ -5,14 +5,17 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -32,6 +35,8 @@ import java.util.List;
 
 public class ActivityKitchen extends AppCompatActivity {
 
+    private FrameLayout kitchenAmountsFragContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +46,31 @@ public class ActivityKitchen extends AppCompatActivity {
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
+        setupFragmentContainers();
+
         getKitchenData();
 
+
+    }
+
+    private void setupFragmentContainers(){
+
+        kitchenAmountsFragContainer = (FrameLayout) findViewById(R.id.kitchen_totals_frag_container);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int orientation = getResources().getConfiguration().orientation;
+        int amountsHeight = 200;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            amountsHeight = (int)(metrics.heightPixels*.15);
+        }
+        else{
+            amountsHeight = (int)(metrics.heightPixels*.1);
+        }
+
+
+        kitchenAmountsFragContainer.getLayoutParams().height = amountsHeight;
 
     }
 
@@ -64,7 +92,6 @@ public class ActivityKitchen extends AppCompatActivity {
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
 
     }
 
@@ -90,7 +117,10 @@ public class ActivityKitchen extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Pass the Tab list to the fragments as a string. Gson parse them on the other side.
+     * @param tabList
+     */
     private void initFragments(String tabList) {
 
         Fragment ordersFrag = FragmentKitchenOrders.newInstance(tabList);
@@ -102,26 +132,19 @@ public class ActivityKitchen extends AppCompatActivity {
 
         transaction.commit();
 
-
     }
 
     private Response.Listener successListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            //System.out.println("Volley success: " + response);
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
 
-                //If successful retrieval, update saved menu
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
                     JSONArray locationCats = theResponse.getJSONArray("result");
-                    System.out.println("locationCats: "+locationCats);
-
-
                     initFragments(locationCats.toString());
-
 
                 }
                 else{

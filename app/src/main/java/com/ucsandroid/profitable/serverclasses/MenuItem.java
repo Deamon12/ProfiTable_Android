@@ -14,6 +14,8 @@ public class MenuItem implements Serializable {
     private List<FoodAddition> defaultAdditions;
     private List<FoodAddition> optionalAdditions;
 
+    private int quantity = 1;
+
     public MenuItem() {
         super();
         this.defaultAdditions = new ArrayList<FoodAddition>();
@@ -139,4 +141,18 @@ public class MenuItem implements Serializable {
     public void setAvailable(boolean available) {
         this.available = available;
     }
+
+    public int getQuantity(){
+        return quantity;
+    }
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
+    public void addQuantityByIncrement(int increment){
+        quantity += increment;
+    }
+    public void removeQuantityByIncrement(int decrement){
+        quantity -= decrement;
+    }
+
 }

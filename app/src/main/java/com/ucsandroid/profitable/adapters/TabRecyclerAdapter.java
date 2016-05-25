@@ -25,8 +25,6 @@ import java.util.Locale;
 public class TabRecyclerAdapter extends RecyclerView.Adapter<TabRecyclerAdapter.ViewHolder> {
 
     private int layout;
-
-    //private Tab tabItem;
     private List<Customer> mCustomer;
 
     private ViewGroup.LayoutParams params;
@@ -36,9 +34,10 @@ public class TabRecyclerAdapter extends RecyclerView.Adapter<TabRecyclerAdapter.
     private int parentPosition = -1;
 
 
+
     public TabRecyclerAdapter(Context context, List<Customer> customers, int layout, int parentPosition, ViewGroup.LayoutParams params,
                               OrderedItemClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
-        //tabItem = dataSet;
+
         this.context = context;
         this.layout = layout;
         this.parentPosition = parentPosition;
@@ -48,8 +47,6 @@ public class TabRecyclerAdapter extends RecyclerView.Adapter<TabRecyclerAdapter.
         mCustomer = customers;
 
     }
-
-
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
@@ -95,14 +92,10 @@ public class TabRecyclerAdapter extends RecyclerView.Adapter<TabRecyclerAdapter.
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-
-        if (params == null) {
-
-        } else {
+        if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
         }
-
 
         ViewHolder vh = new ViewHolder(v);
 
