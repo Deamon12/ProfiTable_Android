@@ -37,26 +37,24 @@ public class ActivityKitchen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kitchen);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
-        getLocations();
+        getKitchenData();
 
 
     }
 
-    private void getLocations() {
 
-
-        //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/location?rest_id=1
+    private void getKitchenData() {
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
-                .appendPath("location")
-                .appendQueryParameter("rest_id", "1");
+                .appendPath("orders")
+                .appendPath("kitchen")
+                .appendQueryParameter("rest_id", "1"); //TODO
         String myUrl = builder.build().toString();
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
@@ -93,10 +91,10 @@ public class ActivityKitchen extends AppCompatActivity {
 
 
 
-    private void initFragments(String allLocations) {
+    private void initFragments(String tabList) {
 
-        Fragment ordersFrag = FragmentKitchenOrders.newInstance(allLocations);
-        Fragment quantityFrag = FragmentKitchenAmounts.newInstance(allLocations);
+        Fragment ordersFrag = FragmentKitchenOrders.newInstance(tabList);
+        Fragment quantityFrag = FragmentKitchenAmounts.newInstance(tabList);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.kitchen_items_frag_container, ordersFrag);
@@ -119,20 +117,8 @@ public class ActivityKitchen extends AppCompatActivity {
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
                     JSONArray locationCats = theResponse.getJSONArray("result");
+                    System.out.println("locationCats: "+locationCats);
 
-                    /*
-                    List<Location> allLocations = new ArrayList<>();
-
-                    Gson gson = new Gson();
-                    for(int a = 0; a < locationCats.length(); a++){
-                        LocationCategory locCat = gson.fromJson(locationCats.getJSONObject(a).toString(), LocationCategory.class);
-                        List<Location> tempLocs = locCat.getLocations();
-                        for(int b = 0; b < tempLocs.size(); b++){
-                            allLocations.add(tempLocs.get(b));
-                        }
-                    }*/
-
-                    //String allLocationsString = gson.toJson(allLocations);
 
                     initFragments(locationCats.toString());
 

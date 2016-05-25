@@ -18,6 +18,7 @@ import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.LocationCategory;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
+import com.ucsandroid.profitable.serverclasses.Tab;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,13 +30,13 @@ import java.util.List;
 public class FragmentKitchenAmounts extends Fragment {
 
     private RecyclerView recyclerView;
-    private List<Location> mLocations;
+    private List<Tab> mTabs;
 
-    public static FragmentKitchenAmounts newInstance(String locations) {
+    public static FragmentKitchenAmounts newInstance(String tabList) {
         FragmentKitchenAmounts thisFrag = new FragmentKitchenAmounts();
 
         Bundle args = new Bundle();
-        args.putString("locations", locations);
+        args.putString("tabList", tabList);
         thisFrag.setArguments(args);
 
         return thisFrag;
@@ -53,7 +54,7 @@ public class FragmentKitchenAmounts extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_amounts_recyclerview);
 
         try {
-            parseLocations();
+            parseTabs();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -61,18 +62,15 @@ public class FragmentKitchenAmounts extends Fragment {
         return view;
     }
 
-    private void parseLocations() throws JSONException {
-        mLocations = new ArrayList<>();
+    private void parseTabs() throws JSONException {
+        mTabs = new ArrayList<>();
 
-        JSONArray locationCats = new JSONArray(getArguments().getString("locations"));
+        JSONArray tabsJson = new JSONArray(getArguments().getString("tabList"));
 
         Gson gson = new Gson();
-        for(int a = 0; a < locationCats.length(); a++){
-            LocationCategory locCat = gson.fromJson(locationCats.getJSONObject(a).toString(), LocationCategory.class);
-            List<Location> tempLocs = locCat.getLocations();
-            for(int b = 0; b < tempLocs.size(); b++){
-                mLocations.add(tempLocs.get(b));
-            }
+        for(int a = 0; a < tabsJson.length(); a++){
+            Tab tab = gson.fromJson(tabsJson.getJSONObject(a).toString(), Tab.class);
+            mTabs.add(tab);
         }
 
         initRecyclerView();
@@ -103,12 +101,12 @@ public class FragmentKitchenAmounts extends Fragment {
 
 
         NestedKitchenRecyclerAdapter rcAdapter = new NestedKitchenRecyclerAdapter(getActivity(),
-                mLocations,
+                mTabs,
                 R.layout.tile_kitchen_amount,
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
                 null);
 
-        recyclerView.setAdapter(rcAdapter);
+        ///recyclerView.setAdapter(rcAdapter);
 
     }
 
