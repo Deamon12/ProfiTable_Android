@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,16 +96,16 @@ public class FragmentKitchenAmounts extends Fragment {
         }
 
 
+        StaggeredGridLayoutManager stagGridMan = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL);
         GridLayoutManager gridManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(gridManager);
-
+        recyclerView.setLayoutManager(stagGridMan);
 
 
         NestedKitchenRecyclerAdapter rcAdapter = new NestedKitchenRecyclerAdapter(getActivity(),
                 mLocations,
-                R.layout.tile_kitchen_order,
-                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT),
+                R.layout.tile_kitchen_amount,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
                 null);
 
         recyclerView.setAdapter(rcAdapter);

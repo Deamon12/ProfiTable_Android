@@ -53,19 +53,26 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         public ViewHolder(View v) {
             super(v);
 
-
-            mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
-            cardView = (CardView) v.findViewById(R.id.the_cardview);
-            recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
 
-            recyclerView.setHasFixedSize(false);
-            recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
+            if(layout == R.layout.tile_kitchen_order){
 
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+                mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
 
-            cardView.setOnClickListener(this);
+                cardView = (CardView) v.findViewById(R.id.the_cardview);
+                recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
+                recyclerView.setHasFixedSize(false);
+                recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
+
+                v.setOnClickListener(this);
+                v.setOnLongClickListener(this);
+
+                cardView.setOnClickListener(this);
+            }
+            else{
+
+            }
+
 
         }
 
