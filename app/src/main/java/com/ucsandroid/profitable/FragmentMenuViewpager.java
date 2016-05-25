@@ -93,6 +93,7 @@ public class FragmentMenuViewpager extends Fragment {
 
 
     private boolean hasMenu(){
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if(settings.contains(getString(R.string.menu_jsonobject))){
 
@@ -229,6 +230,7 @@ public class FragmentMenuViewpager extends Fragment {
                         mCategories.add(category);
                     }
 
+                    Singleton.getInstance().setmCategories(mCategories);
                     //System.out.println(mCategories.size());
 
                     //TODO: if not same, update

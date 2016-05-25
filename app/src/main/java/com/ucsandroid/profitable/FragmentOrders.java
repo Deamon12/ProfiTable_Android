@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.android.volley.Request;
@@ -129,7 +128,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     OrderedItemClickListener clickListener = new OrderedItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
-            showEditDialog(parentPosition, position);
+            showAdditionsDialog(parentPosition, position);
         }
     };
 
@@ -218,7 +217,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                showEditDialog(customer, position);
+                showAdditionsDialog(customer, position);
             }
         });
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
@@ -262,7 +261,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      * @param customerPosition
      * @param position
      */
-    private void showEditDialog(int customerPosition, int position) {
+    private void showAdditionsDialog(int customerPosition, int position) {
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
@@ -271,6 +270,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             fragmentTransaction.remove(prev);
         }
         fragmentTransaction.addToBackStack(null);
+
+
+        //nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position)
 
         // Create and show the dialog.
         DialogFragment newFragment = DialogItemAttributes.newInstance(customerPosition, position, nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position));
@@ -289,7 +291,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void dialogDismissListener(int customer, int position, List<FoodAddition> additions) {
 
-        //TODO nestedRecyclerAdapter.setAdditionsForItem(customer, position, additions);
+        nestedRecyclerAdapter.setAdditionsForItem(customer, position, additions);
 
         sendUpdateAmountBroadcast();
     }
@@ -327,70 +329,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     //TODO update
     private void uploadOrder(){
-
-        //Location thisLocation = Singleton.getInstance().getCurrentLocation();
-
-        //Add customer to list
-        //List<Customer> customerList = new ArrayList();
-        //ArrayList<Customer> customers = thisLocation.getCustomers();
-
-         /*
-        try {
-
-
-
-            //Customer Loop
-            for (int a = 0; a < customers.size(); a++) {
-
-                System.out.println("Customer " + a + " : " + thisLocation.getJsonLocation().getInt("locationId"));
-
-
-                Customer newCust = new Customer(a, thisLocation.getJsonLocation().getInt("locationId")); //TODO this should be tabId
-
-                //OrderedItems includes menuItem along with other details
-                List<OrderedItem> orderedItems = new ArrayList<>();
-                ArrayList<MenuItem> menuItems = customers.get(a).getItems();
-                //MenuItems Loop - (OrderedItem on server) CHANGE?
-                for(int b = 0; b < menuItems.size(); b++){
-
-                    String itemComment = menuItems.get(b).getComment();
-                    String status = "";
-                    boolean bringFirst = false;
-                    List<FoodAddition> foodAdds = new ArrayList<>();
-                    JSONArray additions = menuItems.get(b).getAdditions();
-                    for(int c = 0; c < additions.length(); c++){
-
-                        String foodAdditionName = additions.getJSONObject(c).getString("foodAdditionName");
-                        int foodAdditionPrice = additions.getJSONObject(c).getInt("foodAdditionPrice");
-                        boolean available = additions.getJSONObject(c).getBoolean("available");
-                        int foodAdditionId = additions.getJSONObject(c).getInt("foodAdditionId");
-
-                        foodAdds.add(new FoodAddition(foodAdditionName, foodAdditionPrice,available,foodAdditionId));
-                    }
-
-                    int menuItemId = menuItems.get(b).getJsonItem().getInt("menuItemId");
-                    String menuName = menuItems.get(b).getJsonItem().getString("menuName");
-
-                    OrderedItem orderedItem =
-                            new OrderedItem(b,
-                                    itemComment,
-                                    status,
-                                    bringFirst,
-                                    new MenuItem(menuItemId, menuName),
-                                    foodAdds);
-
-
-                    newCust.addItem(orderedItem);
-                }//End menuitem
-
-                customerList.add(newCust);
-            }//End customer
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
-
 
 
         Gson gson = new GsonBuilder().create();

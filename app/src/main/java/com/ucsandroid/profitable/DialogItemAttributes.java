@@ -18,9 +18,12 @@ import com.ucsandroid.profitable.adapters.FoodAdditionsRecyclerAdapter;
 import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.DialogDismissListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DialogItemAttributes extends DialogFragment{
@@ -84,60 +87,108 @@ public class DialogItemAttributes extends DialogFragment{
         //TODO :need defaults and optionals
 
         OrderedItem orderedItem = (OrderedItem) getArguments().getSerializable("orderedItem");
-        System.out.println("orderedItem: "+orderedItem.getMenuItem().getName());
-
 
         List<FoodAddition> additions = orderedItem.getAdditions();
-        List<FoodAddition> defaults = orderedItem.getMenuItem().getDefaultAdditions(); //empty?
-        List<FoodAddition> optionals = orderedItem.getMenuItem().getOptionalAdditions(); //empty?
-
-        System.out.println("cats: "+Singleton.getInstance().getmCategories());
-
-        //System.out.println("Addition defaults: "+defaults.toString());
-        //System.out.println("Addition optionals: "+optionals.toString());
+        List<FoodAddition> defaults;// = orderedItem.getMenuItem().getDefaultAdditions(); //empty?
+        List<FoodAddition> optionals;// = orderedItem.getMenuItem().getOptionalAdditions(); //empty?
 
 
-        int logValue = binlog(additions.size());
 
+        /*
 
-        //Set span count to log of dataSet.length
-        int spanCount = logValue >= 1 ? logValue : 1;
+        //All this sucks, need defaults, and optionals attached to menuItems
+        //Start bullshit parsing
+        List<Category> categs = Singleton.getInstance().getmCategories();
 
-        addonsRecycler.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
-        addonsRecycler.setLayoutManager(gridLayoutManager);
-        mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), additions, R.layout.item_checkbox, null, addonsCheckListener);
+        MenuItem foundItem = null;
 
-        addonsRecycler.setAdapter(mAdapter);
+        for(int a = 0; a < categs.size(); a++){
+            //System.out.println("cats: "+categs);
+            if(foundItem != null)
+                break;
 
-    }
-
-
-    //TODO: not implemented, visibility GONE for now
-    private void initSidesRecycler() {
-
-        JSONArray dataSet = dataSet = new JSONArray();
-
-        try {
-
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", "Side "+a);
-                temp.put("checked", false);
-                dataSet.put(temp);
+            for(int b = 0; b < categs.get(a).getMenuItems().size(); b++){
+                if(categs.get(a).getMenuItems().get(b).getId() == orderedItem.getMenuItem().getId()){
+                    foundItem = categs.get(a).getMenuItems().get(b);
+                    //System.out.println("found");
+                    break;
+                }
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-        sidesRecycler.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4, GridLayoutManager.HORIZONTAL, false);
-        sidesRecycler.setLayoutManager(gridLayoutManager);
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, sidesCheckListener);
-        sidesRecycler.setAdapter(rcAdapter);
+        List<FoodAddition> allAdditions = new ArrayList<>();
+
+        if(foundItem != null){
+            //System.out.println("item found ");
+            defaults = foundItem.getDefaultAdditions();
+            optionals = foundItem.getOptionalAdditions();
+
+            //Add defaults, and evaluate if they are checked or not
+            for(int a = 0; a < defaults.size(); a++){
+                for(int b = 0; b < additions.size(); b++){
+                    if(defaults.get(a).getId() == additions.get(b).getId()){
+                        //System.out.println("Checked: "+defaults.get(a).getName());
+                        defaults.get(a).setChecked(true);
+                        break;
+                    }
+                    else{
+                        defaults.get(a).setChecked(false);
+                    }
+                }
+                allAdditions.add(defaults.get(a));
+            }
+
+            //Add optionals, and see if they are checked
+            for(int a = 0; a < optionals.size(); a++){
+                for(int b = 0; b < additions.size(); b++){
+                    if(optionals.get(a).getId() == additions.get(b).getId()){
+                        //System.out.println("Checked: "+optionals.get(a).getName());
+                        optionals.get(a).setChecked(true);
+                        break;
+                    }
+                    else{
+                        optionals.get(a).setChecked(false);
+                    }
+                }
+                allAdditions.add(optionals.get(a));
+            }
+
+            //End bullshit parsing
+
+
+
+
+            int logValue = binlog(allAdditions.size());
+
+            //Set span count to log of dataSet.length
+            int spanCount = logValue >= 1 ? logValue : 1;
+
+            addonsRecycler.setHasFixedSize(true);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
+            addonsRecycler.setLayoutManager(gridLayoutManager);
+            mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), allAdditions, R.layout.item_checkbox, null, addonsCheckListener);
+            addonsRecycler.setAdapter(mAdapter);
+
+        }
+        else{
+        */
+            int logValue = binlog(additions.size());
+
+            //Set span count to log of dataSet.length
+            int spanCount = logValue >= 1 ? logValue : 1;
+
+            addonsRecycler.setHasFixedSize(true);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
+            addonsRecycler.setLayoutManager(gridLayoutManager);
+            mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), additions, R.layout.item_checkbox, null, addonsCheckListener);
+            addonsRecycler.setAdapter(mAdapter);
+        //}
+
+
 
     }
+
+
 
     RecyclerViewCheckListener sidesCheckListener = new RecyclerViewCheckListener() {
         @Override
@@ -149,7 +200,8 @@ public class DialogItemAttributes extends DialogFragment{
     RecyclerViewCheckListener addonsCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-            //System.out.println("Addons: " + position + " to " + isChecked);
+            System.out.println("Addons: " + position + " to " + isChecked);
+
         }
     };
 
