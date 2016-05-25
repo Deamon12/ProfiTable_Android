@@ -48,4 +48,17 @@ public class Category {
     public void addToCategory(MenuItem mi) {
         menuItems.add(mi);
     }
+
+    public MenuItem findMenuItem(int menuId){
+        System.out.println("looking for "+menuId);
+        for(int a = 0; a < menuItems.size();a++){
+            System.out.println("found "+menuItems.get(a).getId());
+            if(menuItems.get(a).getId() == menuId)
+                System.out.println("MenuItem found at "+a);
+                return menuItems.get(a);
+        }
+        System.out.println("MenuItem Not found");
+        return null;
+    }
+
 }

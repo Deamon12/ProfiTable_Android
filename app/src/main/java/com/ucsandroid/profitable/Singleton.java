@@ -14,8 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
+import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.Location;
 
 
@@ -35,6 +37,7 @@ public class Singleton {
 	private ArrayList<Location> mTables;	    //local storage of orders
     private ArrayList<Location> mBars;	        //local storage of orders
     private ArrayList<Location> mTakeouts;	    //local storage of orders
+    private List<Category> mCategories;    //The Menu
 
     private int currentLocationPosition = -1;
     private int currentLocationType = -1;
@@ -195,6 +198,22 @@ public class Singleton {
         }
     }
 
+    public void updateCurrentLocation(Location location){
+
+        if(currentLocationType == TYPE_TABLE){
+            mTables.set(currentLocationPosition, location);
+        }
+        else if(currentLocationType == TYPE_BAR){
+            mBars.set(currentLocationPosition, location);
+        }
+        else if(currentLocationType == TYPE_TAKEOUT){
+            mTakeouts.set(currentLocationPosition, location);
+        }
+        else{
+            System.out.println("invalid location type: "+currentLocationType);
+        }
+    }
+
 
     //Table calls
     public void setTables(JSONArray locations) throws JSONException {
@@ -252,5 +271,14 @@ public class Singleton {
         return mTakeouts;
     }
 
+
+    //Menu - in format of list with categories
+    public void setmCategories(List<Category> menu){
+        mCategories = menu;
+    }
+
+    public List<Category> getmCategories(){
+        return mCategories;
+    }
 
 }

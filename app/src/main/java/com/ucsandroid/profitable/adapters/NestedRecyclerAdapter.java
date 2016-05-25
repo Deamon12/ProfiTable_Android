@@ -55,7 +55,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         //Could use Singleton.getInst.getCurrentLocation
 
         mTab = locationData.getCurrentTab();
-        //TODO: compare local data to server data
 
     }
 
@@ -138,9 +137,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     /**
      * Add new order/customer to local data structure
      */
+    //TODO add to server
     public void addCustomer() {
         mTab.addCustomer(new Customer());
-        //locationData.addCustomer(new Customer());
         selectedPosition = 0;
         notifyDataSetChanged();
     }
@@ -179,7 +178,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-
+        //System.out.println()
 
         if(!mTab.getCustomers().get(position).getCustomerNotes().equalsIgnoreCase("")){
             holder.mCommentTextView.setVisibility(View.VISIBLE);

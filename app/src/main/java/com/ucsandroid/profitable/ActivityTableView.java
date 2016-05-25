@@ -423,6 +423,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         }
     };
 
+
     private void setLocationsFromPrefs() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
         try {

@@ -4,6 +4,9 @@
     <string name="menu_jsonobject">menu_jsonobject</string>
     <string name="locations_jsonobject">locations_jsonobject</string>
     <string name="employee_id">employee_id</string>
+    <string name="rest_id">rest_id</string>
+
+
     <bool name="isTablet">false</bool>
 
 </resources>

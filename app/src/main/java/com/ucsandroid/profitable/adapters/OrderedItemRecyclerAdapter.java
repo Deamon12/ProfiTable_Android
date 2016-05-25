@@ -5,16 +5,24 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.MenuItemClickListener;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
+import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -126,92 +134,22 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        String menuItemName = "";
-        String menuItemPrice = "---";
-        String additionsString = "";
 
-        //List<FoodAddition> defaults = orderedItems.get(position).getDefaultAdditions();
-        //List<FoodAddition> optionals = orderedItems.get(position).getOptionalAdditions();
-
-        //TODO addition UI details
-        /*
-        try {
+        String menuItemName = orderedItems.get(position).getMenuItem().getName();
+        holder.mTextView.setText(menuItemName);
 
 
+        String additions = "";
+        List<FoodAddition> foodAdditions = orderedItems.get(position).getAdditions();
+        for(int a = 0; a < foodAdditions.size(); a++){
 
-
-            //JSONArray defaults = dataSet.get(position).getJsonItem().getJSONArray("defaultAdditions");
-            //JSONArray additions = dataSet.get(position).getAdditions();
-
-
-            for(int a = 0;a < additions.length();a++){
-                boolean found = false;
-                //System.out.println(defaults.getJSONObject(a).getString("foodAdditionName"));
-
-                for(int aa = 0;aa < defaults.length();aa++){
-
-                    if(defaults.getJSONObject(aa).getString("foodAdditionName").equalsIgnoreCase(additions.getJSONObject(a).getString("foodAdditionName"))){
-                        if(additions.getJSONObject(a).getBoolean("checked")){
-                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                        }
-                        else{
-                            //System.out.println("default: "+additions.getJSONObject(a).getString("foodAdditionName")+" : no");
-                            additionsString = additionsString + " / no "+additions.getJSONObject(a).getString("foodAdditionName");
-                        }
-                        found = true;
-                    }
-
-                }
-
-                //If we get here we have an item that is not a default, and might be checked>?
-                if(!found && additions.getJSONObject(a).getBoolean("checked")){
-                    //System.out.println("not default: "+additions.getJSONObject(a).getString("foodAdditionName")+" = yes");
-                    additionsString = additionsString + " / "+additions.getJSONObject(a).getString("foodAdditionName");
-                }
-
-            }
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+            additions = foodAdditions.get(a).getName() + ", "+additions;
         }
 
 
+        additions = additions.substring(0, additions.lastIndexOf(','));
 
-        if(!additionsString.equalsIgnoreCase(""))
-            additionsString = additionsString.substring(3);
-*/
-
-
-/* TODO wtf is this VVV
-        try {
-
-            //MenuItem name
-            menuItemName = dataSet.get(position).getJsonItem().getString("menuName");
-            holder.mTextView.setText(menuItemName);
-
-            //MenuItem with price (menuItemViewpager)
-            if(layout == R.layout.item_textview_textview){
-
-                if (dataSet.get(position).getJsonItem().has("menuItemPrice")) {
-                    double tempMenuItemPrice = dataSet.get(position).getJsonItem().getDouble("menuItemPrice") / 100;
-                    menuItemPrice = currencyFormatter.format(tempMenuItemPrice);
-                    holder.mTextView2.setText(menuItemPrice+"");
-                }
-
-            }//MenuItem with attributes (orderView)
-            else if(layout == R.layout.item_textview_textview2){
-                holder.mTextView2.setText(additionsString);
-
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
-
+        holder.mTextView2.setText("");//TODO need defaults to compare
     }
 
     @Override

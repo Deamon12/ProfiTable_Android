@@ -22,15 +22,15 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
-
-    private Fragment orderFrag;
 
     private FrameLayout customerFragContainer;
     private FrameLayout amountFragContainter;
@@ -64,8 +64,8 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
-        //All orders need a tab assigned to them.
-        checkOrGetTabId();
+
+        getLocationData();
 
         dynamicallySizeContainers();
 
@@ -73,44 +73,29 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    private void checkOrGetTabId() {
-
-/*
-        try {
-            JSONObject thisLocation = Singleton.getInstance().getCurrentLocation().getJsonLocation();
-            int locationId = thisLocation.getInt("locationId");
-
-            //TabId does not exist, this is an empty table
-            if(thisLocation.getJSONObject("currentTab").getInt("tabId") == 0){
-                createTabForThisLocation(locationId);
-            }
-            else{//This table has orders, check locally and server
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
-    }
-
-    private void createTabForThisLocation(int locationId){
+    /**
+     * Get all orders, customers, and anything else related to this location
+     */
+    private void getLocationData(){
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        ////http://52.38.148.241:8080/com.ucsandroid.profitable/rest/orders?rest_id=1&location_id=1
+
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+        int restId = settings.getInt(getString(R.string.rest_id), 1);
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("orders")
-                .appendPath("seat")
                 .appendQueryParameter("location_id", locationId+"")
-                .appendQueryParameter("employee_id", settings.getString(getString(R.string.employee_id), "1"));
+                .appendQueryParameter("rest_id", restId+"");
         String myUrl = builder.build().toString();
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                createTabSuccessListener,
+                getOrderSuccesListener,
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -118,7 +103,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                     }
                 });
 
-        // Access the RequestQueue through your singleton class.
+
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
@@ -171,13 +156,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             toolbar.setTitle("Bar " + (Singleton.getInstance().getCurrentLocationPosition() + 1));
         }
         else if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TAKEOUT){
-            toolbar.setTitle("New Takeout");
-            /*
-            try {
-                toolbar.setTitle(Singleton.getInstance().getCurrentLocation().getJsonLocation().getString("locationName"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
+            toolbar.setTitle("Takeout");
         }
 
         setSupportActionBar(toolbar);
@@ -189,7 +168,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
      */
     private void initFragments() {
 
-        orderFrag = new FragmentOrders();
+        Fragment orderFrag = new FragmentOrders();
         Fragment amountFrag = new FragmentOrderAmount();
         Fragment menuFrag = new FragmentMenuViewpager();
 
@@ -260,20 +239,29 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    private Response.Listener createTabSuccessListener = new Response.Listener() {
+    private Response.Listener getOrderSuccesListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            System.out.println("Volley success: " + response);
+            System.out.println("Location Volley success: " + response);
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
 
-                //If successful retrieval, update saved menu
+                //If successful retrieval, update Singleton
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
-                    sendAddCustomerBroadcast();
+
+                    Gson gson = new Gson();
+                   Location  mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
+
+                    Singleton.getInstance().updateCurrentLocation(mLocation);
+
+                    sendLocationUpdateBroadcast();
+
                 }
                 else{
-                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    if(theResponse.has("message")){
+                        showErrorSnackbar(theResponse.getString("message"));
+                    }
                 }
 
             } catch (JSONException e) {
@@ -283,5 +271,10 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         }
     };
 
+
+    private void sendLocationUpdateBroadcast(){
+        Intent intent = new Intent("update-location");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 
 }

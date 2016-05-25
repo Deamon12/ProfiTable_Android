@@ -83,7 +83,7 @@ public class FragmentMenuViewpager extends Fragment {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                successListener, errorListener);
+                menuRetrieveSuccessListener, errorListener);
 
         // Access the RequestQueue through singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -109,6 +109,11 @@ public class FragmentMenuViewpager extends Fragment {
                     //System.out.println("Categ: "+category.getMenuItems());
                     mCategories.add(category);
                 }
+
+                if(Singleton.getInstance().getmCategories() == null){
+                    Singleton.getInstance().setmCategories(mCategories);
+                }
+
 
                 initViewPager();
                 return true;
@@ -195,11 +200,11 @@ public class FragmentMenuViewpager extends Fragment {
 
 
 
-    private Response.Listener successListener = new Response.Listener() {
+    private Response.Listener menuRetrieveSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            //System.out.println("Volley success: " + response);
-            progressDialog.dismiss();
+
+
             try {
 
                 JSONObject theResponse = new JSONObject(response.toString());
@@ -207,10 +212,12 @@ public class FragmentMenuViewpager extends Fragment {
                 //If successful retrieval, update saved menu
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    SharedPreferences.Editor edit = settings.edit();
-                    edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
-                    edit.apply();
+                    if(getActivity() != null){
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        SharedPreferences.Editor edit = settings.edit();
+                        edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
+                        edit.apply();
+                    }
 
                     mCategories = new ArrayList<>();
                     Gson gson = new Gson();
@@ -234,6 +241,8 @@ public class FragmentMenuViewpager extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            progressDialog.dismiss();
 
         }
     };
