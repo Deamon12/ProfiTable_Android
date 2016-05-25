@@ -148,7 +148,6 @@ public class Singleton {
      */
 	public void setLocations(JSONArray locations) throws JSONException {
 
-
         for(int a = 0; a < locations.length(); a++){
 
             if(locations.getJSONObject(a).getInt("locationCategoryId") == TYPE_TABLE){
@@ -217,8 +216,6 @@ public class Singleton {
 
     //Table calls
     public void setTables(JSONArray locations) throws JSONException {
-
-        System.out.println("locations: "+locations);
 
         mTables = new ArrayList<>();
         for(int a = 0; a < locations.length(); a++){

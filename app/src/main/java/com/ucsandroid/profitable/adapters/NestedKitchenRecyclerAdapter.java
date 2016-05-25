@@ -44,8 +44,6 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        public ImageView mCommentImageView;
-        public ImageView mSettingsButton;
         public TextView mCommentTextView;
         public TextView mTextView;
         public RecyclerView recyclerView;
@@ -55,10 +53,8 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         public ViewHolder(View v) {
             super(v);
 
-            /*
+
             mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
-            mCommentImageView = (ImageView) v.findViewById(R.id.comment_image);
-            mSettingsButton = (ImageView) v.findViewById(R.id.settings);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
             cardView = (CardView) v.findViewById(R.id.the_cardview);
             recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
@@ -69,10 +65,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
 
-            mCommentImageView.setOnClickListener(this);
             cardView.setOnClickListener(this);
-            mSettingsButton.setOnClickListener(this);
-*/
 
         }
 
@@ -110,6 +103,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
 
 
         //holder.mTextView.setText("Customer " + (getItemCount()-position));

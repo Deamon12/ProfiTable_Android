@@ -3,6 +3,7 @@ package com.ucsandroid.profitable;
 import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -15,6 +16,7 @@ import com.ucsandroid.profitable.adapters.NestedKitchenRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.LocationCategory;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,13 +25,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentKitchenOrders extends Fragment {
+public class FragmentKitchenAmounts extends Fragment {
 
     private RecyclerView recyclerView;
     private List<Location> mLocations;
 
-    public static FragmentKitchenOrders newInstance(String locations) {
-        FragmentKitchenOrders thisFrag = new FragmentKitchenOrders();
+    public static FragmentKitchenAmounts newInstance(String locations) {
+        FragmentKitchenAmounts thisFrag = new FragmentKitchenAmounts();
 
         Bundle args = new Bundle();
         args.putString("locations", locations);
@@ -38,7 +40,7 @@ public class FragmentKitchenOrders extends Fragment {
         return thisFrag;
     }
 
-    public FragmentKitchenOrders(){
+    public FragmentKitchenAmounts(){
 
     }
 
@@ -46,8 +48,8 @@ public class FragmentKitchenOrders extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_kitchen_orders, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_orders_recyclerview);
+        View view = inflater.inflate(R.layout.fragment_kitchen_amounts, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_amounts_recyclerview);
 
         try {
             parseLocations();
@@ -75,57 +77,38 @@ public class FragmentKitchenOrders extends Fragment {
         initRecyclerView();
     }
 
+
     private void initRecyclerView() {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
 
-        int layoutHeight, layoutWidth;
+        int tileLayoutWidth;
         int orientation = getResources().getConfiguration().orientation;
 
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //tileLayoutHeight = (int)(metrics.heightPixels);
-            layoutWidth = (int) (metrics.widthPixels * .3);
+            tileLayoutWidth = (int) (metrics.widthPixels * .3);
 
         } else {
-            //tileLayoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int) (metrics.widthPixels * .4);
-            //tileLayoutHeight = tileLayoutWidth;
+            tileLayoutWidth = (int) (metrics.widthPixels * .4);
         }
 
 
-
-/*
-        MyLinearLayoutManager layoutManager
-                = new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-*/
-
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        GridLayoutManager gridManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(gridManager);
+
 
 
         NestedKitchenRecyclerAdapter rcAdapter = new NestedKitchenRecyclerAdapter(getActivity(),
                 mLocations,
                 R.layout.tile_kitchen_order,
-                new ViewGroup.LayoutParams(layoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT),
+                new ViewGroup.LayoutParams(tileLayoutWidth, ViewGroup.LayoutParams.WRAP_CONTENT),
                 null);
 
         recyclerView.setAdapter(rcAdapter);
+
     }
-
-
-    LocationClickListener clickListener = new LocationClickListener() {
-
-        @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
-
-
-        }
-
-    };
-
 
 }

@@ -33,7 +33,6 @@ public class FragmentMenuViewpager extends Fragment {
     private MenuCollectionStatePagerAdapter mMenuPages;
     private ViewPager mViewPager;
     private View mView;
-    //private JSONArray mMenuItems;
 
     private List<Category> mCategories;
     private ProgressDialog progressDialog;

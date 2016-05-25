@@ -1,8 +1,9 @@
 package com.ucsandroid.profitable.serverclasses;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Location {
+public class Location implements Serializable {
 
     private int locationId;
     private String locationStatus;
