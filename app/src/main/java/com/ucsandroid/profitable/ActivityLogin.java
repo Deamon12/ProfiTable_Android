@@ -72,7 +72,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
     //Function to jump to the reset page if you forgot pass/username
     private void resetPage() {
-        Intent forgotLoginActivity = new Intent(ActivityLogin.this, ActivityForgotLogin.class);
+        Intent forgotLoginActivity = new Intent(ActivityLogin.this, RetrieveLoginInfo.class);
         startActivity(forgotLoginActivity);
         finish();
     }

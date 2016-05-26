@@ -6,10 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-abstract class EmailLoginInfo extends AppCompatActivity implements View.OnClickListener {
+public class RetrieveLoginInfo extends AppCompatActivity implements View.OnClickListener {
 
     private Button sendButton, backToLoginButton;
     private EditText user_email;
@@ -17,7 +16,7 @@ abstract class EmailLoginInfo extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.email_login_info);
+        setContentView(R.layout.retrieve_login_info);
 
         //Buttons
         sendButton = (Button) findViewById(R.id.respass);
@@ -55,8 +54,13 @@ abstract class EmailLoginInfo extends AppCompatActivity implements View.OnClickL
 
     //Function to jump to the main login page if you forgot pass/username
     private void loginAgain() {
-        Intent loginAgain = new Intent(EmailLoginInfo.this, ActivityLogin.class);
+        Intent loginAgain = new Intent(RetrieveLoginInfo.this, ActivityLogin.class);
         startActivity(loginAgain);
         finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
