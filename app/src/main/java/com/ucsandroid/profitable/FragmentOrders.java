@@ -176,13 +176,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             public void onReceive(Context context, Intent intent) {
 
                 if (nestedRecyclerAdapter != null) {
-                    //TODO menuItem or orderedItem?
-                    //addItem((MenuItem) intent.getSerializableExtra("menuItem"));
+                    addItem((MenuItem) intent.getSerializableExtra("menuItem"));
                 }
-
-                //Send broadcast to update amount calculation
-                sendUpdateAmountBroadcast();
-
             }
         };
 
@@ -194,18 +189,27 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      * MenuItem to be used to update amount of orders and orders UI
      * @param item
      */
-    public void addItem(OrderedItem item) {
+    public void addItem(MenuItem item) {
 
-        //TODO notify server after send to kitchen click
+
         if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
-            //System.out.println("Need to add item: " + item + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
-            nestedRecyclerAdapter.addItemToCustomer(nestedRecyclerAdapter.getSelectedPosition(), item); //TODO: start attribute flow if necessary
+
+            System.out.println("Need to add item: " + item.getName() + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
+
+            int orderedItemId = 89;
+            String orderedItemNotes = "notes";
+            String orderedItemStatus = "status";
+            boolean bringFirst = false;
+            List<FoodAddition> additions = item.getDefaultAdditions();
+
+            nestedRecyclerAdapter.addOrderedItemToCustomer( new OrderedItem(orderedItemId,orderedItemNotes,orderedItemStatus,bringFirst,item,additions ));
             checkSendToKitchenVisibility();
 
         } else { //No customer is selected
             //System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
         }
 
+        sendUpdateAmountBroadcast();
     }
 
 

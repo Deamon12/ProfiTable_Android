@@ -53,7 +53,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.nestedLongClickListener = longClickListener;
 
         //Could use Singleton.getInst.getCurrentLocation
-
         mTab = locationData.getCurrentTab();
 
     }
@@ -220,10 +219,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     /**
      * Setter method to be accessed from the fragment that contains this adapter
-     * @param customerPosition the customer position in the array
      * @param item
      */
-    public void addItemToCustomer(int customerPosition, OrderedItem item) {
+    public void addOrderedItemToCustomer(OrderedItem item) {
 
         if (selectedPosition != -1) {
             mTab.getCustomers().get(selectedPosition).addItem(item);
@@ -231,10 +229,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
     }
 
+    //TODO send remove item webservice
     //Remove a specific item from the items list
     public void removeItemFromCustomer(int customer, int position) {
-
-        //TODO send remove item webservice
 
         locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position).setOrderedItemStatus("");
         locationData.getCurrentTab().getCustomers().get(customer).removeItem(position);
@@ -253,11 +250,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     public OrderedItem getOrderedItemFromCustomer(int customer, int position){
         return mTab.getCustomers().get(customer).getOrders().get(position);
-    }
-
-    public MenuItem getItemFromCustomer(int customer, int position){
-
-        return mTab.getCustomers().get(customer).getOrders().get(position).getMenuItem();
     }
 
     /**

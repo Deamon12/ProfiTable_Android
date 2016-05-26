@@ -82,7 +82,10 @@ public class FragmentMenuItem extends Fragment {
     }
 
     private void sendAddItemToCustomerBroadcast(int customer, int position, MenuItem item) {
+        System.out.println("Add item to customer "+customer+". Position = "+position);
         Intent intent = new Intent("add-item");
+        intent.putExtra("customerPosition", customer);
+        intent.putExtra("itemPosition", position);
         intent.putExtra("menuItem", item);
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
