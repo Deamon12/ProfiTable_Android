@@ -20,8 +20,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         //Buttons
-        loginOkButton = (Button) findViewById(R.id.login_ok_button);
-        loginForgotButton = (Button) findViewById(R.id.login_forgot_button);
+        //loginOkButton = (Button) findViewById(R.id.login_ok_button);
+        //loginForgotButton = (Button) findViewById(R.id.login_forgot_button);
 
         //Input Textfields
         username_textfield = (EditText) findViewById(R.id.username_textfield);
@@ -33,6 +33,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
          otherwise inform user and do not move on.
          TODO: Implement access to Database to check for correct login
          */
+        /*
         loginOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +50,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(getApplicationContext(), "Incorrect Login", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-
+        });*/
+/*
         //If you forgot login info, press this button, then move on to ForgotLogin page
         loginForgotButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +60,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 resetPage();
                 }
             }
-        });
+        });*/
+
     }
 
     //Function to jump to the tableViewActivity page after log-in is succcessful
