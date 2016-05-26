@@ -134,7 +134,7 @@ public class Tab {
         this.server = server;
     }
     public void addCustomer(Customer c) {
-        this.customers.add(c);
+        this.customers.add(0, c);
     }
     public void removeCustomer(int position){
         customers.remove(position);

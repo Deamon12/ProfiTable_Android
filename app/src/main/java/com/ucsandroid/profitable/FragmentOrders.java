@@ -78,7 +78,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         return view;
     }
 
-
     /**
      * Unregister Broadcast listeners when this fragment gets detached, to prevent duplication
      */
@@ -95,8 +94,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      * Init recyclerview with tiles to hold customers and the orders that go with the customers
      */
     private void initRecyclerView() {
-
-        System.out.println("In initRecyclerView");
 
         int spanCount;
 
@@ -120,7 +117,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
     }
 
-
     /**
      * Click listener for inner nested recyclerview. Pair this result with the current adapter position
      * to understand what customer and what item has been clicked.
@@ -141,8 +137,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
             showLongClickedDialog(parentPosition, position);
         }
-
-
     };
 
     /**
@@ -194,8 +188,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
 
-            System.out.println("Need to add item: " + item.getName() + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
-
+            //System.out.println("Need to add item: " + item.getName() + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
             int orderedItemId = 89;
             String orderedItemNotes = "notes";
             String orderedItemStatus = "status";
@@ -211,7 +204,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         sendUpdateAmountBroadcast();
     }
-
 
 
     private void showLongClickedDialog(final int customer, final int position) {
@@ -304,6 +296,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void onClick(View v) {
         if(v == sendToKitchenButton){
+            sendToKitchenButton.setVisibility(View.GONE);
             uploadOrder();
         }
     }
@@ -329,8 +322,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         String customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
 
-        System.out.println("GSON customer: "+ customerslist);
-
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
@@ -339,8 +330,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
                 .appendQueryParameter("customers", customerslist);
 
         String myUrl = builder.build().toString();
-
-        //System.out.println("myUrl: " + myUrl);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 myUrl,
@@ -385,6 +374,5 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateOrderUI,
                 new IntentFilter("update-location"));
     }
-
 
 }

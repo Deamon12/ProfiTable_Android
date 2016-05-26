@@ -30,7 +30,6 @@ public class DialogItemAttributes extends DialogFragment {
 
     private FoodAdditionsRecyclerAdapter mAdapter;
     private RecyclerView addonsRecycler;
-    private RecyclerView sidesRecycler;
 
     static DialogItemAttributes newInstance(int customer, int position, OrderedItem item) {
         DialogItemAttributes f = new DialogItemAttributes();
@@ -58,7 +57,6 @@ public class DialogItemAttributes extends DialogFragment {
 
         View v = inflater.inflate(R.layout.dialog_attributes, container, false);
         addonsRecycler = (RecyclerView) v.findViewById(R.id.addons_recycler);
-        sidesRecycler = (RecyclerView) v.findViewById(R.id.sides_recycler);
 
         Button doneButton = (Button) v.findViewById(R.id.done_button);
         doneButton.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +67,6 @@ public class DialogItemAttributes extends DialogFragment {
         });
 
         initAddonsRecycler();
-        //initSidesRecycler();
-
 
         return v;
     }
@@ -90,9 +86,7 @@ public class DialogItemAttributes extends DialogFragment {
         List<FoodAddition> optionals;
         List<FoodAddition> allAdditions = new ArrayList<>();
 
-        System.out.println("MEnuITem : "+orderedItem.getMenuItem().getName());
         MenuItem defaultItem = Singleton.getInstance().getMenuItem(orderedItem.getMenuItem().getId());
-        System.out.println("MEnuITem from hash: "+defaultItem.getName());
 
         if (defaultItem != null) {
             defaults = defaultItem.getDefaultAdditions();
@@ -116,22 +110,9 @@ public class DialogItemAttributes extends DialogFragment {
                         //break;
                     }
                 }
-
             }
 
             //Should have complete additions with checked items (allAdditions)
-            for (FoodAddition item : allAdditions) {
-                System.out.println("All additions: " + item.getName());
-            }
-
-            for (FoodAddition item : defaults) {
-                System.out.println("default additions: " + item.getName());
-            }
-
-            for (FoodAddition item : selectedAdditions) {
-                System.out.println("selected additions: " + item.getName());
-            }
-
 
         }
 
@@ -161,7 +142,7 @@ public class DialogItemAttributes extends DialogFragment {
     RecyclerViewCheckListener addonsCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-            System.out.println("Addons: " + position + " to " + isChecked);
+            //System.out.println("Addons: " + position + " to " + isChecked);
 
         }
     };
@@ -195,7 +176,7 @@ public class DialogItemAttributes extends DialogFragment {
     }
 
     /**
-     * Overridden onDismiss to communicate back to the interface attached to the calling fragment
+     * Overridden onDismiss to communicate back to the calling fragment
      * So that we the addition items can be passed back to update the UI and data structures
      *
      * @param dialog

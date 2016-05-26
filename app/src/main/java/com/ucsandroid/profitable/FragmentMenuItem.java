@@ -62,7 +62,6 @@ public class FragmentMenuItem extends Fragment {
         return rootView;
     }
 
-
     /**
      * recycler that shows items for a particular food category
      */
@@ -71,18 +70,14 @@ public class FragmentMenuItem extends Fragment {
         Gson gson = new Gson();
         Category category = gson.fromJson(getArguments().getString("dataset"), Category.class);
 
-        //System.out.println("dataset: "+getArguments().getString("dataset"));
-        //JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
-
         recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
         CategoryRecyclerAdapter mAdapter = new CategoryRecyclerAdapter(getActivity(), category, R.layout.item_textview_textview, null, clickListener);
         recyclerView.setAdapter(mAdapter);
 
-
     }
 
     private void sendAddItemToCustomerBroadcast(int customer, int position, MenuItem item) {
-        System.out.println("Add item to customer "+customer+". Position = "+position);
+        //System.out.println("Add item to customer "+customer+". Position = "+position);
         Intent intent = new Intent("add-item");
         intent.putExtra("customerPosition", customer);
         intent.putExtra("itemPosition", position);
