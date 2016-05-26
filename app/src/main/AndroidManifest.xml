@@ -9,6 +9,11 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <!-- For Volley -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.NFC" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/profit_logo"
@@ -25,7 +30,9 @@
 
         <activity android:name=".ActivityTableView" />
         <activity android:name=".ActivityOrderView" />
-        <activity android:name=".ActivityKitchen"/>
+        <activity android:name=".ActivityKitchen" />
+        <activity android:name=".ActivityCheckout"/>
+
     </application>
 
 </manifest>

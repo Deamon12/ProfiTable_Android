@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:layout_margin="10dp">
+    android:id="@+id/the_cardview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tile_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="35"
+            android:textSize="16sp"
+            android:layout_marginLeft="5dp"
+            />
 
         <TextView
             android:id="@+id/tile_total"
@@ -15,24 +25,15 @@
             android:text="$150.00"
             android:textSize="24sp" />
 
+
         <ImageView
             android:id="@+id/tile_image"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:src="@drawable/profit_bar_icon"
             android:layout_below="@+id/tile_text"
-            android:padding="5dp"/>
-
-        <TextView
-            android:id="@+id/tile_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="35"
-            android:textSize="14sp"
-            />
-
-
+            android:padding="10dp"/>
 
 
     </RelativeLayout>

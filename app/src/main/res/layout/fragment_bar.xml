@@ -2,47 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/the_relative">
+    android:id="@+id/the_relative"
+    android:animateLayoutChanges="true"
+    >
 
-    <!--
-    <View
-        android:id="@+id/partition_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_light"
-        android:layout_alignTop="@+id/section_text"
-        android:layout_alignBottom="@+id/section_text"
-        />
-
-    <TextView
-        android:id="@+id/section_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bar"
-        android:padding="5dp"
-        android:textSize="20sp"
-        android:layout_alignParentLeft="true"
-        android:ellipsize="end"
-        android:lines="1"
-        android:gravity="center_vertical"
-        android:layout_toLeftOf="@+id/bar_divider_arrow"/>
-
-    <ImageView
-        android:id="@+id/bar_divider_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_drop_down_white_18dp"
-        android:layout_alignTop="@+id/section_text"
-        android:layout_alignBottom="@+id/section_text"
-        android:layout_alignParentRight="true"
-        android:scaleType="fitCenter" />
-
--->
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="0dp"
         android:id="@+id/bar_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 
 </RelativeLayout>

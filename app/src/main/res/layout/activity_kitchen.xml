@@ -18,6 +18,12 @@
         android:layout_below="@+id/the_toolbar"
         android:layout_above="@+id/kitchen_totals_frag_container"/>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/primary"
+        android:layout_above="@+id/kitchen_totals_frag_container"/>
 
     <FrameLayout
         android:id="@+id/kitchen_totals_frag_container"

@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,28 +12,28 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
-import java.util.ArrayList;
+import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
+import com.ucsandroid.profitable.serverclasses.Location;
 
-import supportclasses.MyAdapter;
+public class FragmentBar extends Fragment {
 
-public class FragmentBar extends Fragment implements View.OnClickListener {
-
-    private RecyclerView recyclerView;
-    private GridLayoutManager gridLayout;
+    private LocationRecyclerAdapter mAdapter;
+    private int mRecyclerViewWidth;
+    private RecyclerView mRecyclerView;
+    private int spanCount;
+    private int tileLayoutWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_bar, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
-
-
-
-
-
         return view;
     }
 
@@ -47,53 +48,108 @@ public class FragmentBar extends Fragment implements View.OnClickListener {
         if(!shown)
             ((ActivityTableView)getActivity()).toggleBarSection(false);
 
+        if(mAdapter != null && Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR) {
+            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+        }
+        else{
+            //System.out.println("bar adapter is null");
+        }
+
     }
 
     private void initRecyclerView() {
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        spanCount = getSpanCount();
 
-        int iconRowLength;
-        int layoutHeight, layoutWidth;
+        ViewTreeObserver vto = mRecyclerView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                int orientation = getResources().getConfiguration().orientation;
+
+                //Cant use the recycler width, because it may be set to GONE, which would be zero width
+                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    mRecyclerViewWidth  = (int) (metrics.widthPixels*.5);
+                }else{
+                    mRecyclerViewWidth  = (int) (metrics.widthPixels);
+                }
+
+                tileLayoutWidth = (mRecyclerViewWidth/spanCount);
+
+                getTableData();
+
+            }
+        });
+
+    }
+
+
+    private void getTableData() {
+
+        GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), spanCount);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(gridLayout);
+
+
+        mAdapter = new LocationRecyclerAdapter(
+                        getActivity(),
+                        Singleton.getInstance().getBars(),
+                        R.layout.tile_bar,
+                        new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
+                        clickListener,
+                        locationLongClickListener);
+
+        mRecyclerView.setAdapter(mAdapter);
+
+
+    }
+
+    private int getSpanCount(){
+
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            iconRowLength = 8;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
+        if (tabletSize) {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                return 8;
+            }else
+                return 9;
+        } else {
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+                return 5;
+            else
+                return 6;
+        }
+    }
 
-
-        }else{
-            iconRowLength = 9;
-            layoutHeight = (int)(metrics.heightPixels*.1);
-            layoutWidth = (int)(metrics.widthPixels*.1);
-            layoutHeight = layoutWidth;
+    LocationClickListener clickListener = new LocationClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            Singleton.getInstance().setLocationType(Singleton.TYPE_BAR);
+            Singleton.getInstance().setCurrentLocationPosition(position);
+            goToOrder();
         }
 
-        ArrayList<String> dataSet = new ArrayList<>();
+    };
 
-        for(int a = 1; a <= 50; a++)
-            dataSet.add(""+a);
+    LocationLongClickListener locationLongClickListener = new LocationLongClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            System.out.println("tableId: "+item.getId());
+            System.out.println("restId: "+item.getRestaurantId());
+            System.out.println("tabId: "+item.getCurrentTab().getTabId());
 
+        }
+    };
 
-        gridLayout = new GridLayoutManager(this.getActivity(), iconRowLength);
-        //recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(gridLayout);
-
-        MyAdapter rcAdapter = new MyAdapter(getActivity(), dataSet, R.layout.tile_bar, new ViewGroup.LayoutParams(
-                layoutWidth,
-                layoutHeight));
-        recyclerView.setAdapter(rcAdapter);
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
     }
-
-
-    @Override
-    public void onClick(View v) {
-
-
-
-    }
-
 
 }

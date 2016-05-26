@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/the_toolbar"
@@ -13,7 +14,7 @@
 
     <FrameLayout
         android:id="@+id/table_frag_container"
-        android:layout_width="500dp"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/the_toolbar"/>
 
@@ -50,6 +51,7 @@
         android:layout_alignTop="@+id/section_text_bar"
         android:layout_alignBottom="@+id/section_text_bar"
         android:layout_alignParentRight="true"
+        android:tint="@color/accent"
         android:scaleType="fitCenter" />
 
     <!--end divider-->
@@ -94,6 +96,7 @@
         android:layout_alignTop="@+id/section_text_takeout"
         android:layout_alignBottom="@+id/section_text_takeout"
         android:layout_alignParentRight="true"
+        android:tint="@color/accent"
         android:scaleType="fitCenter" />
 
     <!--end divider-->

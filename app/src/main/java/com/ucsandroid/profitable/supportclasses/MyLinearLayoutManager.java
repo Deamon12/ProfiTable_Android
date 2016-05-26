@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.supportclasses;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -10,6 +10,10 @@ import android.view.View;
 
 import java.lang.reflect.Field;
 
+
+/**
+ * Used to provide proper formatting for nested recyclerviews.
+ */
 public class MyLinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
 
     private static boolean canMakeInsetsDirty = true;
