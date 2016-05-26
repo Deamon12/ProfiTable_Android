@@ -223,9 +223,8 @@ public class Singleton {
         for(int a = 0; a < locations.length(); a++){
             Gson gson = new Gson();
             Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
-            System.out.println("Tablelocation: "+location.getName());
+            //System.out.println("Tablelocation: "+location.getName());
             mTables.add(location);
-            //mTables.add(new Location(locations.getJSONObject(a)));
         }
     }
 
@@ -245,7 +244,7 @@ public class Singleton {
         for(int a = 0; a < locations.length(); a++){
             Gson gson = new Gson();
             Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
-            System.out.println("barLoc: "+location.getName());
+            //System.out.println("barLoc: "+location.getName());
             mBars.add(location);
         }
     }
@@ -259,7 +258,6 @@ public class Singleton {
         for(int a = 0; a < locations.length(); a++){
             Gson gson = new Gson();
             Location location = gson.fromJson(locations.getJSONObject(a).toString(), Location.class);
-            System.out.println(location.getId()+", takeout: "+location.getName());
 
             mTakeouts.add(location);
         }

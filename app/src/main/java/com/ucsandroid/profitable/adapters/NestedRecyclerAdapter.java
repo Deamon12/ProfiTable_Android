@@ -3,6 +3,7 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -33,7 +34,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private int layout;
 
     private Location locationData;
-    private Tab mTab;
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
@@ -51,11 +51,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
-
-        //Could use Singleton.getInst.getCurrentLocation
-
-        mTab = locationData.getCurrentTab();
-
     }
 
 
@@ -139,7 +134,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      */
     //TODO add to server
     public void addCustomer() {
-        mTab.addCustomer(new Customer());
+        locationData.getCurrentTab().addCustomer(new Customer());
         selectedPosition = 0;
         notifyDataSetChanged();
     }
@@ -149,8 +144,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * @param position
      */
     public void removeCustomer(int position) {
-        mTab.removeCustomer(position);
-        //locationData.removeCustomer(position);
+        locationData.getCurrentTab().removeCustomer(position);
         selectedPosition = -1;
         sendUpdateAmountBroadcast();
         notifyDataSetChanged();
@@ -162,9 +156,8 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if (layoutParams == null) {
-        } else {
-            //v.getLayoutParams().height = layoutParams.height;
+        if (layoutParams != null) {
+            v.getLayoutParams().height = layoutParams.height;
             v.getLayoutParams().width = layoutParams.width;
         }
 
@@ -178,11 +171,9 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        //System.out.println()
-
-        if(!mTab.getCustomers().get(position).getCustomerNotes().equalsIgnoreCase("")){
+        if(!locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes().equalsIgnoreCase("")){
             holder.mCommentTextView.setVisibility(View.VISIBLE);
-            holder.mCommentTextView.setText(mTab.getCustomers().get(position).getCustomerNotes());
+            holder.mCommentTextView.setText(locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes());
         }
         else{
             holder.mCommentTextView.setVisibility(View.GONE);
@@ -193,12 +184,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         //initialize the last tile as selected
         if (selectedPosition == -11 && position == (getItemCount() - 1)) {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
             selectedPosition = (getItemCount() - 1);
         } else if (selectedPosition != -1 && position == selectedPosition) {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
         } else {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
+            holder.cardView.setCardBackgroundColor(0);
         }
 
 
@@ -210,7 +201,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public int getItemCount() {
-        return mTab.getCustomers().size();
+        return locationData.getCurrentTab().getCustomers().size();
     }
 
 
@@ -220,21 +211,19 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     /**
      * Setter method to be accessed from the fragment that contains this adapter
-     * @param customerPosition the customer position in the array
      * @param item
      */
-    public void addItemToCustomer(int customerPosition, OrderedItem item) {
+    public void addOrderedItemToCustomer(OrderedItem item) {
 
         if (selectedPosition != -1) {
-            mTab.getCustomers().get(selectedPosition).addItem(item);
+            locationData.getCurrentTab().getCustomers().get(selectedPosition).addItem(item);
             notifyItemChanged(selectedPosition);
         }
     }
 
+    //TODO send remove item webservice
     //Remove a specific item from the items list
     public void removeItemFromCustomer(int customer, int position) {
-
-        //TODO send remove item webservice
 
         locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position).setOrderedItemStatus("");
         locationData.getCurrentTab().getCustomers().get(customer).removeItem(position);
@@ -245,19 +234,13 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     //Update the additions for a specific item
     public void setAdditionsForItem(int customer, int position, List<FoodAddition> additions) {
 
-        System.out.println("Updating additions: "+additions);
-        mTab.getCustomers().get(customer).getOrders().get(position).setAdditions(additions);
+        locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position).setAdditions(additions);
         notifyItemChanged(customer);
     }
 
 
     public OrderedItem getOrderedItemFromCustomer(int customer, int position){
-        return mTab.getCustomers().get(customer).getOrders().get(position);
-    }
-
-    public MenuItem getItemFromCustomer(int customer, int position){
-
-        return mTab.getCustomers().get(customer).getOrders().get(position).getMenuItem();
+        return locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position);
     }
 
     /**
@@ -324,14 +307,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         dialog.setTitle("Add comment");
 
 
-        edittext.setText(mTab.getCustomers().get(position).getCustomerNotes());
+        edittext.setText(locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes());
         dialog.setView(edittext);
 
         dialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 String commentText = edittext.getText().toString();
-                mTab.getCustomers().get(position).setCustomerNotes(commentText);
+                locationData.getCurrentTab().getCustomers().get(position).setCustomerNotes(commentText);
                 notifyItemChanged(position);
 
             }

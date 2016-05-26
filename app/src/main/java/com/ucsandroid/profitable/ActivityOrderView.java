@@ -238,14 +238,14 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     //TODO: change to snackbar
     public void showErrorSnackbar(String message){
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
 
     private Response.Listener getOrderSuccesListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            System.out.println("Location Volley success: " + response);
+            //System.out.println("Location Volley success: " + response);
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());

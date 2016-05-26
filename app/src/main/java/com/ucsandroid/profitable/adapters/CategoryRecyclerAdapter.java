@@ -80,7 +80,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         public void onClick(View v) {
 
             if (clickListener != null) {
-                //System.out.println("BasicRecycler: " + getAdapterPosition());
                 clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), mMenuItems.get(getAdapterPosition()));
             }
         }
@@ -92,15 +91,12 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if (params == null) {
-
-        } else {
+        if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
         }
 
         ViewHolder vh = new ViewHolder(v);
-
 
         return vh;
     }

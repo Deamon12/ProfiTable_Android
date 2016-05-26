@@ -52,7 +52,7 @@ public class FragmentMenuViewpager extends Fragment {
 
         //TODO: make the call to get updated menu? Could be push notified
         //if(!hasMenu())
-            getMenu();
+        getMenu();
 
         return mView;
     }
@@ -109,7 +109,6 @@ public class FragmentMenuViewpager extends Fragment {
                     mCategories.add(category);
                 }
 
-
                 initViewPager();
                 return true;
             } catch (JSONException e) {
@@ -136,7 +135,6 @@ public class FragmentMenuViewpager extends Fragment {
             TabLayout tabLayout = (TabLayout) mView.findViewById(R.id.sliding_tabs);
             tabLayout.setupWithViewPager(mViewPager);
 
-
         }
     }
 
@@ -162,7 +160,6 @@ public class FragmentMenuViewpager extends Fragment {
             } else {
                 color = android.R.color.white;
             }
-
 
             FragmentMenuItem fragment = FragmentMenuItem.newInstance(color, mCategories.get(position));
 
@@ -235,7 +232,6 @@ public class FragmentMenuViewpager extends Fragment {
                         mCategories = freshCats;
                         initViewPager();
                     }
-
 
                 }
                 else{

@@ -28,15 +28,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     private LocationLongClickListener longClickListener;
     private Context context;
 
-
-    public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, LocationClickListener clickListener) {
-        this.dataSet = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.params = params;
-        this.clickListener = clickListener;
-    }
-
     public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, LocationClickListener clickListener,
                                    LocationLongClickListener longClickListener) {
         this.dataSet = dataSet;
@@ -109,12 +100,13 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         if(layout == R.layout.tile_kitchen_order){
             holder.mTextView.setText(dataSet.get(position).getName());
 
-
         }
         else{
             holder.mTextView.setText(""+(position+1));
 
-            if(dataSet.get(position).getCurrentTab().getTabId() != 0){ //TODO change to status
+            if(dataSet.get(position).getCurrentTab().getTabId() != 0
+                    || dataSet.get(position).getLocationCost() > 0){ //TODO change to status
+
                 holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
             }
             else{

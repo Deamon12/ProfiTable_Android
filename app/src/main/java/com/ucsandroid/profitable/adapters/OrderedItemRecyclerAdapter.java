@@ -78,8 +78,6 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
                 mImageView = (ImageView) v.findViewById(R.id.tile_image);
             }
 
-
-
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
 
@@ -88,20 +86,16 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
 
         @Override
         public void onClick(View v) {
-
-            System.out.println("Clicked item: "+getAdapterPosition());
-
             if (clickListener != null) {
                 clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()));
             }
-
         }
 
         @Override
         public boolean onLongClick(View v) {
 
-            //if(longClickListener != null)
-            //    longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+            if(longClickListener != null)
+                longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()).getMenuItem());
 
             return true;
         }
@@ -154,7 +148,6 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
         }
 
         //Have list of ALL at this point
-
 
         //Loop through all and check the correct ones
         for(FoodAddition item : allAdditions){

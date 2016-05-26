@@ -46,14 +46,6 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         this.layout = layout;
         this.params = params;
         this.checkListener = checkListener;
-    }
-
-    public FoodAdditionsRecyclerAdapter(Context context, List<FoodAddition> dataSet, int layout, ViewGroup.LayoutParams params, RecyclerViewClickListener clickListener) {
-        additionList = dataSet;
-        this.context = context;
-        this.layout = layout;
-        this.params = params;
-        this.clickListener = clickListener;
 
         //temp US currency
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -64,7 +56,6 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         currentLocale = new Locale(localeLang, localeCountry);
         currentCurrency = Currency.getInstance(currentLocale);
         currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
-
     }
 
 
@@ -99,13 +90,6 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         public void onClick(View v) {
 
             if (clickListener != null) {
-                //System.out.println("BasicRecycler: " + getAdapterPosition());
-               /* try {
-                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), new MenuItem(dataSet.getJSONObject(getAdapterPosition()))); //TODO
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
-
             }
         }
 
@@ -113,9 +97,7 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             additionList.get(getAdapterPosition()).setChecked(isChecked);
-            //checkListener.recyclerViewListChecked(buttonView, -1, getAdapterPosition(), isChecked);
         }
-
     }
 
 
@@ -124,15 +106,12 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        if (params == null) {
-
-        } else {
+        if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
         }
 
         ViewHolder vh = new ViewHolder(v);
-
 
         return vh;
     }

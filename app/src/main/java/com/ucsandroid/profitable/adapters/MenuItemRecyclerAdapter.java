@@ -75,9 +75,6 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
                 mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
             }
 
-
-
-
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
 
@@ -88,9 +85,7 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         public void onClick(View v) {
 
             if (clickListener != null) {
-
                 clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), menuItemsData.get(getAdapterPosition()));
-
             }
         }
 
