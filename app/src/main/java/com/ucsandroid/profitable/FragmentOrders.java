@@ -242,7 +242,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         checkSendToKitchenVisibility();
     }
 
-    /**
+    /**todo
      * Hide sendToKitchenButton, if the table has no orders for it
      */
     private void checkSendToKitchenVisibility(){
@@ -271,10 +271,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         }
         fragmentTransaction.addToBackStack(null);
 
-
-        //nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position)
-
-        // Create and show the dialog.
         DialogFragment newFragment = DialogItemAttributes.newInstance(customerPosition, position, nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position));
         newFragment.setTargetFragment(this, 0);
 
@@ -292,16 +288,14 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     public void dialogDismissListener(int customer, int position, List<FoodAddition> additions) {
 
         nestedRecyclerAdapter.setAdditionsForItem(customer, position, additions);
-
         sendUpdateAmountBroadcast();
     }
 
-
     private void sendUpdateAmountBroadcast(){
+        Singleton.getInstance().getCurrentLocation().setEditedLocally(true);
         Intent updateIntent = new Intent("update-amount");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(updateIntent);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -324,12 +318,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
 
-    /**
-     * CRAZY PARSING
-     */
-    //TODO update
-    private void uploadOrder(){
 
+    private void uploadOrder(){
 
         Gson gson = new GsonBuilder().create();
 
@@ -346,14 +336,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         String myUrl = builder.build().toString();
 
+        //System.out.println("myUrl: " + myUrl);
 
-        //String workingURL = "http://52.38.148.241:8080/com.ucsandroid.profitable/rest/orders/parseTest?customers=[{%22order%22:[{%22additions%22:[{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:3,%22foodAdditionPrice%22:0,%22restaurantId%22:0},{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:1,%22foodAdditionPrice%22:0,%22restaurantId%22:0},{%22foodAdditionName%22:%22%22,%22available%22:false,%22foodAdditionId%22:2,%22foodAdditionPrice%22:0,%22restaurantId%22:0}],%22menuItem%22:{%22defaultAdditions%22:[],%22optionalAdditions%22:[],%22available%22:false,%22menuItemId%22:3,%22menuItemPrice%22:0},%22orderedItemNotes%22:%22%22,%22orderedItemStatus%22:%22%22,%22bringFirst%22:true,%22orderedItemId%22:0}],%22customerId%22:0,%22tabId%22:1}]";
-
-        System.out.println("myUrl: " + myUrl);
-
-        /**
-         * JSONObject/Array requests were giving errors, F it. This will work for now.
-         */
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 myUrl,
                 (JSONObject) null,
@@ -368,8 +352,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         @Override
         public void onResponse(Object response) {
             System.out.println("Volley success: " + response);
-
-
         }
     };
 
@@ -377,7 +359,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         @Override
         public void onErrorResponse(VolleyError error) {
-
             ///TODO Connect/server error
             System.out.println("Volley error: " + error.networkResponse);
         }
@@ -391,8 +372,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         mUpdateOrderUI = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-                System.out.println("UPDATE UI RECEIVED (ORDERFRAG");
+                Singleton.getInstance().getCurrentLocation().setEditedLocally(true);
                 initRecyclerView();
                 sendUpdateAmountBroadcast();
             }

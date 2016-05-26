@@ -9,7 +9,8 @@ public class FoodAddition {
     private int foodAdditionId;
     private int restaurantId;
 
-    private boolean isChecked;
+    private boolean isChecked = false;
+    private boolean isDefault = false;
 
     public FoodAddition(String foodAdditionName, int foodAdditionPrice,
                         int foodAdditionId) {
@@ -73,5 +74,11 @@ public class FoodAddition {
         isChecked = checked;
     }
 
+    public void setIsDefault(boolean isDefault){
+        this.isDefault = isDefault;
+    }
+    public boolean isDefault(){
+        return isDefault;
+    }
 
 }

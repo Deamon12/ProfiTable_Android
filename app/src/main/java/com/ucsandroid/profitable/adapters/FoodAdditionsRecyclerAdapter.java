@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -112,8 +113,7 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             additionList.get(getAdapterPosition()).setChecked(isChecked);
-
-            checkListener.recyclerViewListChecked(buttonView, -1, getAdapterPosition(), isChecked);
+            //checkListener.recyclerViewListChecked(buttonView, -1, getAdapterPosition(), isChecked);
         }
 
     }
@@ -143,8 +143,15 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
 
         if(layout == R.layout.item_checkbox){
 
+
             holder.mCheckBox.setText(additionList.get(position).getName());
             holder.mCheckBox.setChecked(additionList.get(position).isChecked());
+
+            if(additionList.get(position).isDefault())
+                holder.mCheckBox.setTextColor(context.getResources().getColor(R.color.primary_dark));
+            else
+                holder.mCheckBox.setTextColor(context.getResources().getColor(R.color.primary_text));
+
 
         }
         else if(layout == R.layout.item_textview_textview){
@@ -168,5 +175,13 @@ public class FoodAdditionsRecyclerAdapter extends RecyclerView.Adapter<FoodAddit
         return additionList;
     }
 
+    public List<FoodAddition> getCheckedDataSet(){
+        List<FoodAddition> checkedList = new ArrayList<>();
+        for(FoodAddition item : additionList){
+            if(item.isChecked())
+                checkedList.add(item);
+        }
+        return checkedList;
+    }
 
 }

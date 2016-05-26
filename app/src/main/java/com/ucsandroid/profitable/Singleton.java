@@ -14,11 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
 import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.Location;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 
 
 public class Singleton {
@@ -34,10 +36,10 @@ public class Singleton {
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
 
-	private ArrayList<Location> mTables;	    //local storage of orders
-    private ArrayList<Location> mBars;	        //local storage of orders
-    private ArrayList<Location> mTakeouts;	    //local storage of orders
-    private List<Category> mCategories;    //The Menu
+	private ArrayList<Location> mTables;	        //local storage of orders
+    private ArrayList<Location> mBars;	            //local storage of orders
+    private ArrayList<Location> mTakeouts;	        //local storage of orders
+    private HashMap<Integer, MenuItem> mMenuItems;  //Menu items
 
     private int currentLocationPosition = -1;
     private int currentLocationType = -1;
@@ -269,13 +271,20 @@ public class Singleton {
     }
 
 
-    //Menu - in format of list with categories
-    public void setmCategories(List<Category> menu){
-        mCategories = menu;
+    public void addMenuItem(MenuItem menuItem){
+        if(mMenuItems == null){
+            mMenuItems = new HashMap<>();
+        }
+        mMenuItems.put(menuItem.getId(), menuItem);
+
     }
 
-    public List<Category> getmCategories(){
-        return mCategories;
+    public MenuItem getMenuItem(Integer menuItemId){
+        if(mMenuItems == null){
+            mMenuItems = new HashMap<>();
+        }
+        return mMenuItems.get(menuItemId);
     }
+
 
 }

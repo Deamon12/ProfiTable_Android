@@ -13,23 +13,18 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.ucsandroid.profitable.serverclasses.Customer;
-import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 import java.io.ByteArrayOutputStream;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
-import static android.nfc.NdefRecord.TNF_WELL_KNOWN;
-import static android.nfc.NdefRecord.createExternal;
 import static android.nfc.NdefRecord.createMime;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -108,7 +103,7 @@ public class ActivityCheckout extends AppCompatActivity implements NfcAdapter.Cr
 
             StringBuilder sb = new StringBuilder();
             //String customerOrders = "";
-            for(OrderedItem item : custs.get(a).getOrder()){
+            for(OrderedItem item : custs.get(a).getOrders()){
 
                 //Add itemName
                 sb.append(item.getMenuItem().getName());

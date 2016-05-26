@@ -16,6 +16,7 @@ import android.view.ViewTreeObserver;
 
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentBar extends Fragment {
@@ -100,7 +101,8 @@ public class FragmentBar extends Fragment {
                         Singleton.getInstance().getBars(),
                         R.layout.tile_bar,
                         new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
-                        clickListener);
+                        clickListener,
+                        locationLongClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -133,6 +135,16 @@ public class FragmentBar extends Fragment {
             goToOrder();
         }
 
+    };
+
+    LocationLongClickListener locationLongClickListener = new LocationLongClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            System.out.println("tableId: "+item.getId());
+            System.out.println("restId: "+item.getRestaurantId());
+            System.out.println("tabId: "+item.getCurrentTab().getTabId());
+
+        }
     };
 
     private void goToOrder() {

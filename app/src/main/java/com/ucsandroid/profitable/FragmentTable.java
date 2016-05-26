@@ -17,8 +17,10 @@ import android.view.ViewTreeObserver;
 
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
-import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
+import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.Location;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 
 /**
@@ -99,9 +101,7 @@ public class FragmentTable extends Fragment {
     }
 
 
-    /**
-     * TODO: Volley call to acquire table data
-     */
+
     private void getTableData() {
 
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), spanCount);
@@ -112,7 +112,8 @@ public class FragmentTable extends Fragment {
                 Singleton.getInstance().getTables(),
                 R.layout.tile_table,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
-                clickListener);
+                clickListener,
+                locationLongClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -121,9 +122,7 @@ public class FragmentTable extends Fragment {
     private void updateUI(int tableFragWidth){
 
         spanCount = getSpanCount();
-
         tileLayoutWidth = (tableFragWidth/spanCount);
-
         getTableData();
     }
 
@@ -139,6 +138,17 @@ public class FragmentTable extends Fragment {
             goToOrder();
         }
 
+    };
+
+    LocationLongClickListener locationLongClickListener = new LocationLongClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            System.out.println("tableId: "+item.getId());
+            System.out.println("restId: "+item.getRestaurantId());
+            System.out.println("tabId: "+item.getCurrentTab().getTabId());
+
+        }
     };
 
     private void goToOrder() {
@@ -170,7 +180,6 @@ public class FragmentTable extends Fragment {
      * larger or smaller
      */
     private void initRemeasureFragListener() {
-
         mRemeasureFragReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -179,7 +188,6 @@ public class FragmentTable extends Fragment {
                     updateUI(intent.getIntExtra("tableWidth", 0));
             }
         };
-
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mRemeasureFragReceiver,
                 new IntentFilter("tablefrag-measure"));
     }

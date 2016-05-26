@@ -26,7 +26,7 @@ import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DialogItemAttributes extends DialogFragment{
+public class DialogItemAttributes extends DialogFragment {
 
     private FoodAdditionsRecyclerAdapter mAdapter;
     private RecyclerView addonsRecycler;
@@ -83,117 +83,78 @@ public class DialogItemAttributes extends DialogFragment{
      */
     private void initAddonsRecycler() {
 
-
-        //TODO :need defaults and optionals
-
         OrderedItem orderedItem = (OrderedItem) getArguments().getSerializable("orderedItem");
 
-        List<FoodAddition> additions = orderedItem.getAdditions();
-        List<FoodAddition> defaults;// = orderedItem.getMenuItem().getDefaultAdditions(); //empty?
-        List<FoodAddition> optionals;// = orderedItem.getMenuItem().getOptionalAdditions(); //empty?
-
-
-
-        /*
-
-        //All this sucks, need defaults, and optionals attached to menuItems
-        //Start bullshit parsing
-        List<Category> categs = Singleton.getInstance().getmCategories();
-
-        MenuItem foundItem = null;
-
-        for(int a = 0; a < categs.size(); a++){
-            //System.out.println("cats: "+categs);
-            if(foundItem != null)
-                break;
-
-            for(int b = 0; b < categs.get(a).getMenuItems().size(); b++){
-                if(categs.get(a).getMenuItems().get(b).getId() == orderedItem.getMenuItem().getId()){
-                    foundItem = categs.get(a).getMenuItems().get(b);
-                    //System.out.println("found");
-                    break;
-                }
-            }
-        }
-
+        List<FoodAddition> selectedAdditions = orderedItem.getAdditions();
+        List<FoodAddition> defaults;
+        List<FoodAddition> optionals;
         List<FoodAddition> allAdditions = new ArrayList<>();
 
-        if(foundItem != null){
-            //System.out.println("item found ");
-            defaults = foundItem.getDefaultAdditions();
-            optionals = foundItem.getOptionalAdditions();
+        System.out.println("MEnuITem : "+orderedItem.getMenuItem().getName());
+        MenuItem defaultItem = Singleton.getInstance().getMenuItem(orderedItem.getMenuItem().getId());
+        System.out.println("MEnuITem from hash: "+defaultItem.getName());
 
-            //Add defaults, and evaluate if they are checked or not
-            for(int a = 0; a < defaults.size(); a++){
-                for(int b = 0; b < additions.size(); b++){
-                    if(defaults.get(a).getId() == additions.get(b).getId()){
-                        //System.out.println("Checked: "+defaults.get(a).getName());
-                        defaults.get(a).setChecked(true);
-                        break;
-                    }
-                    else{
-                        defaults.get(a).setChecked(false);
-                    }
-                }
-                allAdditions.add(defaults.get(a));
+        if (defaultItem != null) {
+            defaults = defaultItem.getDefaultAdditions();
+            optionals = defaultItem.getOptionalAdditions();
+
+            //Add defaults to an overall List
+            for (FoodAddition item : defaults) {
+                allAdditions.add(item);
             }
 
-            //Add optionals, and see if they are checked
-            for(int a = 0; a < optionals.size(); a++){
-                for(int b = 0; b < additions.size(); b++){
-                    if(optionals.get(a).getId() == additions.get(b).getId()){
-                        //System.out.println("Checked: "+optionals.get(a).getName());
-                        optionals.get(a).setChecked(true);
-                        break;
-                    }
-                    else{
-                        optionals.get(a).setChecked(false);
+            //Add optionals to an overall List
+            for (FoodAddition item : optionals)
+                allAdditions.add(item);
+
+
+            //Set item checked if in selected list
+            for (int a = 0; a < selectedAdditions.size(); a++) {
+                for (int b = 0; b < allAdditions.size(); b++) {
+                    if (selectedAdditions.get(a).getId() == allAdditions.get(b).getId()) {
+                        allAdditions.get(b).setChecked(true);
+                        //break;
                     }
                 }
-                allAdditions.add(optionals.get(a));
+
             }
 
-            //End bullshit parsing
+            //Should have complete additions with checked items (allAdditions)
+            for (FoodAddition item : allAdditions) {
+                System.out.println("All additions: " + item.getName());
+            }
 
+            for (FoodAddition item : defaults) {
+                System.out.println("default additions: " + item.getName());
+            }
 
+            for (FoodAddition item : selectedAdditions) {
+                System.out.println("selected additions: " + item.getName());
+            }
 
-
-            int logValue = binlog(allAdditions.size());
-
-            //Set span count to log of dataSet.length
-            int spanCount = logValue >= 1 ? logValue : 1;
-
-            addonsRecycler.setHasFixedSize(true);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
-            addonsRecycler.setLayoutManager(gridLayoutManager);
-            mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), allAdditions, R.layout.item_checkbox, null, addonsCheckListener);
-            addonsRecycler.setAdapter(mAdapter);
 
         }
-        else{
-        */
-            int logValue = binlog(additions.size());
 
-            //Set span count to log of dataSet.length
-            int spanCount = logValue >= 1 ? logValue : 1;
 
-            addonsRecycler.setHasFixedSize(true);
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
-            addonsRecycler.setLayoutManager(gridLayoutManager);
-            mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), additions, R.layout.item_checkbox, null, addonsCheckListener);
-            addonsRecycler.setAdapter(mAdapter);
-        //}
+        int logValue = binlog(allAdditions.size());
 
+        //Set span count to log of dataSet.length
+        int spanCount = logValue >= 1 ? logValue : 1;
+
+        addonsRecycler.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
+        addonsRecycler.setLayoutManager(gridLayoutManager);
+        mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), allAdditions, R.layout.item_checkbox, null, addonsCheckListener);
+        addonsRecycler.setAdapter(mAdapter);
 
 
     }
 
 
-
     RecyclerViewCheckListener sidesCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-           // System.out.println("Sides: " + position + " to " + isChecked);
+            // System.out.println("Sides: " + position + " to " + isChecked);
         }
     };
 
@@ -207,22 +168,36 @@ public class DialogItemAttributes extends DialogFragment{
 
     /**
      * Method to acquire accurate log2() values - quickly
+     *
      * @param bits
      * @return
      */
-    public static int binlog( int bits ) // returns 0 for bits=0
+    public static int binlog(int bits) // returns 0 for bits=0
     {
         int log = 0;
-        if( ( bits & 0xffff0000 ) != 0 ) { bits >>>= 16; log = 16; }
-        if( bits >= 256 ) { bits >>>= 8; log += 8; }
-        if( bits >= 16  ) { bits >>>= 4; log += 4; }
-        if( bits >= 4   ) { bits >>>= 2; log += 2; }
-        return log + ( bits >>> 1 );
+        if ((bits & 0xffff0000) != 0) {
+            bits >>>= 16;
+            log = 16;
+        }
+        if (bits >= 256) {
+            bits >>>= 8;
+            log += 8;
+        }
+        if (bits >= 16) {
+            bits >>>= 4;
+            log += 4;
+        }
+        if (bits >= 4) {
+            bits >>>= 2;
+            log += 2;
+        }
+        return log + (bits >>> 1);
     }
 
     /**
      * Overridden onDismiss to communicate back to the interface attached to the calling fragment
      * So that we the addition items can be passed back to update the UI and data structures
+     *
      * @param dialog
      */
     @Override
@@ -230,9 +205,8 @@ public class DialogItemAttributes extends DialogFragment{
         super.onDismiss(dialog);
         int customer = getArguments().getInt("customer");
         int position = getArguments().getInt("position");
-        ((DialogDismissListener)getTargetFragment()).dialogDismissListener(customer, position, mAdapter.getDataSet());
+        ((DialogDismissListener) getTargetFragment()).dialogDismissListener(customer, position, mAdapter.getCheckedDataSet());
     }
-
 
 
 }

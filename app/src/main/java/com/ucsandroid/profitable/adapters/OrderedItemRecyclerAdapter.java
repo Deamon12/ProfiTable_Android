@@ -35,7 +35,6 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
     private int layout;
 
     private Locale currentLocale;
-    private Currency currentCurrency;
     private NumberFormat currencyFormatter;
 
 
@@ -63,7 +62,6 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
         String localeCountry = settings.getString("locale_country", "us");
 
         currentLocale = new Locale(localeLang, localeCountry);
-        //currentCurrency = Currency.getInstance(currentLocale);
         currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
     }
 
@@ -135,28 +133,73 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
+        //Set itemName
         String menuItemName = orderedItems.get(position).getMenuItem().getName();
         holder.mTextView.setText(menuItemName);
 
+        //Start create additions string
+        int menuItemId = orderedItems.get(position).getMenuItem().getId();
 
-        String additions = "";
-        List<FoodAddition> foodAdditions = orderedItems.get(position).getAdditions();
-        for(int a = 0; a < foodAdditions.size(); a++){
+        //At this point we only have additions that are selected.
+        //Need to use Singleton hash, to set if the items are checked, and if they are default.
+        List<FoodAddition> defaults = Singleton.getInstance().getMenuItem(menuItemId).getDefaultAdditions();
+        List<FoodAddition> optionals = Singleton.getInstance().getMenuItem(menuItemId).getOptionalAdditions();
+        List<FoodAddition> allAdditions = new ArrayList<>();
+        List<FoodAddition> selectedAdditions = orderedItems.get(position).getAdditions();
 
-            additions = foodAdditions.get(a).getName() + ", "+additions;
+        //Add defaults to an overall List
+        for (FoodAddition item : defaults) {
+            item.setIsDefault(true);
+            allAdditions.add(item);
+        }
+
+        //Add optionals to an overall List
+        for (FoodAddition item : optionals) {
+            item.setIsDefault(false);
+            allAdditions.add(item);
+        }
+
+        //Have list of ALL at this point
+
+
+        //Loop through all and check the correct ones
+        for(FoodAddition item : allAdditions){
+            for(int a = 0; a < selectedAdditions.size(); a++){
+                if(selectedAdditions.get(a).getId() == item.getId()){
+                    item.setChecked(true);
+                }
+            }
         }
 
 
-        additions = additions.substring(0, additions.lastIndexOf(','));
+        //Loop back through the edited list (which knows if default or not), and create string;
+        //Check if selected is default or not. And let the UI know via stringbuilder
+        StringBuilder sb = new StringBuilder();
 
-        holder.mTextView2.setText("");//TODO need defaults to compare
+        for(int a = 0; a < allAdditions.size(); a++){
+
+            if(allAdditions.get(a).isDefault() && !allAdditions.get(a).isChecked()){
+                if(sb.toString().equalsIgnoreCase("")){
+                    sb.append("no "+allAdditions.get(a).getName());
+                }
+                else
+                    sb.append(", no "+allAdditions.get(a).getName());
+            }else if(!allAdditions.get(a).isDefault() && allAdditions.get(a).isChecked()){
+                if(sb.toString().equalsIgnoreCase("")){
+                    sb.append(allAdditions.get(a).getName());
+                }
+                else
+                    sb.append(", "+allAdditions.get(a).getName());
+            }
+
+        }
+
+        holder.mTextView2.setText(sb.toString());
     }
 
     @Override
     public int getItemCount() {
         return orderedItems.size();
     }
-
-
 
 }

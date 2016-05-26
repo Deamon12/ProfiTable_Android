@@ -59,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tile_text"
-            android:layout_alignLeft="@+id/tile_text"/>
+            android:layout_alignLeft="@+id/tile_text"
+            android:overScrollMode="never"/>
 
 
         <TextView

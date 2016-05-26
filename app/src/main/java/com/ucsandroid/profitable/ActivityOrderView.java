@@ -65,7 +65,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
 
-        getLocationData();
+        //Dont update if local edits exist
+        if(!Singleton.getInstance().getCurrentLocation().isEditedLocally())
+            getLocationData();
 
         dynamicallySizeContainers();
 
@@ -255,6 +257,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                     Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
 
                     Singleton.getInstance().updateCurrentLocation(mLocation);
+
+                    //TODO more logic, but dont erase local data, unless we NEED to
+
 
                     sendLocationUpdateBroadcast();
 

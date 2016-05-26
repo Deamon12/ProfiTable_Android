@@ -41,7 +41,7 @@ public class Customer {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
-    public List<OrderedItem> getOrder() {
+    public List<OrderedItem> getOrders() {
         return order;
     }
     public void setOrder(List<OrderedItem> order) {

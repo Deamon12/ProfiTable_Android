@@ -10,6 +10,7 @@ public class Location implements Serializable {
     private String locationName;
     private Tab currentTab;
     private int restaurantId;
+    private boolean editedLocally = false;
 
     public Location(int id, String status, String name, int restaurantId) {
         super();
@@ -82,6 +83,14 @@ public class Location implements Serializable {
             cost += custs.get(a).getCustomerCost();
         }
         return cost;
+    }
+
+    public void setEditedLocally(boolean edited){
+        editedLocally = edited;
+    }
+
+    public boolean isEditedLocally(){
+        return editedLocally;
     }
 
 }

@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
@@ -23,6 +25,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
     private ViewGroup.LayoutParams params;
     private LocationClickListener clickListener;
+    private LocationLongClickListener longClickListener;
     private Context context;
 
 
@@ -34,7 +37,18 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         this.clickListener = clickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public LocationRecyclerAdapter(Context context, ArrayList<Location> dataSet, int layout, ViewGroup.LayoutParams params, LocationClickListener clickListener,
+                                   LocationLongClickListener longClickListener) {
+        this.dataSet = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.params = params;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public CardView mCardView;
         public TextView mTextView;
@@ -46,13 +60,11 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
             if(layout == R.layout.tile_kitchen_order){
-
             }else{
-
             }
 
-
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
 
         }
 
@@ -64,6 +76,13 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            if (longClickListener != null) {
+                longClickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
+            }
+            return true;
+        }
     }
 
 

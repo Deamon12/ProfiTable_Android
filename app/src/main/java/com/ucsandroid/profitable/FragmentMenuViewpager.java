@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +35,7 @@ public class FragmentMenuViewpager extends Fragment {
     private ViewPager mViewPager;
     private View mView;
 
-    private List<Category> mCategories;
+    private List<Category> mCategories = new ArrayList<>();;
     private ProgressDialog progressDialog;
 
 
@@ -62,7 +63,6 @@ public class FragmentMenuViewpager extends Fragment {
      * Shows a progressDialog dialog before beginning
      */
     private void getMenu() {
-
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.isIndeterminate();
@@ -96,7 +96,6 @@ public class FragmentMenuViewpager extends Fragment {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if(settings.contains(getString(R.string.menu_jsonobject))){
 
-
             try {
 
                 JSONArray categoryList = new JSONArray(settings.getString(getString(R.string.menu_jsonobject), ""));
@@ -108,10 +107,6 @@ public class FragmentMenuViewpager extends Fragment {
                     category = gson.fromJson(categoryList.getJSONObject(a).toString(), Category.class);
                     //System.out.println("Categ: "+category.getMenuItems());
                     mCategories.add(category);
-                }
-
-                if(Singleton.getInstance().getmCategories() == null){
-                    Singleton.getInstance().setmCategories(mCategories);
                 }
 
 
@@ -204,7 +199,6 @@ public class FragmentMenuViewpager extends Fragment {
         @Override
         public void onResponse(Object response) {
 
-
             try {
 
                 JSONObject theResponse = new JSONObject(response.toString());
@@ -219,21 +213,30 @@ public class FragmentMenuViewpager extends Fragment {
                         edit.apply();
                     }
 
-                    mCategories = new ArrayList<>();
+
+                    //Build the category list for viewpager
+                    //Also build a global hashmap for menuitems to lookup up details (additions, etc)
+                    List<Category> freshCats = new ArrayList<>();
                     Gson gson = new Gson();
 
                     Category category;
                     for(int a = 0; a < theResponse.getJSONArray("result").length(); a++){
                         category = gson.fromJson(theResponse.getJSONArray("result").getJSONObject(a).toString(), Category.class);
                         //System.out.println("Categ: "+category.getMenuItems());
-                        mCategories.add(category);
+
+                        freshCats.add(category);
+                        for(MenuItem menuItem : category.getMenuItems()){
+                            Singleton.getInstance().addMenuItem(menuItem);
+                        }
                     }
 
-                    Singleton.getInstance().setmCategories(mCategories);
-                    //System.out.println(mCategories.size());
+                    //Update UI with new data
+                    if(!freshCats.equals(mCategories)){
+                        mCategories = freshCats;
+                        initViewPager();
+                    }
 
-                    //TODO: if not same, update
-                    initViewPager();
+
                 }
                 else{
                     ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));

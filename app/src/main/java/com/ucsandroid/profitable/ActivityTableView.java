@@ -33,6 +33,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActivityTableView extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -105,6 +108,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         barFragContainer.getLayoutParams().height = barFragHeight;
         takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
 
+        getMenu();
         evaluateLocationData();
 
 
@@ -435,6 +439,84 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             e.printStackTrace();
         }
     }
+
+
+
+    /**
+     * Create and execute a volley call to retrieve JSON data from the server
+     * Shows a progressDialog dialog before beginning
+     */
+    private void getMenu() {
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("menu")
+                .appendPath("entire")
+                .appendQueryParameter("rest_id", "1");
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                menuRetrieveSuccessListener, errorListener);
+
+        // Access the RequestQueue through singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+    }
+
+    /**
+     * Menu retrieval success
+     */
+    private Response.Listener menuRetrieveSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+            try {
+
+                JSONObject theResponse = new JSONObject(response.toString());
+
+                //If successful retrieval, update saved menu
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                    SharedPreferences.Editor edit = settings.edit();
+                    edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
+                    edit.apply();
+
+
+                    //Build the category list for viewpager
+                    //Also build a global hashmap for menuitems to lookup up details (additions, etc)
+                    List<Category> freshCats = new ArrayList<>();
+                    Gson gson = new Gson();
+
+                    Category category;
+                    for (int a = 0; a < theResponse.getJSONArray("result").length(); a++) {
+                        category = gson.fromJson(theResponse.getJSONArray("result").getJSONObject(a).toString(), Category.class);
+                        //System.out.println("Categ: "+category.getMenuItems());
+
+                        freshCats.add(category);
+                        for (com.ucsandroid.profitable.serverclasses.MenuItem menuItem : category.getMenuItems()) {
+                            Singleton.getInstance().addMenuItem(menuItem);
+                        }
+                    }
+
+
+                } else {
+                    //((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    //TODO show error
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            progressDialog.dismiss();
+
+        }
+    };
 
 
 }

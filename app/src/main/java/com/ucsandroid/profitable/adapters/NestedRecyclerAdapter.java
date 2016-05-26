@@ -202,7 +202,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        holder.rcAdapter = new OrderedItemRecyclerAdapter(context, locationData.getCurrentTab().getCustomers().get(position).getOrder(), R.layout.item_textview_textview2, position, null,
+        holder.rcAdapter = new OrderedItemRecyclerAdapter(context, locationData.getCurrentTab().getCustomers().get(position).getOrders(), R.layout.item_textview_textview2, position, null,
                 orderedItemClickListener, longClickListener);
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
@@ -236,7 +236,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         //TODO send remove item webservice
 
-        locationData.getCurrentTab().getCustomers().get(customer).getOrder().get(position).setOrderedItemStatus("");
+        locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position).setOrderedItemStatus("");
         locationData.getCurrentTab().getCustomers().get(customer).removeItem(position);
 
         notifyItemChanged(customer);
@@ -245,18 +245,19 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     //Update the additions for a specific item
     public void setAdditionsForItem(int customer, int position, List<FoodAddition> additions) {
 
-        mTab.getCustomers().get(customer).getOrder().get(position).setAdditions(additions);
+        System.out.println("Updating additions: "+additions);
+        mTab.getCustomers().get(customer).getOrders().get(position).setAdditions(additions);
         notifyItemChanged(customer);
     }
 
 
     public OrderedItem getOrderedItemFromCustomer(int customer, int position){
-        return mTab.getCustomers().get(customer).getOrder().get(position);
+        return mTab.getCustomers().get(customer).getOrders().get(position);
     }
 
     public MenuItem getItemFromCustomer(int customer, int position){
 
-        return mTab.getCustomers().get(customer).getOrder().get(position).getMenuItem();
+        return mTab.getCustomers().get(customer).getOrders().get(position).getMenuItem();
     }
 
     /**
