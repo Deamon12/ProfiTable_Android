@@ -77,10 +77,8 @@ public class FragmentOrderAmount extends Fragment {
 
     }
 
-    //TODO: fix the flow to update more frequently, remove customers, add additions, remove items, etc
-    /**
-     * Loops through json
-     */
+
+    //Run this everytime an update broadcast is received
     public void getOrders(){
 
         subTotal = Singleton.getInstance().getCurrentLocation().getLocationCost();

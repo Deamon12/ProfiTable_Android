@@ -3,6 +3,7 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -183,12 +184,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         //initialize the last tile as selected
         if (selectedPosition == -11 && position == (getItemCount() - 1)) {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
             selectedPosition = (getItemCount() - 1);
         } else if (selectedPosition != -1 && position == selectedPosition) {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.primary_light));
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
         } else {
-            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.gray_light));
+            holder.cardView.setCardBackgroundColor(0);
         }
 
 
