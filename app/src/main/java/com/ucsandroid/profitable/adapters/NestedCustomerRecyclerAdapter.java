@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
@@ -16,6 +18,7 @@ import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCustomerRecyclerAdapter.ViewHolder> {
@@ -23,6 +26,7 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
     private int layout;
 
     private List<Customer> customerData;
+    private List<Customer> oldCustomerData = new ArrayList<>();
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
@@ -43,9 +47,9 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
     }
 
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
+        private ImageView doneButton;
         public TextView mCommentTextView;
         public TextView mTextView;
         public RecyclerView recyclerView;
@@ -65,8 +69,10 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
                 recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
 
             }
-            else if(layout == R.layout.tile_kitchen_order){
 
+            /*else if(layout == R.layout.tile_kitchen_order){
+
+                doneButton = (ImageView) v.findViewById(R.id.check_button);
                 mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
 
                 cardView = (CardView) v.findViewById(R.id.the_cardview);
@@ -79,18 +85,15 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
                 v.setOnLongClickListener(this);
 
                 cardView.setOnClickListener(this);
-            }
+            }*/
             else{
 
             }
 
-
         }
-
 
         @Override
         public void onClick(View v) {
-
 
         }
 
@@ -121,13 +124,9 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-
-
         //holder.mCommentTextView.setText(customerData.get(position));
 
         //holder.mTextView.setText("Table " + (position+1));
-
-
 
         holder.mAdapter = new OrderedItemRecyclerAdapter(context,
                 customerData.get(position).getOrders(),
@@ -138,7 +137,6 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
                 null);
 
         holder.recyclerView.setAdapter(holder.mAdapter);
-
 
     }
 
@@ -168,6 +166,18 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
             nestedLongClickListener.recyclerViewListLongClicked(v, parentPosition, position, item);
         }
     };
+
+
+    public void setTabDone(int position) {
+        //DoVolley
+        System.out.println("Setting status of position "+position);
+
+
+    }
+
+
+
+
 
 
 }

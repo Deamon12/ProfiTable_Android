@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
@@ -43,6 +44,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
+        private ImageView doneButton;
         public TextView mCommentTextView;
         public TextView mTextView;
         public RecyclerView recyclerView;
@@ -56,6 +58,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
             if(layout == R.layout.tile_kitchen_order){
 
+                doneButton = (ImageView) v.findViewById(R.id.check_button);
                 mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
 
                 cardView = (CardView) v.findViewById(R.id.the_cardview);
@@ -68,19 +71,22 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
                 v.setOnLongClickListener(this);
 
                 cardView.setOnClickListener(this);
+                doneButton.setOnClickListener(this);
             }
             else{
 
             }
 
-
         }
-
 
 
         @Override
         public void onClick(View v) {
 
+            if(v == doneButton){
+                //Do volley and update UI
+                mAdapter.setTabDone(getAdapterPosition());
+            }
 
         }
 
@@ -114,7 +120,6 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         holder.mCommentTextView.setText(tabData.get(position).getTabStatus());
 
         holder.mTextView.setText("Table " + tabData.get(position).getTabId()); //(position+1)
-
 
 
         holder.mAdapter = new NestedCustomerRecyclerAdapter(context,
