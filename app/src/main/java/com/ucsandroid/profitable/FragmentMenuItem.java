@@ -10,17 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.MenuItemRecyclerAdapter;
-import supportclasses.MyLinearLayoutManager;
-import supportclasses.RecyclerViewClickListener;
-
-/**
- * Dynamically build food category fragments
- */
+import com.google.gson.Gson;
+import com.ucsandroid.profitable.adapters.CategoryRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.MenuItemClickListener;
+import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
+import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
 
 public class FragmentMenuItem extends Fragment {
@@ -37,8 +33,20 @@ public class FragmentMenuItem extends Fragment {
         return fragment;
     }
 
+    public static FragmentMenuItem newInstance(int color, Category dataset) {
+        FragmentMenuItem fragment = new FragmentMenuItem();
+        Bundle args = new Bundle();
+        args.putInt("color",  color);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(dataset);
+        args.putString("dataset", json);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public FragmentMenuItem() {
-        // Required empty public constructor
     }
 
     @Override
@@ -48,7 +56,6 @@ public class FragmentMenuItem extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu_page, container, false);
         rootView.setBackgroundResource(getArguments().getInt("color"));
         recyclerView = (RecyclerView) rootView.findViewById(R.id.menu_page_recyclerview);
-
 
         initRecycler();
 
@@ -61,19 +68,16 @@ public class FragmentMenuItem extends Fragment {
      */
     private void initRecycler() {
 
+        Gson gson = new Gson();
+        Category category = gson.fromJson(getArguments().getString("dataset"), Category.class);
 
-        try {
+        //System.out.println("dataset: "+getArguments().getString("dataset"));
+        //JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
 
-            JSONArray dataset = new JSONArray(getArguments().getString("dataset"));
+        recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
+        CategoryRecyclerAdapter mAdapter = new CategoryRecyclerAdapter(getActivity(), category, R.layout.item_textview_textview, null, clickListener);
+        recyclerView.setAdapter(mAdapter);
 
-            recyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity()));
-            JSONArrayRecyclerAdapter mAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataset, R.layout.item_textview_textview, null, clickListener);
-            recyclerView.setAdapter(mAdapter);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -85,37 +89,12 @@ public class FragmentMenuItem extends Fragment {
 
     /**
      * Recieves the clicked position from a menu category
-     * Pass off an itemId from a MenuPage, to the OrderFragment to start the add item flow.
+     * Pass off an item from a MenuPage, to the OrderFragment to start the add item flow.
      */
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
-
+    MenuItemClickListener clickListener = new MenuItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-
-
-            //TODO broadcast add item
             sendAddItemToCustomerBroadcast(parentPosition, position, item);
-            /*
-            FragmentOrders orderFrag = (FragmentOrders) getActivity().getSupportFragmentManager().findFragmentById(R.id.orders_frag_container);
-
-            if (orderFrag != null) {
-                orderFrag.addItem(item);
-            }*/
-
-            /*
-            FragmentOrderAmount amountFrag = (FragmentOrderAmount) getActivity().getSupportFragmentManager().findFragmentById(R.id.amounts_frag_container);
-
-            if (amountFrag != null) {
-
-                try {
-                    amountFrag.addItem(item.getJsonItem().getDouble("menuItemPrice"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-*/
-
-
         }
     };
 

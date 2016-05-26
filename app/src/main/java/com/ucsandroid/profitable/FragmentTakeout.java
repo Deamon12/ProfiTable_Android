@@ -1,7 +1,6 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -15,24 +14,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
+import com.ucsandroid.profitable.adapters.TakeoutRecyclerAdapter;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentTakeout extends Fragment {
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager gridLayout;
-    private MyTakeoutAdapter mAdapter;
+    private TakeoutRecyclerAdapter mAdapter;
+
 
 
     private int mRecyclerViewWidth;
     private int spanCount;
     private int tileLayoutWidth;
-
 
 
     @Override
@@ -56,8 +54,8 @@ public class FragmentTakeout extends Fragment {
         boolean shown = settings.getBoolean("takeoutFragShown", true);
 
         //Hide fragment based on SharedPrefs
-        if(!shown)
-            ((ActivityTableView)getActivity()).toggleTakeoutSection(false);
+        if (!shown)
+            ((ActivityTableView) getActivity()).toggleTakeoutSection(false);
 
     }
 
@@ -65,8 +63,6 @@ public class FragmentTakeout extends Fragment {
     private void initRecyclerView() {
 
         spanCount = getSpanCount();
-
-
 
 
         ViewTreeObserver vto = mRecyclerView.getViewTreeObserver();
@@ -81,13 +77,13 @@ public class FragmentTakeout extends Fragment {
                 int orientation = getResources().getConfiguration().orientation;
 
                 //Cant use the recycler width, because it may be set to GONE, which would be zero width
-                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                    mRecyclerViewWidth  = (int) (metrics.widthPixels*.5);
-                }else{
-                    mRecyclerViewWidth  = (int) (metrics.widthPixels);
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    mRecyclerViewWidth = (int) (metrics.widthPixels * .5);
+                } else {
+                    mRecyclerViewWidth = (int) (metrics.widthPixels);
                 }
 
-                tileLayoutWidth = (mRecyclerViewWidth/spanCount);
+                tileLayoutWidth = (mRecyclerViewWidth / spanCount);
 
                 getTableData();
 
@@ -100,21 +96,13 @@ public class FragmentTakeout extends Fragment {
 
     private void getTableData() {
 
-
-        ArrayList<String> dataSet = new ArrayList<>();
-
-        for(int a = 1; a <= 30; a++)
-            dataSet.add("Takeout "+a);
-
-
-
         gridLayout = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new MyTakeoutAdapter(getActivity(),
-                dataSet,
+        mAdapter = new TakeoutRecyclerAdapter(getActivity(),
+                Singleton.getInstance().getTakeouts(),
                 R.layout.tile_takeout,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener);
@@ -123,129 +111,46 @@ public class FragmentTakeout extends Fragment {
 
     }
 
-
-    private int getSpanCount(){
+    private int getSpanCount() {
 
         boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
         if (tabletSize) {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 return 6;
-            }else
+            } else
                 return 8;
         } else {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE)
                 return 4;
             else
                 return 5;
         }
     }
 
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
 
+    LocationClickListener clickListener = new LocationClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            if(position == 0){
-
-                mAdapter.dataSet.add(1, "New " + (mAdapter.getItemCount()));
-                mAdapter.notifyDataSetChanged();
-            }else{
-                Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-                getActivity().startActivity(orderViewActivity);
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            if (position == 0) {
+                //TODO add with server first ---> addTakeoutItem();
+            } else {
+                Singleton.getInstance().setLocationType(Singleton.TYPE_TAKEOUT);
+                Singleton.getInstance().setCurrentLocationPosition(position);
+                goToOrder();
             }
         }
     };
 
 
-}
-
-class MyTakeoutAdapter extends RecyclerView.Adapter<MyTakeoutAdapter.ViewHolder> {
-
-    private int mLayout;
-    protected ArrayList<String> dataSet;
-    private ViewGroup.LayoutParams mParams;
-    Context mContext;
-    private RecyclerViewClickListener clickListener;
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public TextView mTextView;
-
-        public ViewHolder(View v) {
-            super(v);
-            mTextView = (TextView) v.findViewById(R.id.tile_name);
-            v.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-
-            if (clickListener != null) {
-                clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), null);
-            }
-
-        }
-
+    private void addTakeoutItem() {
+        mAdapter.addTakeoutItem();
     }
 
-    public MyTakeoutAdapter(Context context,
-                            ArrayList myDataset,
-                            int layout,
-                            ViewGroup.LayoutParams params,
-                            RecyclerViewClickListener clickListener) {
-        dataSet = myDataset;
-        mContext = context;
-        mLayout = layout;
-        mParams = params;
-        this.clickListener = clickListener;
-    }
-
-    public MyTakeoutAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        View v;
-
-        if(viewType == 0){
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.tile_takeout_plus, parent, false);
-        }
-        else{
-            v = LayoutInflater.from(parent.getContext()).inflate(mLayout, parent, false);
-        }
-
-        if(mParams != null){
-            v.getLayoutParams().height = mParams.height;
-            v.getLayoutParams().width = mParams.width;
-        }
-
-
-        ViewHolder vh = new ViewHolder(v);
-
-
-        return vh;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-
-        if(position == 0){
-            return 0;
-        }
-        else
-            return 1;
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
-        if(position > 0)
-            holder.mTextView.setText(dataSet.get(position));
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return dataSet.size();
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
     }
 
 }

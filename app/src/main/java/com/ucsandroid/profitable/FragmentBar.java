@@ -14,16 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewClickListener;
+import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentBar extends Fragment {
 
+    private LocationRecyclerAdapter mAdapter;
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
     private int spanCount;
@@ -50,6 +48,12 @@ public class FragmentBar extends Fragment {
         if(!shown)
             ((ActivityTableView)getActivity()).toggleBarSection(false);
 
+        if(mAdapter != null && Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR) {
+            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+        }
+        else{
+            //System.out.println("bar adapter is null");
+        }
 
     }
 
@@ -75,14 +79,12 @@ public class FragmentBar extends Fragment {
                     mRecyclerViewWidth  = (int) (metrics.widthPixels);
                 }
 
-
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
 
                 getTableData();
 
             }
         });
-
 
     }
 
@@ -93,26 +95,16 @@ public class FragmentBar extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        JSONArray dataSet = new JSONArray();
 
-        try {
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", ""+a);
-                dataSet.put(temp);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(
+        mAdapter = new LocationRecyclerAdapter(
                         getActivity(),
-                        dataSet,
+                        Singleton.getInstance().getBars(),
                         R.layout.tile_bar,
                         new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
-                        clickListener);
+                        clickListener,
+                        locationLongClickListener);
 
-        mRecyclerView.setAdapter(rcAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
 
     }
@@ -135,12 +127,29 @@ public class FragmentBar extends Fragment {
         }
     }
 
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    LocationClickListener clickListener = new LocationClickListener() {
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-            getActivity().startActivity(orderViewActivity);
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            Singleton.getInstance().setLocationType(Singleton.TYPE_BAR);
+            Singleton.getInstance().setCurrentLocationPosition(position);
+            goToOrder();
         }
 
     };
+
+    LocationLongClickListener locationLongClickListener = new LocationLongClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            System.out.println("tableId: "+item.getId());
+            System.out.println("restId: "+item.getRestaurantId());
+            System.out.println("tabId: "+item.getCurrentTab().getTabId());
+
+        }
+    };
+
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
+    }
+
 }

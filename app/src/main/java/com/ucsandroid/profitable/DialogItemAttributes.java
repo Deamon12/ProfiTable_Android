@@ -14,22 +14,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import supportclasses.DialogDismissListener;
-import supportclasses.JSONArrayRecyclerAdapter;
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.adapters.FoodAdditionsRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.DialogDismissListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
+import com.ucsandroid.profitable.serverclasses.MenuItem;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
-public class DialogItemAttributes extends DialogFragment{
+import java.util.ArrayList;
+import java.util.List;
 
-    private JSONArrayRecyclerAdapter mAdapter;
+public class DialogItemAttributes extends DialogFragment {
+
+    private FoodAdditionsRecyclerAdapter mAdapter;
     private RecyclerView addonsRecycler;
     private RecyclerView sidesRecycler;
 
-    static DialogItemAttributes newInstance(int customer, int position, MenuItem item) {
+    static DialogItemAttributes newInstance(int customer, int position, OrderedItem item) {
         DialogItemAttributes f = new DialogItemAttributes();
 
         Bundle args = new Bundle();
-        args.putSerializable("menuItem", item);
+        args.putSerializable("orderedItem", item);
         args.putInt("customer", customer);
         args.putInt("position", position);
         f.setArguments(args);
@@ -76,33 +83,60 @@ public class DialogItemAttributes extends DialogFragment{
      */
     private void initAddonsRecycler() {
 
-        MenuItem menuItem = (MenuItem) getArguments().getSerializable("menuItem");
-        JSONArray allAddons = new JSONArray();
+        OrderedItem orderedItem = (OrderedItem) getArguments().getSerializable("orderedItem");
 
-        try {
+        List<FoodAddition> selectedAdditions = orderedItem.getAdditions();
+        List<FoodAddition> defaults;
+        List<FoodAddition> optionals;
+        List<FoodAddition> allAdditions = new ArrayList<>();
 
-            if(menuItem.getAdditions().length() > 0){
-                allAddons = menuItem.getAdditions();
+        System.out.println("MEnuITem : "+orderedItem.getMenuItem().getName());
+        MenuItem defaultItem = Singleton.getInstance().getMenuItem(orderedItem.getMenuItem().getId());
+        System.out.println("MEnuITem from hash: "+defaultItem.getName());
+
+        if (defaultItem != null) {
+            defaults = defaultItem.getDefaultAdditions();
+            optionals = defaultItem.getOptionalAdditions();
+
+            //Add defaults to an overall List
+            for (FoodAddition item : defaults) {
+                allAdditions.add(item);
             }
-            else{
-                JSONArray defaults = menuItem.getJsonItem().getJSONArray("defaultAdditions");
-                for(int a = 0; a < defaults.length();a++){
-                    defaults.getJSONObject(a).put("checked", true);
-                    allAddons.put(defaults.get(a));
+
+            //Add optionals to an overall List
+            for (FoodAddition item : optionals)
+                allAdditions.add(item);
+
+
+            //Set item checked if in selected list
+            for (int a = 0; a < selectedAdditions.size(); a++) {
+                for (int b = 0; b < allAdditions.size(); b++) {
+                    if (selectedAdditions.get(a).getId() == allAdditions.get(b).getId()) {
+                        allAdditions.get(b).setChecked(true);
+                        //break;
+                    }
                 }
-                JSONArray optional = menuItem.getJsonItem().getJSONArray("optionalAdditions");
-                for(int a = 0; a < optional.length();a++){
-                    optional.getJSONObject(a).put("checked", false);
-                    allAddons.put(optional.get(a));
-                }
+
+            }
+
+            //Should have complete additions with checked items (allAdditions)
+            for (FoodAddition item : allAdditions) {
+                System.out.println("All additions: " + item.getName());
+            }
+
+            for (FoodAddition item : defaults) {
+                System.out.println("default additions: " + item.getName());
+            }
+
+            for (FoodAddition item : selectedAdditions) {
+                System.out.println("selected additions: " + item.getName());
             }
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-        int logValue = binlog(allAddons.length());
+
+        int logValue = binlog(allAdditions.size());
 
         //Set span count to log of dataSet.length
         int spanCount = logValue >= 1 ? logValue : 1;
@@ -110,71 +144,60 @@ public class DialogItemAttributes extends DialogFragment{
         addonsRecycler.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, GridLayoutManager.HORIZONTAL, false);
         addonsRecycler.setLayoutManager(gridLayoutManager);
-        mAdapter = new JSONArrayRecyclerAdapter(getActivity(), allAddons, R.layout.item_checkbox, null, addonsCheckListener);
-
+        mAdapter = new FoodAdditionsRecyclerAdapter(getActivity(), allAdditions, R.layout.item_checkbox, null, addonsCheckListener);
         addonsRecycler.setAdapter(mAdapter);
 
-    }
-
-
-    //TODO: not implemented, visibility GONE for now
-    private void initSidesRecycler() {
-
-        JSONArray dataSet = dataSet = new JSONArray();
-
-        try {
-
-            for(int a = 1; a <= 35;a++){
-                JSONObject temp = new JSONObject();
-                temp.put("name", "Side "+a);
-                temp.put("checked", false);
-                dataSet.put(temp);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        sidesRecycler.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4, GridLayoutManager.HORIZONTAL, false);
-        sidesRecycler.setLayoutManager(gridLayoutManager);
-        JSONArrayRecyclerAdapter rcAdapter = new JSONArrayRecyclerAdapter(getActivity(), dataSet, R.layout.item_checkbox, null, sidesCheckListener);
-        sidesRecycler.setAdapter(rcAdapter);
 
     }
+
 
     RecyclerViewCheckListener sidesCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-           // System.out.println("Sides: " + position + " to " + isChecked);
+            // System.out.println("Sides: " + position + " to " + isChecked);
         }
     };
 
     RecyclerViewCheckListener addonsCheckListener = new RecyclerViewCheckListener() {
         @Override
         public void recyclerViewListChecked(View v, int parentPosition, int position, boolean isChecked) {
-            //System.out.println("Addons: " + position + " to " + isChecked);
+            System.out.println("Addons: " + position + " to " + isChecked);
+
         }
     };
 
     /**
      * Method to acquire accurate log2() values - quickly
+     *
      * @param bits
      * @return
      */
-    public static int binlog( int bits ) // returns 0 for bits=0
+    public static int binlog(int bits) // returns 0 for bits=0
     {
         int log = 0;
-        if( ( bits & 0xffff0000 ) != 0 ) { bits >>>= 16; log = 16; }
-        if( bits >= 256 ) { bits >>>= 8; log += 8; }
-        if( bits >= 16  ) { bits >>>= 4; log += 4; }
-        if( bits >= 4   ) { bits >>>= 2; log += 2; }
-        return log + ( bits >>> 1 );
+        if ((bits & 0xffff0000) != 0) {
+            bits >>>= 16;
+            log = 16;
+        }
+        if (bits >= 256) {
+            bits >>>= 8;
+            log += 8;
+        }
+        if (bits >= 16) {
+            bits >>>= 4;
+            log += 4;
+        }
+        if (bits >= 4) {
+            bits >>>= 2;
+            log += 2;
+        }
+        return log + (bits >>> 1);
     }
 
     /**
      * Overridden onDismiss to communicate back to the interface attached to the calling fragment
      * So that we the addition items can be passed back to update the UI and data structures
+     *
      * @param dialog
      */
     @Override
@@ -182,9 +205,8 @@ public class DialogItemAttributes extends DialogFragment{
         super.onDismiss(dialog);
         int customer = getArguments().getInt("customer");
         int position = getArguments().getInt("position");
-        ((DialogDismissListener)getTargetFragment()).dialogDismissListener(customer, position, mAdapter.getDataSet());
+        ((DialogDismissListener) getTargetFragment()).dialogDismissListener(customer, position, mAdapter.getCheckedDataSet());
     }
-
 
 
 }

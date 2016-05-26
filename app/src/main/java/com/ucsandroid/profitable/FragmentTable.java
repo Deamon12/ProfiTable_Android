@@ -15,9 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import supportclasses.MenuItem;
-import supportclasses.RecyclerViewClickListener;
-import supportclasses.TableRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
+import com.ucsandroid.profitable.listeners.LocationClickListener;
+import com.ucsandroid.profitable.listeners.LocationLongClickListener;
+import com.ucsandroid.profitable.serverclasses.Customer;
+import com.ucsandroid.profitable.serverclasses.Location;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 
 /**
@@ -30,7 +33,7 @@ public class FragmentTable extends Fragment {
 
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
-    private TableRecyclerAdapter mAdapter;
+    private LocationRecyclerAdapter mAdapter;
     private int spanCount;
     private int tileLayoutWidth;
 
@@ -51,13 +54,21 @@ public class FragmentTable extends Fragment {
 
     /**
      * Use the recently checked table (via the Singleton) to see if the UI needs updating.
-     * The UI will update if a customer is currently at the table
+     * The UI will update if a customer is currently at the table.
+     * Also, reinitialize the Measuring listener
      */
     @Override
     public void onResume() {
         super.onResume();
-        if(mAdapter != null)
-            mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentTableNumber());
+
+        if(mAdapter != null) {
+            if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TABLE){
+                mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+            }
+        }
+        else{
+            System.out.println("adapter is null");
+        }
 
         initRemeasureFragListener();
     }
@@ -90,20 +101,20 @@ public class FragmentTable extends Fragment {
     }
 
 
-    /**
-     * TODO: Volley call to acquire table data
-     */
+
     private void getTableData() {
 
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-        mAdapter = new TableRecyclerAdapter(getActivity(),
-                Singleton.getInstance().getAllTables(),
+        mAdapter = new LocationRecyclerAdapter(getActivity(),
+                Singleton.getInstance().getTables(),
                 R.layout.tile_table,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
-                clickListener);
+                clickListener,
+                locationLongClickListener);
+
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -111,27 +122,39 @@ public class FragmentTable extends Fragment {
     private void updateUI(int tableFragWidth){
 
         spanCount = getSpanCount();
-
         tileLayoutWidth = (tableFragWidth/spanCount);
-
         getTableData();
     }
 
     /**
      * Click interface for adapter
      */
-    RecyclerViewClickListener clickListener = new RecyclerViewClickListener() {
+    LocationClickListener clickListener = new LocationClickListener() {
 
         @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, MenuItem item) {
-            Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
-
-            Singleton.getInstance().setCurrentTableNumber(position);
-            getActivity().startActivity(orderViewActivity);
-
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location location) {
+            Singleton.getInstance().setLocationType(Singleton.TYPE_TABLE);
+            Singleton.getInstance().setCurrentLocationPosition(position);
+            goToOrder();
         }
 
     };
+
+    LocationLongClickListener locationLongClickListener = new LocationLongClickListener() {
+
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
+            System.out.println("tableId: "+item.getId());
+            System.out.println("restId: "+item.getRestaurantId());
+            System.out.println("tabId: "+item.getCurrentTab().getTabId());
+
+        }
+    };
+
+    private void goToOrder() {
+        Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
+        getActivity().startActivity(orderViewActivity);
+    }
 
     private int getSpanCount(){
 
@@ -157,7 +180,6 @@ public class FragmentTable extends Fragment {
      * larger or smaller
      */
     private void initRemeasureFragListener() {
-
         mRemeasureFragReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -166,7 +188,6 @@ public class FragmentTable extends Fragment {
                     updateUI(intent.getIntExtra("tableWidth", 0));
             }
         };
-
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mRemeasureFragReceiver,
                 new IntentFilter("tablefrag-measure"));
     }

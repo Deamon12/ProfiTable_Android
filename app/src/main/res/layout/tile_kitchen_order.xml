@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:layout_margin="5dp"
+    android:id="@+id/the_cardview">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -15,17 +16,15 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_check_circle_grey600_18dp"
             android:layout_margin="5dp"
-            android:padding="10sp"
             android:tint="@color/primary"
             android:layout_alignParentRight="true" />
-
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tile_name_text"
+            android:id="@+id/tile_text"
             android:text="Table 1"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center_vertical"
@@ -34,22 +33,34 @@
             android:layout_alignBottom="@+id/check_button"
             android:layout_alignTop="@+id/check_button"/>
 
+        <TextView
+            android:id="@+id/comment_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="this is comment"
+            android:layout_margin="5dp"
+            android:textSize="16sp"
+            android:layout_below="@+id/tile_text"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/primary"
+            android:layout_below="@+id/comment_text"
+            android:layout_marginBottom="5dp"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/item_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tile_name_text"
-            android:layout_alignLeft="@+id/tile_name_text"
+            android:layout_below="@+id/divider"
+            android:layout_alignLeft="@+id/tile_text"
             android:layout_marginBottom="10dp"
             >
 
-
-
         </android.support.v7.widget.RecyclerView>
 
-
         </RelativeLayout>
-
 
     </android.support.v7.widget.CardView>

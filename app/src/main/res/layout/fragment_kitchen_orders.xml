@@ -4,23 +4,9 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/kitchen_orders_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/divider"/>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@color/primary"
-        android:layout_above="@+id/kitchen_sums_recyclerview"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/kitchen_sums_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"/>
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

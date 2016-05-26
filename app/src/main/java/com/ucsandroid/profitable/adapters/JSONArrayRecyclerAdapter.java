@@ -1,4 +1,4 @@
-package supportclasses;
+package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
+import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,11 +97,11 @@ public class JSONArrayRecyclerAdapter extends RecyclerView.Adapter<JSONArrayRecy
 
             if (clickListener != null) {
                 //System.out.println("BasicRecycler: " + getAdapterPosition());
-                try {
-                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), new MenuItem(dataSet.getJSONObject(getAdapterPosition())));
+               /* try {
+                    clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), new MenuItem(dataSet.getJSONObject(getAdapterPosition()))); //TODO
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                }*/
 
             }
         }

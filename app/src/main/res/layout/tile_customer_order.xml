@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tile_name_text"
+            android:id="@+id/tile_text"
             android:text="Customer 1"
             android:textSize="24sp"
             android:layout_toRightOf="@+id/customer_image"
@@ -36,8 +36,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_insert_comment_black_18dp"
             android:tint="@color/accent"
-            android:layout_alignTop="@+id/tile_name_text"
-            android:layout_alignBottom="@+id/tile_name_text"
+            android:layout_alignTop="@+id/tile_text"
+            android:layout_alignBottom="@+id/tile_text"
             android:layout_toLeftOf="@+id/settings"
             android:padding="5dp"
             android:layout_marginRight="5dp"
@@ -49,8 +49,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_more_vert_grey600_18dp"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/tile_name_text"
-            android:layout_alignBottom="@+id/tile_name_text"
+            android:layout_alignTop="@+id/tile_text"
+            android:layout_alignBottom="@+id/tile_text"
             android:layout_marginRight="5dp"
             android:padding="3dp"/>
 
@@ -58,8 +58,9 @@
             android:id="@+id/item_recycler"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tile_name_text"
-            android:layout_alignLeft="@+id/tile_name_text"/>
+            android:layout_below="@+id/tile_text"
+            android:layout_alignLeft="@+id/tile_text"
+            android:overScrollMode="never"/>
 
 
         <TextView
@@ -67,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="This will be a comment for this customer"
+            android:text="This will be a comment for this customers"
             android:layout_below="@+id/item_recycler"
             android:layout_margin="10dp"/>
 

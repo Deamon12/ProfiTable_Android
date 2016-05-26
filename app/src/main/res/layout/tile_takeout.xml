@@ -25,7 +25,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_above="@+id/tile_name"
-            android:src="@mipmap/profit_logo"/>
+            android:src="@mipmap/profit_logo"
+            android:padding="10dp"/>
 
         <TextView
             android:id="@+id/tile_name"
