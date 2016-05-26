@@ -10,13 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.listeners.NestedClickListener;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
+import com.ucsandroid.profitable.listeners.TabClickListener;
+import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKitchenRecyclerAdapter.ViewHolder> {
@@ -27,17 +31,15 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
-    private OrderedItemClickListener nestedClickListener;
-    private RecyclerViewLongClickListener nestedLongClickListener;
+    private NestedClickListener nestedClickListener;
 
 
-    public NestedKitchenRecyclerAdapter(Context context, List<Tab> dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener) {
+    public NestedKitchenRecyclerAdapter(Context context, List<Tab> dataSet, int layout, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
         tabData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
-        this.nestedLongClickListener = longClickListener;
 
     }
 
@@ -85,7 +87,9 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
             if(v == doneButton){
                 //Do volley and update UI
-                mAdapter.setTabDone(getAdapterPosition());
+                System.out.println("in onclick of nestedKitchen");
+                nestedClickListener.nestedClickListener(getAdapterPosition(), tabData.get(getAdapterPosition()));
+
             }
 
         }
@@ -117,7 +121,16 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.mCommentTextView.setText(tabData.get(position).getTabStatus());
+
+        //tabData.get(position).getCustomers().get(0).getOrders().get(0).getOrderedItemStatus()
+
+        if(tabData.get(position).allOrdersReady())
+            holder.doneButton.setColorFilter(context.getResources().getColor(R.color.accent));
+        else
+            holder.doneButton.setColorFilter(context.getResources().getColor(R.color.primary));
+
+
+        holder.mCommentTextView.setText("");//tabData.get(position).getTabStatus());
 
         holder.mTextView.setText("Table " + tabData.get(position).getTabId()); //(position+1)
 
@@ -139,26 +152,9 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     }
 
 
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
-    OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
-        @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
-            nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);
-        }
-    };
-
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
-    RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
-
-        @Override
-        public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
-            nestedLongClickListener.recyclerViewListLongClicked(v, parentPosition, position, item);
-        }
-    };
+    public Tab getDataItem(int position){
+        return tabData.get(position);
+    }
 
 
 }

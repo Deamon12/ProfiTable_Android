@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.listeners.NestedClickListener;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
@@ -30,27 +31,24 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
-    private OrderedItemClickListener nestedClickListener;
+    private NestedClickListener nestedClickListener;
     private RecyclerViewLongClickListener nestedLongClickListener;
     private int parentPosition = 0;
 
 
 
-    public NestedCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener) {
+    public NestedCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
         customerData = dataSet;
         this.context = context;
         this.layout = layout;
         this.parentPosition = parentPostion;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
-        this.nestedLongClickListener = longClickListener;
 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        private ImageView doneButton;
-        public TextView mCommentTextView;
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
@@ -61,7 +59,6 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
-
             if(layout == R.layout.tile_recyclerview){
 
                 recyclerView = (RecyclerView) v.findViewById(R.id.the_recycler);
@@ -70,31 +67,12 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
             }
 
-            /*else if(layout == R.layout.tile_kitchen_order){
-
-                doneButton = (ImageView) v.findViewById(R.id.check_button);
-                mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
-
-                cardView = (CardView) v.findViewById(R.id.the_cardview);
-
-                recyclerView = (RecyclerView) v.findViewById(R.id.item_recycler);
-                recyclerView.setHasFixedSize(false);
-                recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
-
-                v.setOnClickListener(this);
-                v.setOnLongClickListener(this);
-
-                cardView.setOnClickListener(this);
-            }*/
-            else{
-
-            }
-
         }
 
         @Override
         public void onClick(View v) {
 
+            System.out.println("nestedCust clicked: "+getAdapterPosition());
         }
 
         @Override
@@ -130,7 +108,7 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
         holder.mAdapter = new OrderedItemRecyclerAdapter(context,
                 customerData.get(position).getOrders(),
-                R.layout.item_textview_textview2,
+                R.layout.item_imageview_textview_textview,
                 position,
                 null,
                 null,
@@ -144,37 +122,6 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
     public int getItemCount() {
         return customerData.size();
     }
-
-
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
-    OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
-        @Override
-        public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
-            nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);
-        }
-    };
-
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
-    RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
-
-        @Override
-        public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
-            nestedLongClickListener.recyclerViewListLongClicked(v, parentPosition, position, item);
-        }
-    };
-
-
-    public void setTabDone(int position) {
-        //DoVolley
-        System.out.println("Setting status of position "+position);
-
-
-    }
-
 
 
 

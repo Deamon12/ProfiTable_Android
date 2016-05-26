@@ -68,8 +68,14 @@ public class Customer {
             cost += order.get(a).getAdditionsCost();
         }
         return cost;
-
     }
-
+    public boolean allOrdersReady(){
+        for(OrderedItem item : order){
+            if(!item.getOrderedItemStatus().equalsIgnoreCase("ready")){
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

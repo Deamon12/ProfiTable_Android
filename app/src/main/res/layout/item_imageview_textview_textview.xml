@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_marginTop="0dp">
+
+    <ImageView
+        android:id="@+id/tile_image"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tile_text"
+        android:layout_alignTop="@+id/tile_text"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_check_circle_grey600_18dp"
+        android:tint="@color/primary"/>
+
+    <TextView
+        android:id="@+id/tile_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="Item 1"
+        android:textSize="16sp"
+        android:layout_toRightOf="@+id/tile_image"/>
+
+
+    <TextView
+        android:id="@+id/tile_text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No cheese"
+        android:textSize="16sp"
+        android:gravity="right"
+        android:layout_toRightOf="@+id/tile_text"
+        android:layout_alignTop="@+id/tile_text"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textStyle="bold"/>
+
+
+</RelativeLayout>

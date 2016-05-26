@@ -42,6 +42,10 @@ public class ActivityKitchen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kitchen);
 
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(this);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);

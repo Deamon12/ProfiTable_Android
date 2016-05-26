@@ -139,4 +139,13 @@ public class Tab {
     public void removeCustomer(int position){
         customers.remove(position);
     }
+
+    public boolean allOrdersReady(){
+        for(Customer customer : customers){
+            if(!customer.allOrdersReady()){
+                return false;
+            }
+        }
+        return true;
+    }
 }
