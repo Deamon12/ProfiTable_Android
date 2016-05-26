@@ -53,21 +53,36 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         if(settings.contains(getResources().getString(R.string.user_name)) &&
-                settings.contains(getResources().getString(R.string.rest_id)) &&
-                settings.contains(getResources().getString(R.string.user_pin))){
+                settings.contains(getResources().getString(R.string.rest_id))){
             //User has logged in before
             doLogin();
         }
     }
 
-    private void saveLoginInfo(String username, String restId, String pin){
+    private void saveLoginInfo(JSONObject userData) throws JSONException {
+
+        String employeeId = userData.getInt("employeeId")+"";
+        String restId = userData.getInt("restaurantId")+"";
+        String employeeType = userData.getString("employeeType");
+        String accountName = userData.getString("accountName");
+        String firstName = userData.getString("firstName");
+        String lastName = userData.getString("lastName");
+
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putString(getString(R.string.user_name), username);
+        edit.putString(getString(R.string.user_name), accountName);
         edit.putString(getString(R.string.rest_id), restId);
-        edit.putString(getString(R.string.user_pin), pin);
+
+        edit.putString(getString(R.string.employee_id), employeeId);
+        edit.putString(getString(R.string.employee_type), employeeType);
+
+        edit.putString(getString(R.string.first_name), firstName);
+        edit.putString(getString(R.string.last_name), lastName);
+
         edit.apply();
+
+        doLogin();
     }
 
     //Function to jump to the tableViewActivity page after log-in is succcessful
@@ -141,7 +156,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         String myUrl = builder.build().toString();
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 myUrl,
                 (JSONObject) null,
                 successListener, errorListener);
@@ -161,13 +176,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-
-                    String newData = theResponse.getJSONArray("result").toString();
-
-                    System.out.println("newData: "+newData);
+                    JSONObject userData = theResponse.getJSONObject("result");
 
 
-                    //saveLoginInfo();
+                    //Send retrieved data to saver method
+                    saveLoginInfo(userData);
 
                 }
                 else{

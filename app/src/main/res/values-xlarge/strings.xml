@@ -6,7 +6,9 @@
     <string name="locations_jsonobject">locations_jsonobject</string>
     <string name="employee_id">employee_id</string>
     <string name="rest_id">rest_id</string>
-
+    <string name="employee_type">employee_type</string>
+    <string name="first_name">first_name</string>
+    <string name="last_name">last_name</string>
 
     <bool name="isTablet">true</bool>
 </resources>

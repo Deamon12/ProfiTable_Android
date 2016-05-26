@@ -84,7 +84,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         ////http://52.38.148.241:8080/com.ucsandroid.profitable/rest/orders?rest_id=1&location_id=1
 
         int locationId = Singleton.getInstance().getCurrentLocation().getId();
-        int restId = settings.getInt(getString(R.string.rest_id), 1);
+        String restId = settings.getString(getString(R.string.rest_id), 1+"");
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
