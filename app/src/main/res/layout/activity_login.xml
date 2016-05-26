@@ -63,6 +63,31 @@
             android:layout_centerHorizontal="true"/>
 
 
+            <com.rey.material.widget.EditText
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/Material.Widget.EditText.Light"
+                android:id="@+id/pin_textfield"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/secondary_text"
+                android:hint="Password"
+                android:inputType="textPassword"
+                app:et_autoCompleteMode="none"
+                app:et_dividerColor="@color/profit_color"
+                app:et_dividerPadding="4dp"
+                app:et_supportTextErrorColor="#FFFF0000"
+                app:et_dividerErrorColor="#FFFF0000"
+                app:et_supportMode="helper"
+                android:gravity="start"
+                android:ems="7"
+                android:textCursorDrawable="@null"
+                android:layout_centerInParent="true"
+                android:layout_below="@+id/username_textfield"/>
+
         <com.rey.material.widget.EditText
             xmlns:app="http://schemas.android.com/apk/res-auto"
             style="@style/Material.Widget.EditText.Light"
@@ -85,38 +110,15 @@
             android:ems="7"
             android:textCursorDrawable="@null"
             android:layout_centerInParent="true"
-            android:layout_below="@+id/username_textfield"/>
+            android:layout_below="@+id/pin_textfield"/>
 
-        <com.rey.material.widget.EditText
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            style="@style/Material.Widget.EditText.Light"
-            android:id="@+id/pin_textfield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:textColor="@color/primary_text"
-            android:textColorHint="@color/secondary_text"
-            android:hint="Pin"
-            android:inputType="numberPassword"
-            app:et_autoCompleteMode="none"
-            app:et_dividerColor="@color/profit_color"
-            app:et_dividerPadding="4dp"
-            app:et_supportTextErrorColor="#FFFF0000"
-            app:et_dividerErrorColor="#FFFF0000"
-            app:et_supportMode="helper"
-            android:gravity="start"
-            android:ems="7"
-            android:textCursorDrawable="@null"
-            android:layout_centerInParent="true"
-            android:layout_below="@+id/restaurant_id_textfield"/>
+
 
             <android.support.v7.widget.CardView
                 android:id="@+id/login_card"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_below="@+id/pin_textfield"
+                android:layout_below="@+id/restaurant_id_textfield"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
