@@ -3,64 +3,34 @@ package com.ucsandroid.profitable;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.rey.material.widget.EditText;
+import com.rey.material.widget.TextView;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
-    private Button loginOkButton, loginForgotButton;
-    private EditText username_textfield, restaurant_id_textfield, pin_textfield;
+    private CardView loginButton;
+    private TextView forgotButton;
+    private EditText usernameField, restaurantField, pinField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Buttons
-        //loginOkButton = (Button) findViewById(R.id.login_ok_button);
-        //loginForgotButton = (Button) findViewById(R.id.login_forgot_button);
+        loginButton = (CardView) findViewById(R.id.login_card);
+        loginButton.setOnClickListener(this);
 
         //Input Textfields
-        username_textfield = (EditText) findViewById(R.id.username_textfield);
-        restaurant_id_textfield = (EditText) findViewById(R.id.restaurant_id_textfield);
-        pin_textfield = (EditText) findViewById(R.id.pin_textfield);
+        usernameField = (EditText) findViewById(R.id.username_textfield);
+        restaurantField = (EditText) findViewById(R.id.restaurant_id_textfield);
+        pinField = (EditText) findViewById(R.id.pin_textfield);
 
-        /**
-         Login and move on to the next page if you have the correct information,
-         otherwise inform user and do not move on.
-         TODO: Implement access to Database to check for correct login
-         */
-        /*
-        loginOkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(username_textfield.getText().toString().equals("admin") &&
-                    restaurant_id_textfield.toString().equals("1") &&
-                    pin_textfield.toString().equals("password")){
-                        Toast.makeText(getApplicationContext(), "Logging In...", Toast.LENGTH_SHORT).show();
+        forgotButton = (TextView) findViewById(R.id.forgot_login);
+        forgotButton.setOnClickListener(this);
 
-                        if(v == loginOkButton){
-                            doLogin();
-                        }
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Incorrect Login", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-/*
-        //If you forgot login info, press this button, then move on to ForgotLogin page
-        loginForgotButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                if(v == loginForgotButton){
-                resetPage();
-                }
-            }
-        });*/
 
     }
 
@@ -82,5 +52,39 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
+        if(v == loginButton){
+
+            //Check editFields for errors - refactor perhaps
+            if(usernameField.getText().toString().equalsIgnoreCase("")){
+                usernameField.setError("Username is required");
+            }
+            else{
+                usernameField.clearError();
+            }
+
+            if(restaurantField.getText().toString().equalsIgnoreCase("")){
+                restaurantField.setError("Restaurant Id is required");
+            }
+            else{
+                restaurantField.clearError();
+            }
+
+            if(pinField.getText().toString().equalsIgnoreCase("")){
+                pinField.setError("Pin is required");
+            }
+            else{
+                pinField.clearError();
+            }
+
+        }
+        else if(v == forgotButton){
+
+        }
+
+
+
     }
+
+
+
 }
