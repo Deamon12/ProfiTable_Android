@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="customer_order_text">18sp</dimen>
+    <dimen name="customer_title">24sp</dimen>
+    <dimen name="customer_image">30dp</dimen>
+    <dimen name="customer_comment_image">25dp</dimen>
+
+    <dimen name="divider_bar_height">30dp</dimen>
+
+
+</resources>

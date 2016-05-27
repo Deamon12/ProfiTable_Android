@@ -43,7 +43,7 @@
         <View
             android:id="@+id/menu_divider"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="@dimen/divider_bar_height"
             android:background="@color/primary_light"
             android:layout_above="@+id/menuitems_frag_container"
             />
@@ -64,7 +64,8 @@
             android:layout_marginRight="20dp"
             android:src="@drawable/ic_person_add_black_18dp"
             android:layout_alignRight="@+id/orders_frag_container"
-            android:layout_alignBottom="@+id/menu_divider" />
+            android:layout_alignBottom="@+id/menu_divider"
+            />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/docheckout_fab"
