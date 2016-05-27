@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class FragmentKitchenOrders extends Fragment {
         return thisFrag;
     }
 
+    //Empty constructor
     public FragmentKitchenOrders(){
 
     }
@@ -55,8 +57,6 @@ public class FragmentKitchenOrders extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
 
         View view = inflater.inflate(R.layout.fragment_kitchen_orders, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_orders_recyclerview);
@@ -70,6 +70,10 @@ public class FragmentKitchenOrders extends Fragment {
         return view;
     }
 
+    /**
+     * Parse input data from JSON to Objects
+     * @throws JSONException
+     */
     private void parseTabs() throws JSONException {
         mTabs = new ArrayList<>();
 
@@ -89,21 +93,22 @@ public class FragmentKitchenOrders extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        int layoutWidth;
+
+
+        //Use dimension based on device size
+        TypedValue outValue = new TypedValue();
+
         int orientation = getResources().getConfiguration().orientation;
-
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            layoutWidth = (int) (metrics.widthPixels * .3);
-
-        } else {
-            layoutWidth = (int) (metrics.widthPixels * .4);
+        int layoutWidth;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            getResources().getValue(R.dimen.kitchen_order_width_landscape, outValue, true);
+            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat()); //.15
+        }
+        else{
+            getResources().getValue(R.dimen.kitchen_order_width_landscape, outValue, true);
+            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat()); //.1
         }
 
-
-/*
-        MyLinearLayoutManager layoutManager
-                = new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-*/
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setHasFixedSize(true);

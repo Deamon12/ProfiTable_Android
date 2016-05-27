@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/sendToKitchen"
         android:layout_margin="5dp"
-        android:padding="10dp"
+        android:padding="@dimen/send_to_kitchen_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -24,8 +24,9 @@
 
         <ImageView
             android:id="@+id/sendToKitchen_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/ic_restaurant_menu_black_18dp"
             android:layout_alignBottom="@+id/sendToKitchen_text"
             android:layout_alignTop="@+id/sendToKitchen_text"

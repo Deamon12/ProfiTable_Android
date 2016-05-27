@@ -71,7 +71,6 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
         @Override
         public void onClick(View v) {
-
             System.out.println("nestedCust clicked: "+getAdapterPosition());
         }
 

@@ -1,8 +1,0 @@
-<resources>
-    <dimen name="activity_horizontal_margin">64dp</dimen>
-    <dimen name="divider_bar_height">20dp</dimen>
-
-    <dimen name="customer_title">24sp</dimen>
-    <dimen name="customer_image">20dp</dimen>
-    <dimen name="customer_comment_image">25dp</dimen>
-</resources>

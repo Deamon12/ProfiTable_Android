@@ -3,6 +3,7 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -179,18 +180,25 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
             }
         }
 
-        //Set additions string to textview
+        //Set additions string to textview or hide it if empty
         holder.mTextView2.setText(sb.toString());
+        if(sb.toString().equalsIgnoreCase("")){
+            holder.mTextView2.setVisibility(View.GONE);
+        }
+        else{
+            holder.mTextView2.setVisibility(View.VISIBLE);
+        }
 
 
         //Change each items check mark to reflect if ready or not
         if(layout == R.layout.item_imageview_textview_textview){
 
             if(mOrderedItems.get(position).getOrderedItemStatus().equalsIgnoreCase("ready")){
-                holder.mImageView.setColorFilter(context.getResources().getColor(R.color.accent));
+
+                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.accent));
             }
             else{
-                holder.mImageView.setColorFilter(context.getResources().getColor(R.color.primary));
+                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.primary));
             }
 
         }

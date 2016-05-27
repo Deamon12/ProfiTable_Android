@@ -179,7 +179,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
             holder.mCommentTextView.setVisibility(View.GONE);
         }
 
-
         holder.mTextView.setText("Customer " + (getItemCount()-position));
 
         //initialize the last tile as selected
@@ -193,8 +192,14 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
 
 
-        holder.rcAdapter = new OrderedItemRecyclerAdapter(context, locationData.getCurrentTab().getCustomers().get(position).getOrders(), R.layout.item_textview_textview2, position, null,
-                orderedItemClickListener, longClickListener);
+        holder.rcAdapter = new OrderedItemRecyclerAdapter(context,
+                locationData.getCurrentTab().getCustomers().get(position).getOrders(),
+                R.layout.item_textview_textview2,
+                position,
+                null,
+                orderedItemClickListener,
+                longClickListener);
+
         holder.recyclerView.setAdapter(holder.rcAdapter);
 
     }

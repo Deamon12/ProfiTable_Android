@@ -10,10 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Subtotal"
-        android:textSize="14sp"
-
+        android:textSize="@dimen/amount_frag_header_text"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/amount_margin_top"
         android:textStyle="bold" />
 
     <TextView
@@ -21,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="$100.00"
-        android:textSize="20sp"
+        android:textSize="@dimen/amount_frag_amount_text"
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/subtotaltext"/>
 
@@ -31,10 +30,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tax (7.5%)"
-        android:textSize="14sp"
+        android:textSize="@dimen/amount_frag_header_text"
         android:layout_below="@+id/subtotal_label"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/amount_margin_top"
         android:textStyle="bold" />
 
     <TextView
@@ -42,11 +41,9 @@
         android:layout_height="wrap_content"
         android:text="$15.00"
         android:id="@+id/tax_textview"
-        android:textSize="20sp"
+        android:textSize="@dimen/amount_frag_amount_text"
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/taxtext"/>
-
-
 
 
     <TextView
@@ -54,10 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Discount"
-        android:textSize="14sp"
+        android:textSize="@dimen/amount_frag_header_text"
         android:layout_below="@+id/tax_textview"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/amount_margin_top"
         android:textStyle="italic" />
 
     <TextView
@@ -65,23 +62,9 @@
         android:layout_height="wrap_content"
         android:text="$10.00"
         android:id="@+id/discount_textview"
-        android:textSize="20sp"
+        android:textSize="@dimen/amount_frag_amount_text"
         android:layout_below="@+id/discounttext"
         android:layout_marginLeft="15dp"/>
-
-<!--
-
-    <TextView
-        android:id="@+id/amountduetext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount Due : "
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/discounttext"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
--->
 
     <View
         android:id="@+id/divider"
@@ -89,19 +72,18 @@
         android:layout_height="2sp"
         android:background="@color/primary"
         android:layout_below="@+id/discount_textview"
-        android:layout_margin="10dp"/>
+        android:layout_margin="@dimen/amount_margin_top"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.ucsandroid.profitable.supportclasses.AutoResizeTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/amount_frag_total_text"
         android:text="$10.00"
         android:id="@+id/amountdue_textview"
-        android:textSize="30sp"
+        android:textSize="@dimen/amount_frag_total_text"
         android:layout_below="@+id/divider"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:gravity="center"
         />
 
 

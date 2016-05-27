@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,11 +145,13 @@ public class FragmentMenuViewpager extends Fragment {
      */
     public class MenuCollectionStatePagerAdapter extends FragmentStatePagerAdapter {
 
+        TypedValue outValue = new TypedValue();
         List<Category> dataSet;
 
         public MenuCollectionStatePagerAdapter(FragmentManager fm, List<Category> dataSet) {
             super(fm);
             this.dataSet = dataSet;
+            getResources().getValue(R.dimen.menu_item_width, outValue, true);
         }
 
         @Override
@@ -173,9 +176,7 @@ public class FragmentMenuViewpager extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String categoryName = dataSet.get(position).getName();
-
-            return categoryName;
+            return dataSet.get(position).getName();
         }
 
         /**
@@ -184,7 +185,7 @@ public class FragmentMenuViewpager extends Fragment {
          * @return width size
          */
         public float getPageWidth(int position) {
-            return 0.3f;
+            return outValue.getFloat();
         }
 
     }

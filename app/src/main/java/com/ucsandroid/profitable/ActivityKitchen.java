@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -64,13 +65,16 @@ public class ActivityKitchen extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        TypedValue outValue = new TypedValue();
         int orientation = getResources().getConfiguration().orientation;
-        int amountsHeight = 200;
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            amountsHeight = (int)(metrics.heightPixels*.15);
-        }
-        else{
-            amountsHeight = (int)(metrics.heightPixels*.1);
+        int amountsHeight;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getResources().getValue(R.dimen.kitchen_amount_frag_width_landscape, outValue, true);
+            amountsHeight = (int) (metrics.heightPixels * outValue.getFloat());
+
+        } else {
+            getResources().getValue(R.dimen.kitchen_amount_frag_width_portrait, outValue, true);
+            amountsHeight = (int) (metrics.heightPixels * outValue.getFloat());
         }
 
 
