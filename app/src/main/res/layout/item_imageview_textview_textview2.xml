@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/tile_image"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tile_text"
+        android:layout_alignTop="@+id/tile_text"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_check_circle_grey600_18dp"
+        android:tint="@color/primary"/>
+
+    <TextView
+        android:id="@+id/tile_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="Item 1"
+        android:textSize="@dimen/customer_order_text"
+        android:layout_marginTop="@dimen/text_text2_margin_top"
+        android:layout_toRightOf="@+id/tile_image"/>
+
+    <TextView
+        android:id="@+id/tile_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No cheese"
+        android:textSize="@dimen/customer_order_text"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/tile_text"
+        android:textStyle="bold"
+        android:layout_alignLeft="@+id/tile_text"/>
+
+</RelativeLayout>

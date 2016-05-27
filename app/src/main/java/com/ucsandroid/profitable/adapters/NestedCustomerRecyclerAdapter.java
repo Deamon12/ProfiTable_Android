@@ -101,13 +101,14 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+
         //holder.mCommentTextView.setText(customerData.get(position));
 
         //holder.mTextView.setText("Table " + (position+1));
 
         holder.mAdapter = new OrderedItemRecyclerAdapter(context,
                 customerData.get(position).getOrders(),
-                R.layout.item_imageview_textview_textview,
+                R.layout.item_imageview_textview_textview2,
                 position,
                 null,
                 null,

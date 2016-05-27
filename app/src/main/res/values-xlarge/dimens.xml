@@ -27,8 +27,13 @@
     <dimen name="kitchen_quantity_text">16sp</dimen>
     <item name="kitchen_amount_frag_width_landscape" format="float" type="dimen">.15</item>
     <item name="kitchen_amount_frag_width_portrait" format="float" type="dimen">.1</item>
+    <dimen name="kitchen_title">20sp</dimen>
+    <dimen name="kitchen_check_button">50dp</dimen>
 
     <!--Textview_Textview2 -->
     <dimen name="text_text2_margin_top">3dp</dimen>
+
+    <!--Location Fragments -->
+    <dimen name="location_divider_text">20sp</dimen>
 
 </resources>

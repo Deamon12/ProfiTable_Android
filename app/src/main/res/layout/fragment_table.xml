@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="Tables"
         android:padding="5dp"
-        android:textSize="20sp"
+        android:textSize="@dimen/location_divider_text"
         android:background="@drawable/square_rounded"
         android:textIsSelectable="true"/>
 
@@ -20,7 +20,8 @@
         android:id="@+id/table_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/section_text_takeout"/>
+        android:layout_below="@+id/section_text_takeout"
+        />
 
 
 </RelativeLayout>

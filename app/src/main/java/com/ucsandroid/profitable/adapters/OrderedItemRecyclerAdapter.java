@@ -78,6 +78,10 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
                 mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
                 mImageView = (ImageView) v.findViewById(R.id.tile_image);
             }
+            else if(layout == R.layout.item_imageview_textview_textview2){
+                mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
+                mImageView = (ImageView) v.findViewById(R.id.tile_image);
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -191,10 +195,9 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
 
 
         //Change each items check mark to reflect if ready or not
-        if(layout == R.layout.item_imageview_textview_textview){
+        if(holder.mImageView != null){
 
             if(mOrderedItems.get(position).getOrderedItemStatus().equalsIgnoreCase("ready")){
-
                 holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.accent));
             }
             else{

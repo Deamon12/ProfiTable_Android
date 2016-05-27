@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/check_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/kitchen_check_button"
+            android:layout_height="@dimen/kitchen_check_button"
             android:src="@drawable/ic_check_circle_grey600_18dp"
             android:layout_margin="5dp"
             android:tint="@color/primary"
@@ -24,8 +24,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/tile_text"
             android:text="Table 1"
-            android:layout_margin="5dp"
-            android:textSize="20sp"
+            android:layout_marginLeft="5dp"
+            android:textSize="@dimen/kitchen_title"
             android:textStyle="bold"
             android:gravity="center_vertical"
             android:layout_alignParentLeft="true"

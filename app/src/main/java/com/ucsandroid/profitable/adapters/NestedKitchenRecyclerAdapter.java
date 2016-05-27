@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -125,12 +126,15 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         //tabData.get(position).getCustomers().get(0).getOrders().get(0).getOrderedItemStatus()
 
         if(tabData.get(position).allOrdersReady())
-            holder.doneButton.setColorFilter(context.getResources().getColor(R.color.accent));
+
+            holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.accent));
         else
-            holder.doneButton.setColorFilter(context.getResources().getColor(R.color.primary));
+            holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.primary));
 
 
-        holder.mCommentTextView.setText("");//tabData.get(position).getTabStatus());
+        holder.mCommentTextView.setVisibility(View.GONE); //todo: not being used
+        //holder.mCommentTextView.setText("");//tabData.get(position).getTabStatus());
+
 
         holder.mTextView.setText("Table " + tabData.get(position).getTabId()); //(position+1)
 
