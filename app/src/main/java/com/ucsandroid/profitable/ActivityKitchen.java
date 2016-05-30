@@ -2,12 +2,9 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -22,17 +19,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.ucsandroid.profitable.serverclasses.Location;
-import com.ucsandroid.profitable.serverclasses.LocationCategory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ActivityKitchen extends AppCompatActivity {
 
@@ -115,7 +105,7 @@ public class ActivityKitchen extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_tables:
-                Intent netLabActivity = new Intent(ActivityKitchen.this, ActivityTableView.class);
+                Intent netLabActivity = new Intent(ActivityKitchen.this, ActivityLocationView.class);
                 startActivity(netLabActivity);
                 return true;
 

@@ -11,7 +11,6 @@
     <string name="first_name">first_name</string>
     <string name="last_name">last_name</string>
 
-
     <bool name="isTablet">false</bool>
 
     <integer name="table_tile_span_landscape">6</integer>
@@ -22,5 +21,7 @@
 
     <integer name="takeout_tile_span_landscape">7</integer>
     <integer name="takeout_tile_span_portrait">4</integer>
+
+    <string name="gcm_defaultSenderId">gcm_defaultSenderId</string>
 
 </resources>

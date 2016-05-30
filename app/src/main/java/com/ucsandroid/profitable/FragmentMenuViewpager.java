@@ -37,7 +37,7 @@ public class FragmentMenuViewpager extends Fragment {
     private View mView;
 
     private List<Category> mCategories = new ArrayList<>();;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
 
 
     @Override
@@ -64,12 +64,12 @@ public class FragmentMenuViewpager extends Fragment {
      * Shows a progressDialog dialog before beginning
      */
     private void getMenu() {
-
+/*
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.isIndeterminate();
         progressDialog.setMessage("Retrieving Menu Items");
         progressDialog.show();
-
+*/
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
@@ -243,7 +243,7 @@ public class FragmentMenuViewpager extends Fragment {
                 e.printStackTrace();
             }
 
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
 
         }
     };
@@ -252,7 +252,7 @@ public class FragmentMenuViewpager extends Fragment {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             System.out.println("Volley error: " + error);
         }
     };

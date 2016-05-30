@@ -14,10 +14,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.iid.InstanceID;
 import com.rey.material.widget.EditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,6 +47,10 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         forgotButton = (TextView) findViewById(R.id.forgot_login);
         forgotButton.setOnClickListener(this);
+
+
+        String iid = InstanceID.getInstance(this).getId();
+        System.out.println("iid: "+iid);
 
         checkUserLoggedIn();
 
@@ -88,7 +95,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     //Function to jump to the tableViewActivity page after log-in is succcessful
     private void doLogin()
     {
-        Intent tableViewActivity = new Intent(ActivityLogin.this, ActivityTableView.class);
+        Intent tableViewActivity = new Intent(ActivityLogin.this, ActivityLocationView.class);
         startActivity(tableViewActivity);
         finish();
     }

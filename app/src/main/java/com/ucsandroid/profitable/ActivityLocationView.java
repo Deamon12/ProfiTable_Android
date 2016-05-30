@@ -8,14 +8,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.BottomBarBadge;
 import com.roughike.bottombar.OnMenuTabSelectedListener;
 import com.ucsandroid.profitable.serverclasses.Category;
 
@@ -34,7 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityTableView extends AppCompatActivity {
+public class ActivityLocationView extends AppCompatActivity {
 
 
     private Fragment mTableFrag;
@@ -107,7 +104,7 @@ public class ActivityTableView extends AppCompatActivity {
                         break;
                 }
 
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
                 SharedPreferences.Editor edit = settings.edit();
                 edit.putInt("location_tab", location);
                 edit.apply();
@@ -153,7 +150,7 @@ public class ActivityTableView extends AppCompatActivity {
      */
     private void evaluateLocationData() {
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
 
         if(settings.getString(getString(R.string.locations_jsonobject), "").equalsIgnoreCase("")) {
             System.out.println("getting tables data");
@@ -211,8 +208,15 @@ public class ActivityTableView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_kitchen:
-                Intent intent = new Intent(ActivityTableView.this, ActivityKitchen.class);
+                Intent intent = new Intent(ActivityLocationView.this, ActivityKitchen.class);
                 startActivity(intent);
+                return true;
+
+            case R.id.action_logout:
+                clearSharedPrefs();
+                Intent logoutIntent = new Intent(ActivityLocationView.this, ActivityLogin.class);
+                startActivity(logoutIntent);
+                finish();
                 return true;
 
             default:
@@ -220,6 +224,12 @@ public class ActivityTableView extends AppCompatActivity {
         }
     }
 
+    private void clearSharedPrefs() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.clear();
+        edit.apply();
+    }
 
 
     private Response.Listener successListener = new Response.Listener() {
@@ -233,7 +243,7 @@ public class ActivityTableView extends AppCompatActivity {
                 //If successful retrieval, update saved menu
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
 
                     String newData = theResponse.getJSONArray("result").toString();
                     String localData = settings.getString(getString(R.string.locations_jsonobject), "");
@@ -275,7 +285,7 @@ public class ActivityTableView extends AppCompatActivity {
 
 
     private void setLocationsFromPrefs() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
         try {
             Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
 
@@ -325,7 +335,7 @@ public class ActivityTableView extends AppCompatActivity {
                 //If successful retrieval, update saved menu
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
                     SharedPreferences.Editor edit = settings.edit();
                     edit.putString(getString(R.string.menu_jsonobject), theResponse.getJSONArray("result").toString());
                     edit.apply();
