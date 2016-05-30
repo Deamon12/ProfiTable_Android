@@ -14,7 +14,7 @@
 
 
     <FrameLayout
-        android:id="@+id/table_frag_container"
+        android:id="@+id/location_frag_container"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/the_toolbar"/>
@@ -41,7 +41,7 @@
         android:gravity="center_vertical"
         android:layout_below="@+id/the_toolbar"
         android:layout_toLeftOf="@+id/bar_divider_arrow"
-        android:layout_toRightOf="@+id/table_frag_container"
+        android:layout_toRightOf="@+id/location_frag_container"
         />
 
     <ImageView
@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/section_text_bar"
-        android:layout_toRightOf="@+id/table_frag_container" />
+        android:layout_toRightOf="@+id/location_frag_container" />
 
 
     <View
@@ -87,7 +87,7 @@
         android:gravity="center_vertical"
         android:layout_below="@+id/bar_frag_container"
         android:layout_toLeftOf="@+id/takeout_divider_arrow"
-        android:layout_toRightOf="@+id/table_frag_container"/>
+        android:layout_toRightOf="@+id/location_frag_container"/>
 
     <ImageView
         android:id="@+id/takeout_divider_arrow"
@@ -108,7 +108,7 @@
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/section_text_takeout"
-        android:layout_toRightOf="@+id/table_frag_container" />
+        android:layout_toRightOf="@+id/location_frag_container" />
 
 
 </RelativeLayout>

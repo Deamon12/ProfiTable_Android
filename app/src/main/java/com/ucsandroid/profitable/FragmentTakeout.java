@@ -54,8 +54,8 @@ public class FragmentTakeout extends Fragment {
         boolean shown = settings.getBoolean("takeoutFragShown", true);
 
         //Hide fragment based on SharedPrefs
-        if (!shown)
-            ((ActivityTableView) getActivity()).toggleTakeoutSection(false);
+        //if (!shown)
+        //    ((ActivityTableView) getActivity()).toggleTakeoutSection(false);
 
     }
 

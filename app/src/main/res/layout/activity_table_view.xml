@@ -14,12 +14,12 @@
         android:elevation="4dp"/>
 
     <FrameLayout
-        android:id="@+id/table_frag_container"
+        android:id="@+id/location_frag_container"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/section_text_bar"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/the_toolbar"/>
 
+<!--
 
     <View
         android:layout_width="wrap_content"
@@ -55,7 +55,6 @@
         android:tint="@color/accent"
         android:scaleType="fitCenter" />
 
-    <!--end divider-->
 
     <FrameLayout
         android:id="@+id/bar_frag_container"
@@ -98,13 +97,12 @@
         android:tint="@color/accent"
         android:scaleType="fitCenter" />
 
-    <!--end divider-->
     <FrameLayout
         android:id="@+id/takeout_frag_container"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         />
-
+-->
 
 </RelativeLayout>

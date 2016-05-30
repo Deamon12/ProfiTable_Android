@@ -45,8 +45,8 @@ public class FragmentBar extends Fragment {
         boolean shown = settings.getBoolean("barFragShown", true);
 
         //Hide fragment based on SharedPrefs
-        if(!shown)
-            ((ActivityTableView)getActivity()).toggleBarSection(false);
+        //if(!shown)
+        //    ((ActivityTableView)getActivity()).toggleBarSection(false);
 
         if(mAdapter != null && Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR) {
             mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
