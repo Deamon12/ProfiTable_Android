@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
@@ -43,16 +44,20 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         public CardView mCardView;
         public TextView mTextView;
+        private ImageView mImageView;
 
         public ViewHolder(View v) {
             super(v);
 
             mCardView = (CardView) v.findViewById(R.id.the_cardview);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
+            mImageView = (ImageView) v.findViewById(R.id.tile_image);
 
+            /*
             if(layout == R.layout.tile_kitchen_order){
-            }else{
             }
+            else if(layout == R.layout.tile_bar_new){
+            }*/
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -88,7 +93,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         ViewHolder vh = new ViewHolder(v);
 
-
         return vh;
     }
 
@@ -96,21 +100,58 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-
+        //Kitchen orders
         if(layout == R.layout.tile_kitchen_order){
             holder.mTextView.setText(dataSet.get(position).getName());
 
+        } //Tables
+        else if(layout == R.layout.tile_table_new){
+
+            holder.mTextView.setText("Table "+(position+1));
+
+            if(dataSet.get(position).getCurrentTab().getTabId() != 0
+                    || dataSet.get(position).getLocationCost() > 0) {
+
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
+            }
+            else{
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_75x75_blackseats));
+            }
         }
+        else if(layout == R.layout.tile_bar_new){
+
+            holder.mTextView.setText("Bar "+(position+1));
+
+            if(dataSet.get(position).getCurrentTab().getTabId() != 0
+                    || dataSet.get(position).getLocationCost() > 0) {
+
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_seated));
+            }
+            else{
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_75));
+            }
+        }
+
+
+
         else{
-            holder.mTextView.setText(""+(position+1));
+
 
             if(dataSet.get(position).getCurrentTab().getTabId() != 0
                     || dataSet.get(position).getLocationCost() > 0){ //TODO change to status
 
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+                if(layout == R.layout.tile_table_new){
+                    holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
+                }
+                else{
+                    holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
+                }
+
+
+
             }
             else{
-                holder.mCardView.setCardBackgroundColor(0);
+                //holder.mCardView.setCardBackgroundColor(0);
             }
 
         }

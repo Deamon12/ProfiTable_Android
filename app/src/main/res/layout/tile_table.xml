@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/the_cardview"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_margin="5dp"
+    app:cardElevation="1dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -36,19 +39,6 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"/>
 
-
-
-<!--
-        <com.ucsandroid.profitable.supportclasses.AutoResizeTextView
-            android:id="@+id/tile_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Location #"
-            android:lines="1"
-            android:textSize="14sp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"/>
-        -->
 
     </RelativeLayout>
 

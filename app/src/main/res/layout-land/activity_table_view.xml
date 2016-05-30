@@ -12,6 +12,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:elevation="4dp"/>
 
+
     <FrameLayout
         android:id="@+id/table_frag_container"
         android:layout_width="300dp"

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,7 @@ public class FragmentTable extends Fragment {
 
         mAdapter = new LocationRecyclerAdapter(getActivity(),
                 Singleton.getInstance().getTables(),
-                R.layout.tile_table,
+                R.layout.tile_table_new,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener,
                 locationLongClickListener);
@@ -156,22 +157,17 @@ public class FragmentTable extends Fragment {
         getActivity().startActivity(orderViewActivity);
     }
 
+
     private int getSpanCount(){
 
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
-        if (tabletSize) {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                return 7;
-            }else
-                return 8;
-        } else {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                return 6;
-            }else
-                return 5;
-        }
+
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            return getResources().getInteger(R.integer.table_tile_span_landscape);
+        }else
+            return getResources().getInteger(R.integer.table_tile_span_portrait);
+
     }
 
 

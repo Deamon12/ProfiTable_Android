@@ -99,7 +99,7 @@ public class FragmentBar extends Fragment {
         mAdapter = new LocationRecyclerAdapter(
                         getActivity(),
                         Singleton.getInstance().getBars(),
-                        R.layout.tile_bar,
+                        R.layout.tile_bar_new,
                         new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                         clickListener,
                         locationLongClickListener);
