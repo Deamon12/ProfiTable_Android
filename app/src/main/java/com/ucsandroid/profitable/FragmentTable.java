@@ -91,9 +91,7 @@ public class FragmentTable extends Fragment {
                 mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
                 mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
-
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
-
                 getTableData();
 
             }
@@ -161,7 +159,6 @@ public class FragmentTable extends Fragment {
     private int getSpanCount(){
 
         int orientation = getResources().getConfiguration().orientation;
-
 
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             return getResources().getInteger(R.integer.table_tile_span_landscape);

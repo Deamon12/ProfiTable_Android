@@ -26,8 +26,6 @@ public class FragmentTakeout extends Fragment {
     private GridLayoutManager gridLayout;
     private TakeoutRecyclerAdapter mAdapter;
 
-
-
     private int mRecyclerViewWidth;
     private int spanCount;
     private int tileLayoutWidth;
@@ -38,9 +36,7 @@ public class FragmentTakeout extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_takeout, container, false);
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.takeout_recyclerview);
-
         initRecyclerView();
 
         return view;
@@ -49,21 +45,11 @@ public class FragmentTakeout extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean shown = settings.getBoolean("takeoutFragShown", true);
-
-        //Hide fragment based on SharedPrefs
-        //if (!shown)
-        //    ((ActivityTableView) getActivity()).toggleTakeoutSection(false);
-
     }
-
 
     private void initRecyclerView() {
 
         spanCount = getSpanCount();
-
 
         ViewTreeObserver vto = mRecyclerView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -71,28 +57,15 @@ public class FragmentTakeout extends Fragment {
             public void onGlobalLayout() {
                 mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-                DisplayMetrics metrics = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
 
-                int orientation = getResources().getConfiguration().orientation;
-
-                //Cant use the recycler width, because it may be set to GONE, which would be zero width
-                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mRecyclerViewWidth = (int) (metrics.widthPixels * .5);
-                } else {
-                    mRecyclerViewWidth = (int) (metrics.widthPixels);
-                }
-
-                tileLayoutWidth = (mRecyclerViewWidth / spanCount);
+                tileLayoutWidth = (mRecyclerViewWidth/spanCount);
 
                 getTableData();
 
             }
         });
-
-
     }
-
 
     private void getTableData() {
 
@@ -103,7 +76,7 @@ public class FragmentTakeout extends Fragment {
 
         mAdapter = new TakeoutRecyclerAdapter(getActivity(),
                 Singleton.getInstance().getTakeouts(),
-                R.layout.tile_takeout,
+                R.layout.tile_takeout_new,
                 new ViewGroup.LayoutParams(tileLayoutWidth, tileLayoutWidth),
                 clickListener);
 
@@ -113,20 +86,13 @@ public class FragmentTakeout extends Fragment {
 
     private int getSpanCount() {
 
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
-        if (tabletSize) {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                return 6;
-            } else
-                return 8;
-        } else {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE)
-                return 4;
-            else
-                return 5;
-        }
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            return getResources().getInteger(R.integer.takeout_tile_span_landscape);
+        }else
+            return getResources().getInteger(R.integer.takeout_tile_span_portrait);
+
     }
 
 

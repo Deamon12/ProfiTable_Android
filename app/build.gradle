@@ -31,4 +31,5 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.roughike:bottom-bar:1.2.1'
+    compile "com.google.android.gms:play-services-gcm:9.0.1"
 }

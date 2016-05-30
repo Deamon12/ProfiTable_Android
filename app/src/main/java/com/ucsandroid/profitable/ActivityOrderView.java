@@ -260,7 +260,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
                     //TODO more logic, but dont erase local data, unless we NEED to
 
-
                     sendLocationUpdateBroadcast();
 
                 } else {

@@ -5,23 +5,17 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.BottomBarBadge;
 import com.roughike.bottombar.OnMenuTabSelectedListener;
 import com.ucsandroid.profitable.serverclasses.Category;
 
@@ -39,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityTableView extends AppCompatActivity implements View.OnClickListener {
+public class ActivityTableView extends AppCompatActivity {
 
 
     private Fragment mTableFrag;
@@ -47,25 +42,15 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
     private Fragment mTakeoutFrag;
 
     private BottomBar mBottomBar;
-    //private int tableFragWidth;
-    //private int barFragHeight, takeoutFragHeight;
-    //private FrameLayout barFragContainer;
-    private FrameLayout locationFragContainer;
-    //private FrameLayout takeoutFragContainer;
     private Toolbar toolbar;
-    //private TextView barDivider, takeoutDivider, tableDivider;
-    //private ImageView barArrow, takeoutArrow;
 
     private ProgressDialog progressDialog;
-
-    private DisplayMetrics metrics;
-    private int orientation;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_table_view);
+        setContentView(R.layout.activity_location_view);
 
 
         toolbar = (Toolbar) findViewById(R.id.the_toolbar);
@@ -77,75 +62,39 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             Singleton.initialize(this);
         }
 
-        initBottomNavigation();
-
-        metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        orientation = getResources().getConfiguration().orientation;
-
-        locationFragContainer = (FrameLayout) findViewById(R.id.location_frag_container);
-        /*
-        barFragContainer = (FrameLayout) findViewById(R.id.bar_frag_container);
-        takeoutFragContainer = (FrameLayout) findViewById(R.id.takeout_frag_container);
-
-
-        barDivider = (TextView) findViewById(R.id.section_text_bar);
-        barDivider.setOnClickListener(this);
-
-        takeoutDivider = (TextView) findViewById(R.id.section_text_takeout);
-        takeoutDivider.setOnClickListener(this);
-
-        barArrow = (ImageView) findViewById(R.id.bar_divider_arrow);
-        barArrow.setOnClickListener(this);
-
-        takeoutArrow = (ImageView) findViewById(R.id.takeout_divider_arrow);
-        takeoutArrow.setOnClickListener(this);
-
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            barFragHeight = (int)(metrics.heightPixels*.4);
-            takeoutFragHeight = (int)(metrics.heightPixels*.4);
-            barFragContainer.getLayoutParams().height = barFragHeight;
-            tableFragWidth = (int)(metrics.widthPixels*.5);
-        }
-        else{
-            barFragHeight = (int)((metrics.heightPixels*.2));
-            takeoutFragHeight = (int)(metrics.heightPixels*.2);
-            tableFragWidth = locationFragContainer.getLayoutParams().width;
-        }
-*/
-
-        //locationFragContainer.getLayoutParams().width = tableFragWidth;
-        //barFragContainer.getLayoutParams().height = barFragHeight;
-        //takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
-
+        initBottomNavigation(savedInstanceState);
         getMenu();
         evaluateLocationData();
 
 
     }
 
-    private void initBottomNavigation() {
 
+    private void initBottomNavigation(Bundle savedInstanceState) {
 
-        mBottomBar = BottomBar.attach(this, null);
+        mBottomBar = BottomBar.attach(this, savedInstanceState);
+        mBottomBar.setActiveTabColor(ContextCompat.getColor(this, R.color.accent));
+
         mBottomBar.setItemsFromMenu(R.menu.bottom_nav_items, new OnMenuTabSelectedListener() {
+
             @Override
             public void onMenuItemSelected(int itemId) {
+                int location = -1;
                 switch (itemId) {
                     case R.id.action_show_tables:
                         if(!mTableFrag.isVisible()){
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mTableFrag);
                             transaction.commit();
+                            location = 0;
                         }
-
                         break;
                     case R.id.action_show_bar:
                         if(!mBarFrag.isVisible()){
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mBarFrag);
                             transaction.commit();
+                            location = 1;
                         }
                         break;
                     case R.id.action_show_takeout:
@@ -153,14 +102,49 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mTakeoutFrag);
                             transaction.commit();
+                            location = 2;
                         }
                         break;
                 }
+
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityTableView.this);
+                SharedPreferences.Editor edit = settings.edit();
+                edit.putInt("location_tab", location);
+                edit.apply();
+
             }
         });
 
-
     }
+
+
+    private void initFragments() {
+
+        mTableFrag = new FragmentTable();
+        mBarFrag = new FragmentBar();
+        mTakeoutFrag = new FragmentTakeout();
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int location = settings.getInt("location_tab", 0);
+
+        if(location == 0){
+            transaction.replace(R.id.location_frag_container, mTableFrag);
+        }
+        else if(location == 1){
+            transaction.replace(R.id.location_frag_container, mBarFrag);
+        }
+        else if(location == 2){
+            transaction.replace(R.id.location_frag_container, mTakeoutFrag);
+        }
+
+        // Commit the transaction
+        transaction.commit();
+
+        mBottomBar.selectTabAtPosition(location, true);
+    }
+
 
 
     /**
@@ -186,9 +170,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
             getTablesData(); //progress?
         }
 
-
     }
-
 
 
     private void getTablesData() {
@@ -214,175 +196,7 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
-
     }
-
-
-    private void initFragments() {
-
-        mTableFrag = new FragmentTable();
-        mBarFrag = new FragmentBar();
-        mTakeoutFrag = new FragmentTakeout();
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        //todo: prefs?
-        transaction.replace(R.id.location_frag_container, mTableFrag);
-        //transaction.replace(R.id.bar_frag_container, barFrag);
-        //transaction.replace(R.id.takeout_frag_container, takeoutFrag);
-
-        // Commit the transaction
-        transaction.commit();
-
-    }
-
-
-    //TODO: use listener
-    /**
-     * Hide or show bar section fragment container
-     */
-    /*
-    public void toggleBarSection(boolean show){
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = settings.edit();
-
-        if(!show){
-            barFragContainer.findViewById(R.id.the_relative).setVisibility(View.GONE);
-            ((ImageView) findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_18dp);
-            barFragContainer.getLayoutParams().height = 0;
-        }
-        else{
-            barFragContainer.findViewById(R.id.the_relative).setVisibility(View.VISIBLE);
-            ((ImageView) findViewById(R.id.bar_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
-            barFragContainer.getLayoutParams().height = barFragHeight;
-        }
-
-        edit.putBoolean("barFragShown", show);
-        edit.apply();
-
-
-            checkVisibility();
-
-    }*/
-/*
-    //TODO: use listener
-    public void toggleTakeoutSection(boolean show){
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = settings.edit();
-
-        if(!show){
-            takeoutFragContainer.findViewById(R.id.the_relative).setVisibility(View.GONE);
-            ((ImageView) findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_left_white_18dp);
-            takeoutFragContainer.getLayoutParams().height = 0;
-        }
-        else{
-            takeoutFragContainer.findViewById(R.id.the_relative).setVisibility(View.VISIBLE);
-            ((ImageView) findViewById(R.id.takeout_divider_arrow)).setImageResource(R.drawable.ic_arrow_drop_down_white_18dp);
-            takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
-
-        }
-        edit.putBoolean("takeoutFragShown", show);
-        edit.apply();
-        checkVisibility();
-    }
-*/
-
-    /**
-     * The main logic that resizes Bar and Takeout fragments depending on what views are toggled
-     */
-    /*
-    private void checkVisibility() {
-        if(barFragContainer.findViewById(R.id.the_relative) == null || takeoutFragContainer.findViewById(R.id.the_relative) == null)
-            return;
-
-        orientation = getResources().getConfiguration().orientation;
-
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            //bar showing, but takeout is gone: put takeout at bottom
-            if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-                //System.out.println("In if..." + locationFragContainer.getHeight());
-
-
-                if (locationFragContainer.getHeight() == 0) {
-                    locationFragContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            locationFragContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            barFragContainer.getLayoutParams().height = locationFragContainer.getHeight() - (barDivider.getHeight() * 2);
-                            locationFragContainer.getLayoutParams().width = tableFragWidth;
-                        }
-                    });
-                } else {
-                    barFragContainer.getLayoutParams().height = locationFragContainer.getHeight() - (barDivider.getHeight() * 2);
-                    locationFragContainer.getLayoutParams().width = tableFragWidth;
-                }
-
-            }
-            //bar and takeout gone
-            else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-                //System.out.println("In if else...");
-                locationFragContainer.getLayoutParams().width = (int) (metrics.widthPixels * .85);
-
-            } else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-                //System.out.println("In vis if...");
-                barFragContainer.getLayoutParams().height = barFragHeight;
-                takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
-            } else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-                //System.out.println("In gone/vis if...");
-                takeoutFragContainer.getLayoutParams().height = locationFragContainer.getHeight() - (barDivider.getHeight() * 2);
-                locationFragContainer.getLayoutParams().width = tableFragWidth;
-            } else {
-                //System.out.println("In else...");
-                locationFragContainer.getLayoutParams().width = tableFragWidth;
-
-            }
-        }
-        else{ //portrait
-
-            if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-
-                barFragContainer.getLayoutParams().height = takeoutFragHeight*2;
-
-            }
-            else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE) {
-
-                //System.out.println("In gone if..."  );
-                //takeoutFragContainer.getLayoutParams().height = 0;
-                //locationFragContainer.getLayoutParams().height = (int) metrics.heightPixels - toolbar.getHeight() - (150*2);
-            }
-            else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.GONE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-
-                takeoutFragContainer.getLayoutParams().height = takeoutFragHeight*2;
-                barFragContainer.getLayoutParams().height = 0;
-
-            }
-            else if (barFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE &&
-                    takeoutFragContainer.findViewById(R.id.the_relative).getVisibility() == View.VISIBLE) {
-
-                takeoutFragContainer.getLayoutParams().height = takeoutFragHeight;
-                barFragContainer.getLayoutParams().height = takeoutFragHeight;
-
-            }
-
-        }
-
-
-        //BroadCast table frag width update
-        sendRemeasureTableWidthBroadcast();
-
-
-    }
-*/
 
 
     @Override
@@ -407,26 +221,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
     }
 
 
-    @Override
-    public void onClick(View v) {
-/*
-        if(v == barDivider || v == barArrow){
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            toggleBarSection(!settings.getBoolean("barFragShown", false));
-
-        }
-        else if(v == takeoutDivider || v == takeoutArrow){
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            toggleTakeoutSection(!settings.getBoolean("takeoutFragShown", false));
-        }*/
-    }
-
-    private void sendRemeasureTableWidthBroadcast() {
-        Intent intent = new Intent("tablefrag-measure");
-        intent.putExtra("tableWidth", locationFragContainer.getLayoutParams().width);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
 
     private Response.Listener successListener = new Response.Listener() {
         @Override
@@ -443,7 +237,6 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
 
                     String newData = theResponse.getJSONArray("result").toString();
                     String localData = settings.getString(getString(R.string.locations_jsonobject), "");
-
 
 
                     //IF results are different than local data, update local data
@@ -486,13 +279,11 @@ public class ActivityTableView extends AppCompatActivity implements View.OnClick
         try {
             Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
 
-
             initFragments();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
 
 
     /**

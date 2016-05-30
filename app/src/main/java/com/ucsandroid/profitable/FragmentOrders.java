@@ -168,7 +168,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         mAddItemToCustomerReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
                 if (nestedRecyclerAdapter != null) {
                     addItem((MenuItem) intent.getSerializableExtra("menuItem"));
                 }
@@ -189,7 +188,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
 
             //System.out.println("Need to add item: " + item.getName() + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
-            int orderedItemId = 89;
+            int orderedItemId = 0;
             String orderedItemNotes = "notes";
             String orderedItemStatus = "status";
             boolean bringFirst = false;

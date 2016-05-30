@@ -41,13 +41,6 @@ public class FragmentBar extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean shown = settings.getBoolean("barFragShown", true);
-
-        //Hide fragment based on SharedPrefs
-        //if(!shown)
-        //    ((ActivityTableView)getActivity()).toggleBarSection(false);
-
         if(mAdapter != null && Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_BAR) {
             mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
         }
@@ -56,6 +49,7 @@ public class FragmentBar extends Fragment {
         }
 
     }
+
 
     private void initRecyclerView() {
 
@@ -67,17 +61,7 @@ public class FragmentBar extends Fragment {
             public void onGlobalLayout() {
                 mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-                DisplayMetrics metrics = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-                int orientation = getResources().getConfiguration().orientation;
-
-                //Cant use the recycler width, because it may be set to GONE, which would be zero width
-                if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                    mRecyclerViewWidth  = (int) (metrics.widthPixels*.5);
-                }else{
-                    mRecyclerViewWidth  = (int) (metrics.widthPixels);
-                }
+                mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
 
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
 
@@ -87,6 +71,7 @@ public class FragmentBar extends Fragment {
         });
 
     }
+
 
 
     private void getTableData() {
@@ -111,20 +96,12 @@ public class FragmentBar extends Fragment {
 
     private int getSpanCount(){
 
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         int orientation = getResources().getConfiguration().orientation;
 
-        if (tabletSize) {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-                return 8;
-            }else
-                return 9;
-        } else {
-            if(orientation == Configuration.ORIENTATION_LANDSCAPE)
-                return 5;
-            else
-                return 6;
-        }
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            return getResources().getInteger(R.integer.bar_tile_span_landscape);
+        }else
+            return getResources().getInteger(R.integer.bar_tile_span_portrait);
     }
 
     LocationClickListener clickListener = new LocationClickListener() {

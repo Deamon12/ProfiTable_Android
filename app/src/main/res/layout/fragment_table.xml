@@ -4,24 +4,12 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-<!--
-    <TextView
-        android:id="@+id/section_text_takeout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tables"
-        android:padding="5dp"
-        android:textSize="@dimen/location_divider_text"
-        android:background="@drawable/square_rounded"
-        android:textIsSelectable="true"/>
--->
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="0dp"
         android:id="@+id/table_recyclerview"
         android:layout_width="match_parent"
-        android:layout_marginRight="4dp"
         android:layout_height="match_parent"
-        android:layout_below="@+id/section_text_takeout"
+        android:layout_marginRight="4dp"
         />
 
 
