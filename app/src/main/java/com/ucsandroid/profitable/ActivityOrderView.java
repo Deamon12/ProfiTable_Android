@@ -7,29 +7,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.ucsandroid.profitable.serverclasses.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
+
 
 
     private FrameLayout customerFragContainer;
@@ -74,6 +77,26 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         initFragments();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_order_view, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_check_status:
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     /**
      * Get all orders, customers, and anything else related to this location
@@ -104,7 +127,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
                     }
                 });
-
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -222,6 +244,29 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     //TODO: split bills dialog
     private void doCheckOut() {
+
+        showBillSplitDialog();
+
+
+    }
+
+    private void showBillSplitDialog() {
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("bill_split");
+
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+        fragmentTransaction.addToBackStack(null);
+
+        DialogFragment newFragment = DialogBillSplit.newInstance();
+        //newFragment.setTargetFragment(null, 0);
+
+        newFragment.show(fragmentTransaction, "bill_split");
+    }
+
+    private void doNFCReceiptTransfer(){
         Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
         startActivity(intent);
     }

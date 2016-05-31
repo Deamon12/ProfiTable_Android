@@ -1,7 +1,9 @@
 package com.ucsandroid.profitable.serverclasses;
 
 
-public class FoodAddition {
+import java.io.Serializable;
+
+public class FoodAddition implements Serializable {
 
     private String foodAdditionName;
     private int foodAdditionPrice;

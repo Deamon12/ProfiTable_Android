@@ -1,10 +1,13 @@
 package com.ucsandroid.profitable;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -15,15 +18,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.iid.InstanceID;
+import com.google.android.gms.iid.InstanceIDListenerService;
 import com.rey.material.widget.EditText;
+import com.ucsandroid.profitable.supportclasses.MyInstanceIDListenerService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
+    private String userIID = "";
     private CardView loginButton;
     private TextView forgotButton;
     private EditText usernameField, restaurantField, pinField;
@@ -48,15 +52,15 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         forgotButton = (TextView) findViewById(R.id.forgot_login);
         forgotButton.setOnClickListener(this);
 
-
-        String iid = InstanceID.getInstance(this).getId();
-        System.out.println("iid: "+iid);
-
         checkUserLoggedIn();
 
     }
 
     private void checkUserLoggedIn() {
+
+        userIID = InstanceID.getInstance(this).getId();
+
+        //todo: check if error getting iid
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         if(settings.contains(getResources().getString(R.string.user_name)) &&
@@ -166,7 +170,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 myUrl,
                 (JSONObject) null,
-                successListener, errorListener);
+                loginSuccessListener, loginErrorListener);
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -174,39 +178,128 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private Response.Listener successListener = new Response.Listener() {
+    private Response.Listener loginSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
-
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
                     JSONObject userData = theResponse.getJSONObject("result");
+                    String employeeId = userData.getInt("employeeId")+"";
 
-
+                    //update userIID in server
+                    if(!userIID.equalsIgnoreCase("")){
+                        updateUserIID(employeeId, userIID);
+                    }
                     //Send retrieved data to saver method
                     saveLoginInfo(userData);
-
                 }
                 else{
                     //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     };
 
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+    Response.ErrorListener loginErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             System.out.println("Volley error: " + error);///TODO Connect/server error
         }
     };
+
+
+
+    //UPDATE DEVICEID METHODS//
+
+    private void updateUserIID(String employeeId, String userIID) {
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("employee")
+                .appendPath("device")
+                .appendQueryParameter("emp_id", employeeId)
+                .appendQueryParameter("device_id", userIID);
+
+        String myUrl = builder.build().toString();
+
+        System.out.println("update DeviceId:" +myUrl);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                myUrl,
+                (JSONObject) null,
+                deviceSuccessListener, deviceErrorListener);
+
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+    private Response.Listener deviceSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+            try {
+                JSONObject theResponse = new JSONObject(response.toString());
+                if(theResponse.getBoolean("success") && theResponse.has("result")){
+
+                    System.out.println("Error updating deviceID, you may not receive notifications");
+
+                    //todo
+
+                }
+                else{
+
+                    showDeviceErrorDialog();
+                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
+    Response.ErrorListener deviceErrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            showDeviceErrorDialog();
+        }
+    };
+
+    private void showDeviceErrorDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Error setting device ID, you may not receive push notifications.")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // FIRE ZE MISSILES!
+                    }
+                })
+                .setNeutralButton("Retry", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // FIRE ZE MISSILES!
+                        userIID = InstanceID.getInstance(ActivityLogin.this).getId();
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create();
+        builder.show();
+
+    }
+
+
 
 
 }

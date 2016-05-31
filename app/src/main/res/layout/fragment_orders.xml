@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
+
+
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_toLeftOf="@+id/sendToKitchen"/>
+
     <RelativeLayout
         android:id="@+id/sendToKitchen"
         android:layout_margin="5dp"
@@ -13,6 +22,7 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/square_rounded_edge"
         >
+
 
         <TextView
             android:id="@+id/sendToKitchen_text"

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +19,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import org.json.JSONObject;
@@ -26,6 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ucsandroid.profitable.listeners.DialogDismissListener;
@@ -41,6 +44,7 @@ import java.util.List;
 
 public class FragmentOrders extends Fragment implements DialogDismissListener, View.OnClickListener {
 
+    private ProgressBar mProgress;
     private BroadcastReceiver mUpdateOrderUI;
     private BroadcastReceiver mDoCalculationUpdate;
     private BroadcastReceiver mAddCustomerReceiver;
@@ -65,6 +69,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.orders_recyclerview);
         mRecyclerView.setHasFixedSize(true);
+
+        mProgress = (ProgressBar) view.findViewById(R.id.progress_spinner);
+        mProgress.setVisibility(View.GONE);
 
         initRecyclerView();
 
@@ -295,7 +302,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     @Override
     public void onClick(View v) {
         if(v == sendToKitchenButton){
-            sendToKitchenButton.setVisibility(View.GONE);
             uploadOrder();
         }
     }
@@ -317,6 +323,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
     private void uploadOrder(){
 
+        mProgress.setVisibility(View.VISIBLE);
+
         Gson gson = new GsonBuilder().create();
 
         String customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
@@ -330,29 +338,40 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         String myUrl = builder.build().toString();
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
-                (JSONObject) null,
-                successListener,
-                errorListener);
+                uploadOrderSuccessListener,
+                uploadOrderErrorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
-    private Response.Listener successListener = new Response.Listener() {
+    private Response.Listener uploadOrderSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
+            sendToKitchenButton.setVisibility(View.GONE);
+            mProgress.setVisibility(View.GONE);
             System.out.println("Volley success: " + response);
         }
     };
 
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
+    Response.ErrorListener uploadOrderErrorListener = new Response.ErrorListener() {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            ///TODO Connect/server error
-            System.out.println("Volley error: " + error.networkResponse);
+            mProgress.setVisibility(View.GONE);
+
+            if(getActivity().findViewById(R.id.order_coordinator)  != null){
+                Snackbar snackbar = Snackbar
+                        .make(getActivity().findViewById(R.id.order_coordinator), "Error sending order", Snackbar.LENGTH_LONG);
+
+
+                snackbar.show();
+            }
+
+            System.out.println("Volley error: " + error);
         }
     };
 
