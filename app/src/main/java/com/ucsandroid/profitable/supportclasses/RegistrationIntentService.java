@@ -1,24 +1,16 @@
 package com.ucsandroid.profitable.supportclasses;
 
-
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GcmPubSub;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ucsandroid.profitable.R;
-
-import java.io.IOException;
 
 public class RegistrationIntentService extends IntentService {
 
+    // abbreviated tag name
     private static final String TAG = "RegIntentService";
-    private static final String[] TOPICS = {"global"};
 
     public RegistrationIntentService() {
         super(TAG);
@@ -26,34 +18,22 @@ public class RegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        try {
+        // Make a call to Instance API
+        FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
+        String senderId = getResources().getString(R.string.FCM_defaultSenderId);
 
-            InstanceID instanceID = InstanceID.getInstance(this);
-            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+        // request token that will be used by the server to send push notifications
+        String token = instanceID.getToken();
+        Log.d(TAG, "FCM Registration Token: " + token);
 
-            sendRegistrationToServer(token);
-
-            sharedPreferences.edit().putBoolean("SENT_TOKEN_TO_SERVER", true).apply();
-
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
-
-            sharedPreferences.edit().putBoolean("SENT_TOKEN_TO_SERVER", false).apply();
-        }
-        // Notify UI that registration has completed, so the progress indicator can be hidden.
-        Intent registrationComplete = new Intent("REGISTRATION_COMPLETE");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+        // pass along this data
+        sendRegistrationToServer(token);
     }
-
 
     private void sendRegistrationToServer(String token) {
-        System.out.println("sendToServer: "+token);
-        //todo: volley call to update server data
-
-
+        // Add custom implementation, as needed.
+        //// TODO: 5/31/16
+        System.out.println("Token: "+token);
     }
-
 }

@@ -49,11 +49,9 @@ public class ActivityLocationView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_view);
 
-
         toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
-
 
         if (!Singleton.hasBeenInitialized()) {
             Singleton.initialize(this);
@@ -62,7 +60,6 @@ public class ActivityLocationView extends AppCompatActivity {
         initBottomNavigation(savedInstanceState);
         getMenu();
         evaluateLocationData();
-
 
     }
 

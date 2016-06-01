@@ -1,6 +1,5 @@
 package com.ucsandroid.profitable;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,20 +17,29 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.iid.InstanceID;
-import com.google.android.gms.iid.InstanceIDListenerService;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.rey.material.widget.EditText;
-import com.ucsandroid.profitable.supportclasses.MyInstanceIDListenerService;
+import com.ucsandroid.profitable.supportclasses.RegistrationIntentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
+    private String mToken = "";
     private String userIID = "";
     private CardView loginButton;
     private TextView forgotButton;
     private EditText usernameField, restaurantField, pinField;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +61,49 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         forgotButton = (TextView) findViewById(R.id.forgot_login);
         forgotButton.setOnClickListener(this);
 
+
+        if (checkPlayServices()) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
         checkUserLoggedIn();
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, 0)
+                        .show();
+            } else {
+                Log.i("profit", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     private void checkUserLoggedIn() {
 
-        userIID = InstanceID.getInstance(this).getId();
+        //userIID = InstanceID.getInstance(this).getId();
+
+
+        System.out.println("userIID = " + userIID);
+        System.out.println("mToken = " + mToken);
+
 
         //todo: check if error getting iid
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
-        if(settings.contains(getResources().getString(R.string.user_name)) &&
-                settings.contains(getResources().getString(R.string.rest_id))){
+        if (settings.contains(getResources().getString(R.string.user_name)) &&
+                settings.contains(getResources().getString(R.string.rest_id))) {
             //User has logged in before
             doLogin();
         }
@@ -72,8 +111,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
     private void saveLoginInfo(JSONObject userData) throws JSONException {
 
-        String employeeId = userData.getInt("employeeId")+"";
-        String restId = userData.getInt("restaurantId")+"";
+        String employeeId = userData.getInt("employeeId") + "";
+        String restId = userData.getInt("restaurantId") + "";
         String employeeType = userData.getString("employeeType");
         String accountName = userData.getString("accountName");
         String firstName = userData.getString("firstName");
@@ -97,8 +136,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     }
 
     //Function to jump to the tableViewActivity page after log-in is succcessful
-    private void doLogin()
-    {
+    private void doLogin() {
         Intent tableViewActivity = new Intent(ActivityLogin.this, ActivityLocationView.class);
         startActivity(tableViewActivity);
         finish();
@@ -114,46 +152,42 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
-        if(v == loginButton){
+        if (v == loginButton) {
 
             boolean doLogin = true;
             //Check editFields for errors - refactor perhaps
-            if(usernameField.getText().toString().equalsIgnoreCase("")){    //Check username field
+            if (usernameField.getText().toString().equalsIgnoreCase("")) {    //Check username field
                 doLogin = false;
                 usernameField.setError("Username is required");
-            }
-            else{
+            } else {
                 usernameField.clearError();
             }
 
-            if(restaurantField.getText().toString().equalsIgnoreCase("")){  //Check restaurant field
+            if (restaurantField.getText().toString().equalsIgnoreCase("")) {  //Check restaurant field
                 doLogin = false;
                 restaurantField.setError("Restaurant Id is required");
-            }
-            else{
+            } else {
                 restaurantField.clearError();
             }
 
-            if(pinField.getText().toString().equalsIgnoreCase("")){         //Check pin field
+            if (pinField.getText().toString().equalsIgnoreCase("")) {         //Check pin field
                 doLogin = false;
                 pinField.setError("Pin is required");
-            }
-            else{
+            } else {
                 pinField.clearError();
             }
 
-            if(doLogin){            //Continue to volley if nothing errors out
+            if (doLogin) {            //Continue to volley if nothing errors out
                 doVolleyLogin(usernameField.getText().toString(), restaurantField.getText().toString(), pinField.getText().toString());
             }
 
-        }
-        else if(v == forgotButton){
+        } else if (v == forgotButton) {
             //todo
         }
 
     }
 
-    private void doVolleyLogin(String username, String restId, String pin){
+    private void doVolleyLogin(String username, String restId, String pin) {
 
         //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/employee/login?rest_id=1&account_name=bigX&account_pass=password
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
@@ -184,19 +218,18 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
-                if(theResponse.getBoolean("success") && theResponse.has("result")){
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
                     JSONObject userData = theResponse.getJSONObject("result");
-                    String employeeId = userData.getInt("employeeId")+"";
+                    String employeeId = userData.getInt("employeeId") + "";
 
                     //update userIID in server
-                    if(!userIID.equalsIgnoreCase("")){
+                    if (!userIID.equalsIgnoreCase("")) {
                         updateUserIID(employeeId, userIID);
                     }
                     //Send retrieved data to saver method
                     saveLoginInfo(userData);
-                }
-                else{
+                } else {
                     //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
                 }
             } catch (JSONException e) {
@@ -214,7 +247,6 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     };
 
 
-
     //UPDATE DEVICEID METHODS//
 
     private void updateUserIID(String employeeId, String userIID) {
@@ -229,7 +261,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         String myUrl = builder.build().toString();
 
-        System.out.println("update DeviceId:" +myUrl);
+        System.out.println("update DeviceId:" + myUrl);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                 myUrl,
@@ -246,17 +278,10 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
-                if(theResponse.getBoolean("success") && theResponse.has("result")){
-
-                    System.out.println("Error updating deviceID, you may not receive notifications");
-
-                    //todo
-
-                }
-                else{
-
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
+                    doLogin();
+                } else {
                     showDeviceErrorDialog();
-                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -278,28 +303,72 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         builder.setMessage("Error setting device ID, you may not receive push notifications.")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
+                        //continue
+                        dialog.dismiss();
+                        doLogin();
                     }
                 })
                 .setNeutralButton("Retry", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                        userIID = InstanceID.getInstance(ActivityLogin.this).getId();
+                        //retry
+                        dialog.dismiss();
+                        //userIID = InstanceID.getInstance(ActivityLogin.this).getId();
+
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
+                        String empoyeeID = settings.getString(getString(R.string.employee_id), "");
+                        updateUserIID(empoyeeID, userIID);
 
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
+                        dialog.dismiss();
                     }
                 });
         // Create the AlertDialog object and return it
         builder.create();
-        builder.show();
 
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "ActivityLogin Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.ucsandroid.profitable/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "ActivityLogin Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.ucsandroid.profitable/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }

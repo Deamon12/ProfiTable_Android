@@ -22,6 +22,6 @@
     <integer name="takeout_tile_span_landscape">7</integer>
     <integer name="takeout_tile_span_portrait">4</integer>
 
-    <string name="gcm_defaultSenderId">gcm_defaultSenderId</string>
+    <string name="FCM_defaultSenderId">FCM_defaultSenderId</string>
 
 </resources>
