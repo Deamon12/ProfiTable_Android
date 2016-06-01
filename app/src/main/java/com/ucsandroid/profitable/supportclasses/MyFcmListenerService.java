@@ -41,12 +41,12 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         }
         else if(type == 2){
 
-
+            //kitchen
 
         }
         else if(type == 3){
 
-
+            //food/order status
 
         }
 

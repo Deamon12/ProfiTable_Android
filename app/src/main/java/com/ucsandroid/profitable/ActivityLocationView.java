@@ -2,7 +2,6 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,8 +44,6 @@ public class ActivityLocationView extends AppCompatActivity {
 
     private BottomBar mBottomBar;
     private Toolbar toolbar;
-
-    //private ProgressDialog progressDialog;
 
 
     @Override

@@ -66,6 +66,9 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         @Override
         public boolean onLongClick(View v) {
+
+            //todo:dialog?? System.out.println("longed: "+dataSet.get(getAdapterPosition()).getId());
+
             if (longClickListener != null) {
                 longClickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
             }
@@ -113,7 +116,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
                 holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_75));
             }
         }
-
 
     }
 
