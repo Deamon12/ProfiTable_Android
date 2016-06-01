@@ -22,6 +22,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.rey.material.widget.EditText;
 import com.ucsandroid.profitable.supportclasses.RegistrationIntentService;
 
@@ -31,7 +32,7 @@ import org.json.JSONObject;
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
     private String mToken = "";
-    private String userIID = "";
+    //private String userIID = "";
     private CardView loginButton;
     private TextView forgotButton;
     private EditText usernameField, restaurantField, pinField;
@@ -92,18 +93,16 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
     private void checkUserLoggedIn() {
 
-        //userIID = InstanceID.getInstance(this).getId();
 
+        FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
+        mToken = instanceID.getToken();
 
-        System.out.println("userIID = " + userIID);
         System.out.println("mToken = " + mToken);
-
-
-        //todo: check if error getting iid
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         if (settings.contains(getResources().getString(R.string.user_name)) &&
                 settings.contains(getResources().getString(R.string.rest_id))) {
+
             //User has logged in before
             doLogin();
         }
@@ -223,21 +222,21 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     JSONObject userData = theResponse.getJSONObject("result");
                     String employeeId = userData.getInt("employeeId") + "";
 
-                    //update userIID in server
-                    if (!userIID.equalsIgnoreCase("")) {
-                        updateUserIID(employeeId, userIID);
+                    //update userToken in server
+                    if (!mToken.equalsIgnoreCase("")) {
+                        updateUserToken(employeeId, mToken);
                     }
                     //Send retrieved data to saver method
                     saveLoginInfo(userData);
                 } else {
-                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    //TODO:Results Error
+                    System.out.println("Volley login error: ");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     };
-
 
     Response.ErrorListener loginErrorListener = new Response.ErrorListener() {
         @Override
@@ -247,9 +246,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     };
 
 
-    //UPDATE DEVICEID METHODS//
-
-    private void updateUserIID(String employeeId, String userIID) {
+    //Update Token on server
+    private void updateUserToken(String employeeId, String userToken) {
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
@@ -257,11 +255,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 .appendPath("employee")
                 .appendPath("device")
                 .appendQueryParameter("emp_id", employeeId)
-                .appendQueryParameter("device_id", userIID);
+                .appendQueryParameter("device_id", userToken);
 
         String myUrl = builder.build().toString();
 
-        System.out.println("update DeviceId:" + myUrl);
+        //System.out.println("update DeviceId:" + myUrl);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                 myUrl,
@@ -279,9 +277,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
-                    doLogin();
                 } else {
-                    showDeviceErrorDialog();
+                    System.out.println("Error updating deviceID");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -289,86 +286,12 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         }
     };
 
-
     Response.ErrorListener deviceErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            showDeviceErrorDialog();
+            //showDeviceErrorDialog();
+            System.out.println("ErrorListener updating deviceID");
         }
     };
 
-    private void showDeviceErrorDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Error setting device ID, you may not receive push notifications.")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //continue
-                        dialog.dismiss();
-                        doLogin();
-                    }
-                })
-                .setNeutralButton("Retry", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //retry
-                        dialog.dismiss();
-                        //userIID = InstanceID.getInstance(ActivityLogin.this).getId();
-
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
-                        String empoyeeID = settings.getString(getString(R.string.employee_id), "");
-                        updateUserIID(empoyeeID, userIID);
-
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        dialog.dismiss();
-                    }
-                });
-        // Create the AlertDialog object and return it
-        builder.create();
-
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "ActivityLogin Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.ucsandroid.profitable/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "ActivityLogin Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.ucsandroid.profitable/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
 }
