@@ -3,6 +3,8 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -14,22 +16,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
-import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
-public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder> {
+public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAdapter.ViewHolder> {
 
     private int layout;
 
@@ -43,7 +53,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private RecyclerViewLongClickListener nestedLongClickListener;
 
 
-    public NestedRecyclerAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener,
+    public CustomerOrdersAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
         this.locationData = dataSet;
         this.context = context;
@@ -51,6 +61,11 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
+
+        if(locationData.getCurrentTab().getCustomers().size() == 0){
+            addCustomer();
+        }
+
     }
 
 
@@ -124,19 +139,34 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         public boolean onLongClick(View v) {
 
             showCustomerEditDialog(getAdapterPosition());
-
             return true;
         }
     }
 
     /**
-     * Add new order/customer to local data structure
+     * Update local data and call method to check location status
      */
-    //TODO add to server
     public void addCustomer() {
+        System.out.println("Adding customer");
         locationData.getCurrentTab().addCustomer(new Customer());
         selectedPosition = 0;
+        checkLocationStatus();
         notifyDataSetChanged();
+    }
+
+    /**
+     * Evaluate local data, and update server if needed
+     */
+    private void checkLocationStatus() {
+        //No customers, set this table as free
+        System.out.println("custSize: "+locationData.getCurrentTab().getCustomers().size());
+        if(locationData.getCurrentTab().getCustomers().size() == 0){
+            setLocationStatus(context.getString(R.string.location_available), locationData.getId());
+        }
+        else if(locationData.getCurrentTab().getCustomers().size() > 0 &&
+                locationData.getStatus().equalsIgnoreCase("available")){
+            setLocationStatus(context.getString(R.string.location_occupied), locationData.getId());
+        }
     }
 
     /**
@@ -144,15 +174,15 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * @param position
      */
     public void removeCustomer(int position) {
+        System.out.println("Removing customer");
         locationData.getCurrentTab().removeCustomer(position);
         selectedPosition = -1;
         sendUpdateAmountBroadcast();
         notifyDataSetChanged();
-
-
+        checkLocationStatus();
     }
 
-    public NestedRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CustomerOrdersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -169,7 +199,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
 
         if(!locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes().equalsIgnoreCase("")){
             holder.mCommentTextView.setVisibility(View.VISIBLE);
@@ -333,5 +362,56 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         dialog.show();
     }
+
+
+    private void setLocationStatus(String status, int locationId) {
+
+        //free or occupy
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("location")
+                .appendPath(status)
+                .appendQueryParameter("location_id", locationId+"");
+
+        String myUrl = builder.build().toString();
+
+        //System.out.println("update DeviceId:" + myUrl);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                myUrl,
+                (JSONObject) null,
+                statusSuccessListener,
+                statusErrorListener);
+
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+    private Response.Listener statusSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+            try {
+                JSONObject theResponse = new JSONObject(response.toString());
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                } else {
+                    System.out.println("Error settings location status"); //todo snackbar?
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    Response.ErrorListener statusErrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            //showDeviceErrorDialog();
+            System.out.println("ErrorListener updating deviceID");
+        }
+    };
+
 
 }

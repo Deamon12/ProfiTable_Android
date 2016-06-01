@@ -35,7 +35,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         this.params = params;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -80,7 +79,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public LocationRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-
         if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
@@ -90,7 +88,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         return vh;
     }
-
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -122,6 +119,12 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public int getItemCount() {
         return dataSet.size();
+    }
+
+    public void updateStatus(int position, String status){
+        System.out.println("adapter wants to update status: "+status);
+        dataSet.get(position).setStatus(status);
+        notifyItemChanged(position);
     }
 
 }

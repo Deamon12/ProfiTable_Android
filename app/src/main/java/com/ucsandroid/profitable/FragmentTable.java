@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,7 @@ import android.view.ViewTreeObserver;
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.LocationLongClickListener;
-import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.Location;
-import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 
 /**
@@ -30,7 +27,7 @@ import com.ucsandroid.profitable.serverclasses.OrderedItem;
  */
 public class FragmentTable extends Fragment {
 
-    private BroadcastReceiver mRemeasureFragReceiver;
+    private BroadcastReceiver mUpdateLocationUI;
 
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
@@ -50,6 +47,7 @@ public class FragmentTable extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
         initRecyclerView();
 
+
         return view;
     }
 
@@ -62,22 +60,15 @@ public class FragmentTable extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if(mAdapter != null) {
-            if(Singleton.getInstance().getCurrentLocationType() == Singleton.TYPE_TABLE){
-                mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
-            }
-        }
-        else{
-            System.out.println("adapter is null");
-        }
+        initUpdateLocationStatus();
 
-        initRemeasureFragListener();
     }
 
+
     @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mRemeasureFragReceiver);
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
     }
 
     private void initRecyclerView() {
@@ -92,16 +83,12 @@ public class FragmentTable extends Fragment {
 
                 mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
-                getTableData();
-
+                showTableData();
             }
         });
-
     }
 
-
-
-    private void getTableData() {
+    private void showTableData() {
 
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setHasFixedSize(true);
@@ -116,13 +103,6 @@ public class FragmentTable extends Fragment {
 
         mRecyclerView.setAdapter(mAdapter);
 
-    }
-
-    private void updateUI(int tableFragWidth){
-
-        spanCount = getSpanCount();
-        tileLayoutWidth = (tableFragWidth/spanCount);
-        getTableData();
     }
 
     /**
@@ -159,7 +139,6 @@ public class FragmentTable extends Fragment {
     private int getSpanCount(){
 
         int orientation = getResources().getConfiguration().orientation;
-
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             return getResources().getInteger(R.integer.table_tile_span_landscape);
         }else
@@ -169,20 +148,33 @@ public class FragmentTable extends Fragment {
 
 
     /**
-     * Listen for UI changes. Visibility changes from other frags will allow this fragment to be
-     * larger or smaller
+     * Indicates if location data has changed, if so we need to update the UI.
+     * Update Singleton data, and currently used adapter
      */
-    private void initRemeasureFragListener() {
-        mRemeasureFragReceiver = new BroadcastReceiver() {
+    private void initUpdateLocationStatus() {
+
+        mUpdateLocationUI = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                System.out.println("Received update location UI broadcast");
 
-                if(intent.getIntExtra("tableWidth", 0) != -1 && getActivity() != null)
-                    updateUI(intent.getIntExtra("tableWidth", 0));
+                //only update the status of the specific location
+                int locationId = intent.getIntExtra("locationId", 0);
+                String status = intent.getStringExtra("locationStatus");
+
+                for(int a = 0; a < Singleton.getInstance().getTables().size(); a++){
+                    if(Singleton.getInstance().getTables().get(a).getId() == locationId){
+                        Singleton.getInstance().getTables().get(a).setStatus(status);
+                        mAdapter.updateStatus(a, status);
+                        return;
+                    }
+                }
+
             }
         };
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mRemeasureFragReceiver,
-                new IntentFilter("tablefrag-measure"));
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationUI,
+                new IntentFilter("update-location"));
     }
 
 

@@ -52,8 +52,8 @@ public class FragmentMenuViewpager extends Fragment {
 
 
         //TODO: make the call to get updated menu? Could be push notified
-        //if(!hasMenu())
-        getMenu();
+        if(!hasMenu())
+            getMenu();
 
         return mView;
     }

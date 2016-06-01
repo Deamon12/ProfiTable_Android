@@ -36,7 +36,7 @@ import java.util.List;
 
 public class ActivityLocationView extends AppCompatActivity {
 
-    private BroadcastReceiver mUpdateLocationUI;
+
 
     private Fragment mTableFrag;
     private Fragment mBarFrag;
@@ -62,7 +62,7 @@ public class ActivityLocationView extends AppCompatActivity {
         initBottomNavigation(savedInstanceState);
         getMenu();
         evaluateLocationData();
-        initUpdateLocationStatus();
+
     }
 
 
@@ -165,37 +165,33 @@ public class ActivityLocationView extends AppCompatActivity {
             initFragments();
             getLocationsData(); //progress?
         }
-
     }
 
 
+    /**
+     * Call server to get location information for this restaurant
+     */
     private void getLocationsData() {
 
-        //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/location?rest_id=1
-        //progressDialog = new ProgressDialog(this);
-        //progressDialog.isIndeterminate();
-        //progressDialog.setMessage("Retrieving Menu Items");
-        //progressDialog.show();
-
-        //todo rest_id from sharedPrfs
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String restId = settings.getString(getString(R.string.rest_id), "1");
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("location")
-                .appendQueryParameter("rest_id", "1");
+                .appendQueryParameter("rest_id", restId);
         String myUrl = builder.build().toString();
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                locationSuccessListener, locationErrorListener);
-
+                locationSuccessListener,
+                locationErrorListener);
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -251,15 +247,17 @@ public class ActivityLocationView extends AppCompatActivity {
 
                     //IF results are different than local data, update local data
                     if(!newData.equalsIgnoreCase(localData)){
-                        //System.out.println("updating local locations");
+
                         SharedPreferences.Editor edit = settings.edit();
                         edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
                         edit.apply();
                         setLocationsFromPrefs();
 
-                        //TODO: will this work?
+                        //TODO: This has issues updating local data after the initial retrieval....
 
                         initFragments();
+
+
                     }
                     else if(newData.equalsIgnoreCase(localData)){
                         //System.out.println("Local locations are the same as new locations. Not updating data or UI");
@@ -369,26 +367,7 @@ public class ActivityLocationView extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            //progressDialog.dismiss();
         }
     };
-
-
-    /**
-     * Indicates if location data has changed, if so we need to update the UI.
-     */
-    private void initUpdateLocationStatus() {
-        mUpdateLocationUI = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                System.out.println("Received update location UI broadcast");
-                getLocationsData();
-            }
-        };
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mUpdateLocationUI,
-                new IntentFilter("update-location"));
-    }
-
 
 }

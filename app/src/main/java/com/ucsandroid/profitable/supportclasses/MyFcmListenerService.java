@@ -25,26 +25,32 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         System.out.println("Recieved FCM message: "+data);
 
         JSONObject response = new JSONObject(data);
-        int type = -1;
+        int notificationType = -1;
+
+        int locationId = -1;
+        String locationStatus = "";
+
 
         try {
-            type = response.getInt("type");
+            notificationType = response.getInt("type");
+            locationId = response.getInt("locationId");
+            locationStatus = response.getString("locationStatus");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        if(type == 1){
+        if(notificationType == 1){
 
-            sendUpdateLocationUI();
+            sendUpdateLocationUI(locationStatus, locationId);
 
         }
-        else if(type == 2){
+        else if(notificationType == 2){
 
             //kitchen
 
         }
-        else if(type == 3){
+        else if(notificationType == 3){
 
             //food/order status
 
@@ -56,8 +62,11 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     }
 
-    private void sendUpdateLocationUI(){
+    private void sendUpdateLocationUI(String locationStatus, int locationId){
         Intent updateIntent = new Intent("update-location");
+        updateIntent.putExtra("locationStatus", locationStatus);
+        updateIntent.putExtra("locationId", locationId);
+
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 

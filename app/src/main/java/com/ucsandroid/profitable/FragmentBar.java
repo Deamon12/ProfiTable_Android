@@ -1,11 +1,15 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -21,6 +25,8 @@ import com.ucsandroid.profitable.serverclasses.Location;
 
 public class FragmentBar extends Fragment {
 
+
+    private BroadcastReceiver mUpdateLocationUI;
     private LocationRecyclerAdapter mAdapter;
     private int mRecyclerViewWidth;
     private RecyclerView mRecyclerView;
@@ -34,6 +40,7 @@ public class FragmentBar extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bar, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.bar_recyclerview);
         initRecyclerView();
+
         return view;
     }
 
@@ -47,9 +54,15 @@ public class FragmentBar extends Fragment {
         else{
             //System.out.println("bar adapter is null");
         }
+        initUpdateLocationStatus();
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
+    }
 
     private void initRecyclerView() {
 
@@ -60,11 +73,8 @@ public class FragmentBar extends Fragment {
             @Override
             public void onGlobalLayout() {
                 mRecyclerView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-
                 mRecyclerViewWidth  = mRecyclerView.getMeasuredWidth();
-
                 tileLayoutWidth = (mRecyclerViewWidth/spanCount);
-
                 getTableData();
 
             }
@@ -80,7 +90,6 @@ public class FragmentBar extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-
         mAdapter = new LocationRecyclerAdapter(
                         getActivity(),
                         Singleton.getInstance().getBars(),
@@ -90,8 +99,6 @@ public class FragmentBar extends Fragment {
                         locationLongClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
-
-
     }
 
     private int getSpanCount(){
@@ -127,6 +134,35 @@ public class FragmentBar extends Fragment {
     private void goToOrder() {
         Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
         getActivity().startActivity(orderViewActivity);
+    }
+
+
+    /**
+     * Indicates if location data has changed, if so we need to update the UI.
+     */
+    private void initUpdateLocationStatus() {
+        mUpdateLocationUI = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                System.out.println("Received update location UI broadcast");
+
+                //only update the status of the specific location
+                int locationId = intent.getIntExtra("locationId", 0);
+                String status = intent.getStringExtra("locationStatus");
+
+                for(int a = 0; a < Singleton.getInstance().getBars().size(); a++){
+                    if(Singleton.getInstance().getBars().get(a).getId() == locationId){
+                        Singleton.getInstance().getBars().get(a).setStatus(status);
+                        mAdapter.updateStatus(a, status);
+                        return;
+                    }
+                }
+
+            }
+        };
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationUI,
+                new IntentFilter("update-location"));
     }
 
 }

@@ -12,16 +12,9 @@ import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.NestedClickListener;
-import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
-import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
-import com.ucsandroid.profitable.listeners.TabClickListener;
-import com.ucsandroid.profitable.serverclasses.Customer;
-import com.ucsandroid.profitable.serverclasses.MenuItem;
-import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKitchenRecyclerAdapter.ViewHolder> {
@@ -52,7 +45,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         public TextView mTextView;
         public RecyclerView recyclerView;
         private CardView cardView;
-        private NestedCustomerRecyclerAdapter mAdapter;
+        private KitchenCustomerRecyclerAdapter mAdapter;
 
         public ViewHolder(View v) {
             super(v);
@@ -139,7 +132,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         holder.mTextView.setText("Table " + tabData.get(position).getTabId()); //(position+1)
 
 
-        holder.mAdapter = new NestedCustomerRecyclerAdapter(context,
+        holder.mAdapter = new KitchenCustomerRecyclerAdapter(context,
                 tabData.get(position).getCustomers(),
                 R.layout.tile_recyclerview,
                 position,

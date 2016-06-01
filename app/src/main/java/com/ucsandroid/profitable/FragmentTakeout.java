@@ -1,11 +1,15 @@
 package com.ucsandroid.profitable;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -118,5 +122,7 @@ public class FragmentTakeout extends Fragment {
         Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
         getActivity().startActivity(orderViewActivity);
     }
+
+
 
 }

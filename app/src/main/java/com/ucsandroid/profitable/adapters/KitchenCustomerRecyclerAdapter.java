@@ -6,23 +6,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.NestedClickListener;
-import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
-import com.ucsandroid.profitable.serverclasses.MenuItem;
-import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCustomerRecyclerAdapter.ViewHolder> {
+public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<KitchenCustomerRecyclerAdapter.ViewHolder> {
 
     private int layout;
 
@@ -37,7 +32,7 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
 
 
-    public NestedCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
+    public KitchenCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
         customerData = dataSet;
         this.context = context;
         this.layout = layout;
@@ -83,7 +78,7 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
 
 
 
-    public NestedCustomerRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public KitchenCustomerRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -122,8 +117,6 @@ public class NestedCustomerRecyclerAdapter extends RecyclerView.Adapter<NestedCu
     public int getItemCount() {
         return customerData.size();
     }
-
-
 
 
 

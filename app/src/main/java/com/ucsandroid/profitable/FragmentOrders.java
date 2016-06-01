@@ -22,12 +22,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import org.json.JSONObject;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,7 +33,7 @@ import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
-import com.ucsandroid.profitable.adapters.NestedRecyclerAdapter;
+import com.ucsandroid.profitable.adapters.CustomerOrdersAdapter;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
 import java.util.List;
@@ -49,7 +46,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     private BroadcastReceiver mDoCalculationUpdate;
     private BroadcastReceiver mAddCustomerReceiver;
     private BroadcastReceiver mAddItemToCustomerReceiver;
-    private NestedRecyclerAdapter nestedRecyclerAdapter;
+    private CustomerOrdersAdapter nestedRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private RelativeLayout sendToKitchenButton;
 
@@ -113,7 +110,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         StaggeredGridLayoutManager stagLayout = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(stagLayout);
 
-        nestedRecyclerAdapter = new NestedRecyclerAdapter(getActivity(),
+        nestedRecyclerAdapter = new CustomerOrdersAdapter(getActivity(),
                 Singleton.getInstance().getCurrentLocation(),
                 R.layout.tile_customer_order,
                 null,
