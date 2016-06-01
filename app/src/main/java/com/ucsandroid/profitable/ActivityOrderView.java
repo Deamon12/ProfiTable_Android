@@ -71,9 +71,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
 
-        //Dont update if local edits exist
-        if(!Singleton.getInstance().getCurrentLocation().isEditedLocally())
-            getLocationData();
+        getOrderData();
 
         dynamicallySizeContainers();
 
@@ -216,28 +214,33 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     private void showOrderStatus() {
         String message = "";
-        if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus() == null){
-            System.out.println("no tab yet");
-            message = "Not sent to kitchen yet";
+        String tabStatus = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus();
+        if(tabStatus == null || tabStatus.equalsIgnoreCase("null")){
+            message = "No order for this location";
         }
-        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("ordered")){
+        else if(tabStatus.equalsIgnoreCase("ordered")){
             message = "Order is being prepared";
         }
-        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("ready")){
+        else if(tabStatus.equalsIgnoreCase("ready")){
             message = "Ready for pickup";
         }
-        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("delivered")){
+        else if(tabStatus.equalsIgnoreCase("delivered")){
             message = "Delivered to table";
+        }
+        else if(tabStatus.equalsIgnoreCase("InProgress")){ //Actual
+            message = "In progress";
+        }
+        else if(tabStatus.equalsIgnoreCase("Completed")){ //Actual
+            message = "Order is complete";
         }
         else{
             message = "Status is unknown";
         }
 
+        System.out.println("tabStatus: "+tabStatus);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
     }
-
-
 
     private void showBillSplitDialog() {
 
@@ -248,10 +251,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             fragmentTransaction.remove(prev);
         }
         fragmentTransaction.addToBackStack(null);
-
         DialogFragment newFragment = DialogBillSplit.newInstance();
-        //newFragment.setTargetFragment(null, 0);
-
         newFragment.show(fragmentTransaction, "bill_split");
     }
 
@@ -277,8 +277,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    private void sendLocationUpdateBroadcast(){
-        Intent intent = new Intent("update-location");
+
+    private void sendOrderUIUpdate(){
+        Intent intent = new Intent("update-orders");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -289,7 +290,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     /**
      * Get all orders, customers, and anything else related to this location
      */
-    private void getLocationData(){
+    private void getOrderData(){
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -304,12 +305,11 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                 .appendQueryParameter("rest_id", restId+"");
         String myUrl = builder.build().toString();
 
-        System.out.println("URL: "+myUrl);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                getOrderSuccesListener,
+                getOrderSuccessListener,
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -322,7 +322,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    private Response.Listener getOrderSuccesListener = new Response.Listener() {
+    private Response.Listener getOrderSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
 
@@ -334,14 +334,15 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                     Gson gson = new Gson();
                     Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
                     Singleton.getInstance().updateCurrentLocation(mLocation);
-                    sendLocationUpdateBroadcast();
+
+                    System.out.println("newLocation: "+mLocation.getCurrentTab().getCustomers().toString());
+
+                    sendOrderUIUpdate();
+
+
 
                 } else {
-
-                    //todo could be an empty location
-                    //if (theResponse.has("message")) {
-                    //    showErrorSnackbar(theResponse.getString("message"));
-                    //}
+                    //empty location
                 }
 
             } catch (JSONException e) {

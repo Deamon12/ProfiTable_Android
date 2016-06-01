@@ -133,7 +133,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                     notifyItemChanged(selectedPosition);
 
             }
-
         }
 
         @Override
@@ -149,7 +148,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
      */
     public void addCustomer() {
 
-        locationData.getCurrentTab().addCustomer(new Customer());
+        locationData.getCurrentTab().addCustomer(new Customer(0, locationData.getCurrentTab().getTabId()));
         selectedPosition = 0;
         checkLocationStatus();
         notifyDataSetChanged();
@@ -174,13 +173,21 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     private void checkLocationStatus() {
 
         //No customers, set this table as free
+        //Remove tab
         if(locationData.getCurrentTab().getCustomers().size() == 0){
             setLocationStatusVolley(context.getString(R.string.location_available), locationData.getId());
+            closeTabAtLocation();
         }
         else if(locationData.getCurrentTab().getCustomers().size() > 0 &&
                 locationData.getStatus().equalsIgnoreCase("available")){
             setLocationStatusVolley(context.getString(R.string.location_occupied), locationData.getId());
+
+            //add tab
+            if(locationData.getCurrentTab().getTabId() == 0){
+                openTabAtLocation();
+            }
         }
+
     }
 
 
@@ -310,7 +317,12 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         });
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                removeCustomer(position);
+                if(locationData.getCurrentTab().getCustomers().size() == 1){
+                    showRemoveLastCustomerConfirm(position);
+                }
+                else{
+                    removeCustomer(position);
+                }
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -321,6 +333,31 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         builder.show();
     }
+
+    private void showRemoveLastCustomerConfirm(final int position) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Removing this customer will make this table available"+(getItemCount()-position));
+
+        TextView textView = new TextView(context);
+
+        textView.setText("Removing this customer will close the table and clear all the data attached to it. Continue?  ");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeCustomer(position);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+    }
+
+
 
     private void sendUpdateAmountBroadcast(){
         Intent updateIntent = new Intent("update-amount");
@@ -418,6 +455,8 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
     private void closeTabAtLocation(){
 
+        System.out.println("Closing tab: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId());
+
         int locationId = Singleton.getInstance().getCurrentLocation().getId();
         int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
 
@@ -431,23 +470,31 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         String myUrl = builder.build().toString();
 
-        System.out.println("SEAT URL: "+myUrl);
+
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
-                seatLocationSuccessListener,
+                closeTabSuccessListener,
                 errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
+    private Response.Listener closeTabSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+            //Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId();
+            System.out.println("Volley success: " + response);
+        }
+    };
 
 
     private void openTabAtLocation(){
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        int employeeId = settings.getInt(context.getString(R.string.employee_id), 0);
+        String employeeId = settings.getString(context.getString(R.string.employee_id), "");
         int locationId = Singleton.getInstance().getCurrentLocation().getId();
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
@@ -456,7 +503,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                 .appendPath("orders")
                 .appendPath("seat")
                 .appendQueryParameter("location_id", locationId+"")
-                .appendQueryParameter("employee_id", employeeId+"");
+                .appendQueryParameter("employee_id", employeeId);
 
         String myUrl = builder.build().toString();
 
@@ -464,7 +511,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
-                seatLocationSuccessListener,
+                openTabSuccessListener,
                 errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -472,12 +519,29 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     }
 
 
-    private Response.Listener seatLocationSuccessListener = new Response.Listener() {
+    private Response.Listener openTabSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            //sendToKitchenButton.setVisibility(View.GONE);
-            //mProgress.setVisibility(View.GONE);
-            System.out.println("Volley success: " + response);
+
+            try {
+
+                JSONObject theResponse = new JSONObject(response.toString());
+                System.out.println("Volley success: " + response);
+
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                    int tabId = theResponse.getJSONObject("result").getInt("tabId");
+                    Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId(tabId);
+                    locationData.getCurrentTab().setTabId(tabId);
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId();
+
         }
     };
 

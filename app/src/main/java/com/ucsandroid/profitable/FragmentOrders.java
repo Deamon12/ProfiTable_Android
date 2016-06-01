@@ -38,6 +38,8 @@ import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.adapters.CustomerOrdersAdapter;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 
@@ -155,7 +157,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
 
-
             int orderedItemId = 0;
             String orderedItemNotes = "";
             String orderedItemStatus = "not_ordered";
@@ -187,6 +188,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             nestedRecyclerAdapter.addCustomer();
             mRecyclerView.scrollToPosition(0);
         }
+
     }
 
 
@@ -276,9 +278,9 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         builder.show();
     }
 
+
+
     // -----Volley Calls & Responses------ //
-
-
 
 
 
@@ -288,21 +290,20 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     private void uploadOrder(){
 
         mProgress.setVisibility(View.VISIBLE);
-
         Gson gson = new GsonBuilder().create();
 
         String customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
+
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("orders")
-                //.appendPath("parseTest")
                 .appendQueryParameter("customers", customerslist);
 
         String myUrl = builder.build().toString();
 
-        System.out.println("myURL: "+myUrl);
+        System.out.println("customerslist: "+customerslist);
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
@@ -338,12 +339,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     };
 
 
-
-
-
-
-
-
     //----- Broadcast Listeners ----//
 
     /**
@@ -353,14 +348,15 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         mUpdateOrderUI = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Singleton.getInstance().getCurrentLocation().setEditedLocally(true);
+
                 initRecyclerView();
                 sendUpdateAmountBroadcast();
+
             }
         };
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateOrderUI,
-                new IntentFilter("update-location"));
+                new IntentFilter("update-orders"));
     }
 
     /**

@@ -3,8 +3,12 @@ package com.ucsandroid.profitable;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +30,7 @@ import org.json.JSONObject;
 
 public class ActivityKitchen extends AppCompatActivity {
 
+    private CoordinatorLayout mCoordinator;
     private FrameLayout kitchenAmountsFragContainer;
 
     @Override
@@ -37,6 +42,7 @@ public class ActivityKitchen extends AppCompatActivity {
             Singleton.initialize(this);
         }
 
+        mCoordinator = (CoordinatorLayout) findViewById(R.id.the_coordinator);
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
@@ -44,7 +50,6 @@ public class ActivityKitchen extends AppCompatActivity {
         setupFragmentContainers();
 
         getKitchenData();
-
 
     }
 
@@ -67,7 +72,6 @@ public class ActivityKitchen extends AppCompatActivity {
             amountsHeight = (int) (metrics.heightPixels * outValue.getFloat());
         }
 
-
         kitchenAmountsFragContainer.getLayoutParams().height = amountsHeight;
 
     }
@@ -75,18 +79,22 @@ public class ActivityKitchen extends AppCompatActivity {
 
     private void getKitchenData() {
 
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String restId = settings.getString(getString(R.string.rest_id), 1+"");
+
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("orders")
                 .appendPath("kitchen")
-                .appendQueryParameter("rest_id", "1"); //TODO
+                .appendQueryParameter("rest_id", restId);
         String myUrl = builder.build().toString();
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                successListener, errorListener);
+                successListener,
+                errorListener);
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -164,6 +172,12 @@ public class ActivityKitchen extends AppCompatActivity {
             System.out.println("Volley error: " + error);
         }
     };
+
+    public void showErrorSnackbar(String message){
+        Snackbar snackbar = Snackbar
+                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
 
 
 }

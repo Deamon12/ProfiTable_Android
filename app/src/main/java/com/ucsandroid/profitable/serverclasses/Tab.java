@@ -106,8 +106,14 @@ public class Tab {
     public int getTabId() {
         return tabId;
     }
+
     public void setTabId(int tabId) {
         this.tabId = tabId;
+
+        for(Customer customer : customers){
+            customer.setTabId(tabId);
+        }
+
     }
     public String getTabStatus() {
         return tabStatus;
@@ -147,5 +153,18 @@ public class Tab {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Tab{" +
+                "tabId=" + tabId +
+                ", tabStatus='" + tabStatus + '\'' +
+                ", timeIn=" + timeIn +
+                ", timeOut=" + timeOut +
+                ", discount=" + discount +
+                ", customers=" + customers +
+                ", server=" + server +
+                '}';
     }
 }

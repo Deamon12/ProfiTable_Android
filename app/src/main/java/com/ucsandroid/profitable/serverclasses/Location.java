@@ -93,4 +93,15 @@ public class Location implements Serializable {
         return editedLocally;
     }
 
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", locationStatus='" + locationStatus + '\'' +
+                ", locationName='" + locationName + '\'' +
+                ", currentTab=" + currentTab +
+                ", restaurantId=" + restaurantId +
+                ", editedLocally=" + editedLocally +
+                '}';
+    }
 }
