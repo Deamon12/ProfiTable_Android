@@ -5,7 +5,6 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.ucsandroid.profitable.Singleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,46 +16,48 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message){
-        //String from = message.getFrom();
+
         Map data = message.getData();
 
-        //System.out.println("Recieved FCM message: "+message);
-        //System.out.println("from: "+from);
-        System.out.println("Recieved FCM message: "+data);
 
         JSONObject response = new JSONObject(data);
-        int notificationType = -1;
 
-        int locationId = -1;
-        String locationStatus = "";
+        int notificationType = -1;
 
 
         try {
             notificationType = response.getInt("type");
-            locationId = response.getInt("locationId");
-            locationStatus = response.getString("locationStatus");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
         if(notificationType == 1){
+            System.out.println("Recieved FCM location update: "+data);
+            //location status
+            int locationId = -1;
+            String locationStatus = "";
+            try {
+                locationId = response.getInt("locationId");
+                locationStatus = response.getString("locationStatus");
+                sendUpdateLocationUI(locationStatus, locationId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            sendUpdateLocationUI(locationStatus, locationId);
 
         }
         else if(notificationType == 2){
-
-            //kitchen
+            System.out.println("Recieved FCM kitchen update: "+data);
+            //kitchen - an order has been added to the queue
+            sendUpdateKitchenUI();
 
         }
         else if(notificationType == 3){
-
+            System.out.println("Recieved FCM order status update: "+data);
             //food/order status
-
+            sendUpdateOrderStatus();
         }
-
-
 
 
 
@@ -67,6 +68,16 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         updateIntent.putExtra("locationStatus", locationStatus);
         updateIntent.putExtra("locationId", locationId);
 
+        LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+    }
+
+    private void sendUpdateKitchenUI(){ //todo make reciver in kitchen
+        Intent updateIntent = new Intent("update-kitchen");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+    }
+
+    private void sendUpdateOrderStatus(){ //todo make recivers in location frags
+        Intent updateIntent = new Intent("update-order-status");
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 

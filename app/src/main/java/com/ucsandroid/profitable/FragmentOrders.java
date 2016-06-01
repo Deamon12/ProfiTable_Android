@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -139,48 +141,10 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
         @Override
         public void recyclerViewListLongClicked(View v, int parentPosition, int position, MenuItem item) {
-            showLongClickedDialog(parentPosition, position);
+            showOrderedItemLongClickedDialog(parentPosition, position);
         }
     };
 
-    /**
-     * Start the broadcast receiver to listen for add customers broadcasts from other fragments
-     * in order to add customers to the order recyclerview in this fragment
-     */
-    private void initAddCustomerListener() {
-
-        mAddCustomerReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (nestedRecyclerAdapter != null) {
-                    nestedRecyclerAdapter.addCustomer();
-                    mRecyclerView.scrollToPosition(0);
-                }
-            }
-        };
-
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddCustomerReceiver,
-                new IntentFilter("add-customer"));
-    }
-
-
-    /**
-     * Listen for add item requests from any other fragment
-     */
-    private void initAddItemToCustomerListener() {
-
-        mAddItemToCustomerReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (nestedRecyclerAdapter != null) {
-                    addItem((MenuItem) intent.getSerializableExtra("menuItem"));
-                }
-            }
-        };
-
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddItemToCustomerReceiver,
-                new IntentFilter("add-item"));
-    }
 
     /**
      * MenuItem to be used to update amount of orders and orders UI
@@ -191,14 +155,14 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         if (nestedRecyclerAdapter.getSelectedPosition() > -1) {
 
-            //System.out.println("Need to add item: " + item.getName() + " to customer " + (nestedRecyclerAdapter.getSelectedPosition() + 1));
-            int orderedItemId = 0;
-            String orderedItemNotes = "notes";
-            String orderedItemStatus = "status";
-            boolean bringFirst = false;
-            List<FoodAddition> additions = item.getDefaultAdditions();
 
-            nestedRecyclerAdapter.addOrderedItemToCustomer( new OrderedItem(orderedItemId,orderedItemNotes,orderedItemStatus,bringFirst,item,additions ));
+            int orderedItemId = 0;
+            String orderedItemNotes = "";
+            String orderedItemStatus = "not_ordered";
+            boolean bringFirst = false;
+
+            List<FoodAddition> additions = item.getDefaultAdditions();
+            nestedRecyclerAdapter.addOrderedItemToCustomer( new OrderedItem(orderedItemId, orderedItemNotes, orderedItemStatus, bringFirst, item, additions ));
             checkSendToKitchenVisibility();
 
         } else { //No customer is selected
@@ -209,29 +173,20 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
 
-    private void showLongClickedDialog(final int customer, final int position) {
+    @Override
+    public void onClick(View v) {
+        if(v == sendToKitchenButton){
+            uploadOrder();
+        }
+    }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("What to do...");
 
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                showAdditionsDialog(customer, position);
-            }
-        });
-        builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                removeItem(customer, position);
+    private void addCustomer(){
 
-            }
-        });
-        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
-
-        builder.show();
+        if (nestedRecyclerAdapter != null) {
+            nestedRecyclerAdapter.addCustomer();
+            mRecyclerView.scrollToPosition(0);
+        }
     }
 
 
@@ -241,7 +196,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         checkSendToKitchenVisibility();
     }
 
-    /**todo
+    /**
      * Hide sendToKitchenButton, if the table has no orders for it
      */
     private void checkSendToKitchenVisibility(){
@@ -285,7 +240,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     @Override
     public void dialogDismissListener(int customer, int position, List<FoodAddition> additions) {
-
         nestedRecyclerAdapter.setAdditionsForItem(customer, position, additions);
         sendUpdateAmountBroadcast();
     }
@@ -296,28 +250,41 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(updateIntent);
     }
 
-    @Override
-    public void onClick(View v) {
-        if(v == sendToKitchenButton){
-            uploadOrder();
-        }
-    }
 
-    private void initUpdateAmountListener() {
+    private void showOrderedItemLongClickedDialog(final int customer, final int position) {
 
-        mDoCalculationUpdate = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                checkSendToKitchenVisibility();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("What to do...");
+
+        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                showAdditionsDialog(customer, position);
             }
-        };
+        });
+        builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeItem(customer, position);
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mDoCalculationUpdate,
-                new IntentFilter("update-amount"));
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
     }
 
+    // -----Volley Calls & Responses------ //
 
 
+
+
+
+    /**
+     * Send the whole order up to the server
+     */
     private void uploadOrder(){
 
         mProgress.setVisibility(View.VISIBLE);
@@ -330,16 +297,17 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
                 .appendPath("orders")
-                .appendPath("parseTest")
+                //.appendPath("parseTest")
                 .appendQueryParameter("customers", customerslist);
 
         String myUrl = builder.build().toString();
 
+        System.out.println("myURL: "+myUrl);
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
                 uploadOrderSuccessListener,
-                uploadOrderErrorListener);
+                errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -354,24 +322,29 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         }
     };
 
-    Response.ErrorListener uploadOrderErrorListener = new Response.ErrorListener() {
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
 
         @Override
         public void onErrorResponse(VolleyError error) {
             mProgress.setVisibility(View.GONE);
 
-            if(getActivity().findViewById(R.id.order_coordinator)  != null){
+            if(getActivity().findViewById(R.id.the_coordinator)  != null){
                 Snackbar snackbar = Snackbar
-                        .make(getActivity().findViewById(R.id.order_coordinator), "Error sending order", Snackbar.LENGTH_LONG);
-
+                        .make(getActivity().findViewById(R.id.the_coordinator), "Error sending order", Snackbar.LENGTH_LONG);
 
                 snackbar.show();
             }
-
-            System.out.println("Volley error: " + error);
         }
     };
 
+
+
+
+
+
+
+
+    //----- Broadcast Listeners ----//
 
     /**
      * Indicates if location data has changed, if so we need to update the UI.
@@ -389,5 +362,53 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateOrderUI,
                 new IntentFilter("update-location"));
     }
+
+    /**
+     * Start the broadcast receiver to listen for add customers broadcasts from other fragments
+     * in order to add customers to the order recyclerview in this fragment
+     */
+    private void initAddCustomerListener() {
+
+        mAddCustomerReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                addCustomer();
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddCustomerReceiver,
+                new IntentFilter("add-customer"));
+    }
+    /**
+     * Listen for add item requests from any other fragment
+     */
+    private void initAddItemToCustomerListener() {
+
+        mAddItemToCustomerReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (nestedRecyclerAdapter != null) {
+                    addItem((MenuItem) intent.getSerializableExtra("menuItem"));
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mAddItemToCustomerReceiver,
+                new IntentFilter("add-item"));
+    }
+
+    private void initUpdateAmountListener() {
+
+        mDoCalculationUpdate = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                checkSendToKitchenVisibility();
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mDoCalculationUpdate,
+                new IntentFilter("update-amount"));
+    }
+
 
 }

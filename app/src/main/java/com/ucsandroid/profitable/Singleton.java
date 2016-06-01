@@ -23,6 +23,7 @@ import com.ucsandroid.profitable.serverclasses.MenuItem;
 
 public class Singleton {
 
+
     static final int TYPE_TABLE = 1;
     static final int TYPE_BAR = 2;
     static final int TYPE_TAKEOUT = 3;

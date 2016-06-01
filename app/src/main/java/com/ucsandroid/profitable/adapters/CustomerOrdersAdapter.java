@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -16,13 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.rey.material.app.Dialog;
+import com.rey.material.app.DialogFragment;
+import com.rey.material.app.SimpleDialog;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
@@ -55,16 +60,13 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
     public CustomerOrdersAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
+
         this.locationData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
-
-        if(locationData.getCurrentTab().getCustomers().size() == 0){
-            addCustomer();
-        }
 
     }
 
@@ -109,7 +111,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         @Override
         public void onClick(View v) {
 
-
             if(v == mCommentImageView){
                 showCustomerCommentDialog(getAdapterPosition());
             }
@@ -147,7 +148,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
      * Update local data and call method to check location status
      */
     public void addCustomer() {
-        System.out.println("Adding customer");
+
         locationData.getCurrentTab().addCustomer(new Customer());
         selectedPosition = 0;
         checkLocationStatus();
@@ -155,32 +156,33 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     }
 
     /**
-     * Evaluate local data, and update server if needed
-     */
-    private void checkLocationStatus() {
-        //No customers, set this table as free
-        System.out.println("custSize: "+locationData.getCurrentTab().getCustomers().size());
-        if(locationData.getCurrentTab().getCustomers().size() == 0){
-            setLocationStatus(context.getString(R.string.location_available), locationData.getId());
-        }
-        else if(locationData.getCurrentTab().getCustomers().size() > 0 &&
-                locationData.getStatus().equalsIgnoreCase("available")){
-            setLocationStatus(context.getString(R.string.location_occupied), locationData.getId());
-        }
-    }
-
-    /**
      * Remove customer from table, update datastructure, update UI
      * @param position
      */
     public void removeCustomer(int position) {
-        System.out.println("Removing customer");
+
         locationData.getCurrentTab().removeCustomer(position);
         selectedPosition = -1;
         sendUpdateAmountBroadcast();
         notifyDataSetChanged();
         checkLocationStatus();
     }
+
+    /**
+     * Evaluate local data, and update server if needed
+     */
+    private void checkLocationStatus() {
+
+        //No customers, set this table as free
+        if(locationData.getCurrentTab().getCustomers().size() == 0){
+            setLocationStatusVolley(context.getString(R.string.location_available), locationData.getId());
+        }
+        else if(locationData.getCurrentTab().getCustomers().size() > 0 &&
+                locationData.getStatus().equalsIgnoreCase("available")){
+            setLocationStatusVolley(context.getString(R.string.location_occupied), locationData.getId());
+        }
+    }
+
 
     public CustomerOrdersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -277,9 +279,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         return locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position);
     }
 
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
+    //Pass clicks from nested recyclerview through parent recyclerview, to fragment
     OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
@@ -287,9 +287,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         }
     };
 
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
+    //Pass clicks from nested recyclerview through parent recyclerview, to fragment
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
 
         @Override
@@ -335,10 +333,11 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
         final EditText edittext = new EditText(context);
-        edittext.setPadding(20,10,20,10);
+
         edittext.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        edittext.setSingleLine(false);
-        dialog.setTitle("Add comment");
+        edittext.setHint("Comment");
+        //edittext.setSingleLine(false);
+        dialog.setTitle("Add comment to this order");
 
 
         edittext.setText(locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes());
@@ -361,10 +360,16 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         });
 
         dialog.show();
+
+
     }
 
 
-    private void setLocationStatus(String status, int locationId) {
+
+
+    //----- Volley Calls -------//
+
+    private void setLocationStatusVolley(String status, int locationId) {
 
         //free or occupy
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
@@ -376,15 +381,12 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         String myUrl = builder.build().toString();
 
-        //System.out.println("update DeviceId:" + myUrl);
-
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                 myUrl,
                 (JSONObject) null,
                 statusSuccessListener,
                 statusErrorListener);
 
-        // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
@@ -408,10 +410,94 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     Response.ErrorListener statusErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            //showDeviceErrorDialog();
             System.out.println("ErrorListener updating deviceID");
         }
     };
+
+
+
+    private void closeTabAtLocation(){
+
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+        int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("close")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", tabId+"");
+
+        String myUrl = builder.build().toString();
+
+        System.out.println("SEAT URL: "+myUrl);
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
+                myUrl,
+                seatLocationSuccessListener,
+                errorListener);
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+
+
+    private void openTabAtLocation(){
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        int employeeId = settings.getInt(context.getString(R.string.employee_id), 0);
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("seat")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", employeeId+"");
+
+        String myUrl = builder.build().toString();
+
+        System.out.println("SEAT URL: "+myUrl);
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
+                myUrl,
+                seatLocationSuccessListener,
+                errorListener);
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+
+    private Response.Listener seatLocationSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            //sendToKitchenButton.setVisibility(View.GONE);
+            //mProgress.setVisibility(View.GONE);
+            System.out.println("Volley success: " + response);
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+            /*if(context.findViewById(R.id.the_coordinator)  != null){
+                Snackbar snackbar = Snackbar
+                        .make(getActivity().findViewById(R.id.the_coordinator), "Error sending order", Snackbar.LENGTH_LONG);
+
+                snackbar.show();
+            }*/
+        }
+    };
+
+
+
+
+
 
 
 }

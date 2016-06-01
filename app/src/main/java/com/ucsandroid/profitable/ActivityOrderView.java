@@ -6,7 +6,9 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,6 +37,7 @@ import org.json.JSONObject;
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
 
+    private CoordinatorLayout mCoordinator;
     private FrameLayout customerFragContainer;
     private FrameLayout amountFragContainter;
     private FrameLayout menuitemFragContainer;
@@ -54,6 +58,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         initToolbar();
 
+        mCoordinator = (CoordinatorLayout) findViewById(R.id.the_coordinator);
         customerFragContainer = (FrameLayout) findViewById(R.id.orders_frag_container);
         amountFragContainter = (FrameLayout) findViewById(R.id.amounts_frag_container);
         menuitemFragContainer = (FrameLayout) findViewById(R.id.menuitems_frag_container);
@@ -63,7 +68,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         addCustomer.setOnClickListener(this);
         menuDivider = findViewById(R.id.menu_divider);
         menuDivider.setOnClickListener(this);
-
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
 
@@ -89,7 +93,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         switch (item.getItemId()) {
 
             case R.id.action_check_status:
-
+                showOrderStatus();
                 return true;
 
             default:
@@ -98,44 +102,9 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * Get all orders, customers, and anything else related to this location
-     */
-    private void getLocationData(){
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        ////http://52.38.148.241:8080/com.ucsandroid.profitable/rest/orders?rest_id=1&location_id=1
-
-        int locationId = Singleton.getInstance().getCurrentLocation().getId();
-        String restId = settings.getString(getString(R.string.rest_id), 1+"");
-
-        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
-        builder.appendPath("com.ucsandroid.profitable")
-                .appendPath("rest")
-                .appendPath("orders")
-                .appendQueryParameter("location_id", locationId+"")
-                .appendQueryParameter("rest_id", restId+"");
-        String myUrl = builder.build().toString();
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                myUrl,
-                (JSONObject) null,
-                getOrderSuccesListener,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-    }
-
-
-    /**
      * Use screen metrics to adjust the sizing of fragment containers.
      */
-    private void dynamicallySizeContainers() {
+    private void dynamicallySizeContainers() { //todo for phone and tab
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -155,7 +124,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             menuItemsFragHeight = (int)(metrics.heightPixels*.3);
             menuItemsFragWidth = (int)(metrics.widthPixels);
         }
-
 
         //Dynamic resizing of the fragment containers
         customerFragContainer.getLayoutParams().height = custFragHeight;
@@ -201,7 +169,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         transaction.replace(R.id.amounts_frag_container, amountFrag);
         transaction.replace(R.id.menuitems_frag_container, menuFrag);
 
-        // Commit the transaction
         transaction.commit();
 
     }
@@ -209,7 +176,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     /**
      * Dynamically show or hide the menu items to give more room to see customer info
-     * TODO:animate
      */
     private void toggleMenuContainer(){
 
@@ -246,8 +212,32 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         showBillSplitDialog();
 
+    }
+
+    private void showOrderStatus() {
+        String message = "";
+        if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus() == null){
+            System.out.println("no tab yet");
+            message = "Not sent to kitchen yet";
+        }
+        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("ordered")){
+            message = "Order is being prepared";
+        }
+        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("ready")){
+            message = "Ready for pickup";
+        }
+        else if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus().equalsIgnoreCase("delivered")){
+            message = "Delivered to table";
+        }
+        else{
+            message = "Status is unknown";
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
     }
+
+
 
     private void showBillSplitDialog() {
 
@@ -280,36 +270,78 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    //TODO: change to snackbar
     public void showErrorSnackbar(String message){
-        //Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar
+                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
+
+    private void sendLocationUpdateBroadcast(){
+        Intent intent = new Intent("update-location");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+
+    //----- Volley Calls -----//
+
+    /**
+     * Get all orders, customers, and anything else related to this location
+     */
+    private void getLocationData(){
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+        String restId = settings.getString(getString(R.string.rest_id), 1+"");
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("rest_id", restId+"");
+        String myUrl = builder.build().toString();
+
+        System.out.println("URL: "+myUrl);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                getOrderSuccesListener,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        showErrorSnackbar("Error getting order info");
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
     }
 
 
     private Response.Listener getOrderSuccesListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            //System.out.println("Location Volley success: " + response);
 
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
 
-                //If successful retrieval, update Singleton
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
                     Gson gson = new Gson();
                     Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
-
                     Singleton.getInstance().updateCurrentLocation(mLocation);
-
-                    //TODO more logic, but dont erase local data, unless we NEED to
-
                     sendLocationUpdateBroadcast();
 
                 } else {
-                    if (theResponse.has("message")) {
-                        showErrorSnackbar(theResponse.getString("message"));
-                    }
+
+                    //todo could be an empty location
+                    //if (theResponse.has("message")) {
+                    //    showErrorSnackbar(theResponse.getString("message"));
+                    //}
                 }
 
             } catch (JSONException e) {
@@ -319,10 +351,5 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         }
     };
 
-
-    private void sendLocationUpdateBroadcast(){
-        Intent intent = new Intent("update-location");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
 
 }

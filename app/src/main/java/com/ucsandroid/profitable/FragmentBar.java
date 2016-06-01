@@ -58,9 +58,10 @@ public class FragmentBar extends Fragment {
 
     }
 
+
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDetach() {
+        super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
     }
 

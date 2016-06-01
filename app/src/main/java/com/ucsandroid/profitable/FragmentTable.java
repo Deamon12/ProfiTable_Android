@@ -66,8 +66,8 @@ public class FragmentTable extends Fragment {
 
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
     }
 
