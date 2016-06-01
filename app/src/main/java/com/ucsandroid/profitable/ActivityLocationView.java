@@ -3,12 +3,16 @@ package com.ucsandroid.profitable;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -33,6 +37,7 @@ import java.util.List;
 
 public class ActivityLocationView extends AppCompatActivity {
 
+    private BroadcastReceiver mUpdateLocationUI;
 
     private Fragment mTableFrag;
     private Fragment mBarFrag;
@@ -41,7 +46,7 @@ public class ActivityLocationView extends AppCompatActivity {
     private BottomBar mBottomBar;
     private Toolbar toolbar;
 
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
 
 
     @Override
@@ -60,7 +65,7 @@ public class ActivityLocationView extends AppCompatActivity {
         initBottomNavigation(savedInstanceState);
         getMenu();
         evaluateLocationData();
-
+        initUpdateLocationStatus();
     }
 
 
@@ -151,29 +156,31 @@ public class ActivityLocationView extends AppCompatActivity {
 
         if(settings.getString(getString(R.string.locations_jsonobject), "").equalsIgnoreCase("")) {
             System.out.println("getting tables data");
-            getTablesData();
+            getLocationsData();
         }
         else if(!Singleton.getInstance().hasLocationData()){
             System.out.println("setting tables data");
             setLocationsFromPrefs();
-            getTablesData(); //todo:progress?
+            getLocationsData(); //todo:progress?
         }
         else{ //use local data
             System.out.println("using tables data");
             initFragments();
-            getTablesData(); //progress?
+            getLocationsData(); //progress?
         }
 
     }
 
 
-    private void getTablesData() {
+    private void getLocationsData() {
 
         //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/location?rest_id=1
-        progressDialog = new ProgressDialog(this);
-        progressDialog.isIndeterminate();
-        progressDialog.setMessage("Retrieving Menu Items");
-        progressDialog.show();
+        //progressDialog = new ProgressDialog(this);
+        //progressDialog.isIndeterminate();
+        //progressDialog.setMessage("Retrieving Menu Items");
+        //progressDialog.show();
+
+        //todo rest_id from sharedPrfs
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
@@ -185,7 +192,7 @@ public class ActivityLocationView extends AppCompatActivity {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                successListener, errorListener);
+                locationSuccessListener, locationErrorListener);
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -229,11 +236,10 @@ public class ActivityLocationView extends AppCompatActivity {
     }
 
 
-    private Response.Listener successListener = new Response.Listener() {
+    private Response.Listener locationSuccessListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
-            //System.out.println("Volley success: " + response);
-            progressDialog.dismiss();
+
             try {
                 JSONObject theResponse = new JSONObject(response.toString());
 
@@ -253,11 +259,14 @@ public class ActivityLocationView extends AppCompatActivity {
                         edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
                         edit.apply();
                         setLocationsFromPrefs();
+
+                        //TODO: will this work?
+
+                        initFragments();
                     }
                     else if(newData.equalsIgnoreCase(localData)){
                         //System.out.println("Local locations are the same as new locations. Not updating data or UI");
                     }
-
                 }
                 else{
                     //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
@@ -266,15 +275,14 @@ public class ActivityLocationView extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     };
 
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
+    Response.ErrorListener locationErrorListener = new Response.ErrorListener() {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             ///TODO Connect/server error
             System.out.println("Volley error: " + error);
         }
@@ -310,7 +318,7 @@ public class ActivityLocationView extends AppCompatActivity {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
                 (JSONObject) null,
-                menuRetrieveSuccessListener, errorListener);
+                menuRetrieveSuccessListener, locationErrorListener);
 
         // Access the RequestQueue through singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
@@ -364,10 +372,26 @@ public class ActivityLocationView extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            progressDialog.dismiss();
-
+            //progressDialog.dismiss();
         }
     };
+
+
+    /**
+     * Indicates if location data has changed, if so we need to update the UI.
+     */
+    private void initUpdateLocationStatus() {
+        mUpdateLocationUI = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("Received update location UI broadcast");
+                getLocationsData();
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mUpdateLocationUI,
+                new IntentFilter("update-location"));
+    }
 
 
 }

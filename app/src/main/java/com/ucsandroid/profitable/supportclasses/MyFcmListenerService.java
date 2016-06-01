@@ -1,7 +1,11 @@
 package com.ucsandroid.profitable.supportclasses;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.ucsandroid.profitable.Singleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +36,16 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
         if(type == 1){
 
+            sendUpdateLocationUI();
+
+        }
+        else if(type == 2){
+
+
+
+        }
+        else if(type == 3){
+
 
 
         }
@@ -42,6 +56,9 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     }
 
-
+    private void sendUpdateLocationUI(){
+        Intent updateIntent = new Intent("update-location");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
+    }
 
 }

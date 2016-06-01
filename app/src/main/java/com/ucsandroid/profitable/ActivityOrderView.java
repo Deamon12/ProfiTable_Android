@@ -34,7 +34,6 @@ import org.json.JSONObject;
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
 
-
     private FrameLayout customerFragContainer;
     private FrameLayout amountFragContainter;
     private FrameLayout menuitemFragContainer;
