@@ -196,12 +196,11 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
 
         //Change each items check mark to reflect if ready or not
         if(holder.mImageView != null){
-
             if(mOrderedItems.get(position).getOrderedItemStatus().equalsIgnoreCase("ready")){
-                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.accent));
+                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.primary));
             }
             else{
-                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.primary));
+                holder.mImageView.setColorFilter(ContextCompat.getColor(context, R.color.accent));
             }
 
         }

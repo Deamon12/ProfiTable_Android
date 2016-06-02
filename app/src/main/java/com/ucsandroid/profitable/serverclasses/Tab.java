@@ -155,6 +155,16 @@ public class Tab {
         return true;
     }
 
+    public boolean hasUnOrderedItems(){
+        for(Customer customer : customers){
+            if(customer.hasUnordedItems()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     @Override
     public String toString() {
         return "Tab{" +

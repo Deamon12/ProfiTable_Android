@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/kitchen_totals_frag_container"/>
+        android:layout_above="@+id/divider"/>
 
     <View
         android:id="@+id/divider"

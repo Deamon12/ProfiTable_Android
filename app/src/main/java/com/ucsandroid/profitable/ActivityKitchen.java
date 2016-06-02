@@ -48,7 +48,6 @@ public class ActivityKitchen extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setupFragmentContainers();
-
         getKitchenData();
 
     }
@@ -63,6 +62,7 @@ public class ActivityKitchen extends AppCompatActivity {
         TypedValue outValue = new TypedValue();
         int orientation = getResources().getConfiguration().orientation;
         int amountsHeight;
+
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             getResources().getValue(R.dimen.kitchen_amount_frag_width_landscape, outValue, true);
             amountsHeight = (int) (metrics.heightPixels * outValue.getFloat());
@@ -77,37 +77,12 @@ public class ActivityKitchen extends AppCompatActivity {
     }
 
 
-    private void getKitchenData() {
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        String restId = settings.getString(getString(R.string.rest_id), 1+"");
-
-        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
-        builder.appendPath("com.ucsandroid.profitable")
-                .appendPath("rest")
-                .appendPath("orders")
-                .appendPath("kitchen")
-                .appendQueryParameter("rest_id", restId);
-        String myUrl = builder.build().toString();
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                myUrl,
-                (JSONObject) null,
-                successListener,
-                errorListener);
-
-        // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_kitchen_view, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -140,6 +115,31 @@ public class ActivityKitchen extends AppCompatActivity {
 
     }
 
+
+
+    private void getKitchenData() {
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String restId = settings.getString(getString(R.string.rest_id), 1+"");
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("kitchen")
+                .appendQueryParameter("rest_id", restId);
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                successListener,
+                errorListener);
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+
     private Response.Listener successListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
@@ -151,16 +151,14 @@ public class ActivityKitchen extends AppCompatActivity {
 
                     JSONArray locationCats = theResponse.getJSONArray("result");
                     initFragments(locationCats.toString());
-
                 }
                 else{
-                    //TODO:Results Error ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    showErrorSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     };
 
@@ -168,8 +166,8 @@ public class ActivityKitchen extends AppCompatActivity {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            ///TODO Connect/server error
             System.out.println("Volley error: " + error);
+            showErrorSnackbar(error.toString());
         }
     };
 

@@ -27,16 +27,13 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     private static Context context;
     private NestedClickListener nestedClickListener;
 
-
     public NestedKitchenRecyclerAdapter(Context context, List<Tab> dataSet, int layout, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
         tabData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
-
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
@@ -72,9 +69,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
             else{
 
             }
-
         }
-
 
         @Override
         public void onClick(View v) {
@@ -83,18 +78,17 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
                 //Do volley and update UI
                 System.out.println("in onclick of nestedKitchen");
                 nestedClickListener.nestedClickListener(getAdapterPosition(), tabData.get(getAdapterPosition()));
-
             }
-
         }
 
         @Override
         public boolean onLongClick(View v) {
 
+            System.out.println("In long click: "+tabData.get(getAdapterPosition()).allOrdersReady());
+
             return true;
         }
     }
-
 
 
     public NestedKitchenRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -116,16 +110,18 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        //tabData.get(position).getCustomers().get(0).getOrders().get(0).getOrderedItemStatus()
+        //tabData.get(position).getCustomers().get(0).getOrders().get(0).getOrderedItemStatus();
 
+
+
+        //Green for done, Blue for not done
         if(tabData.get(position).allOrdersReady())
-
-            holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.accent));
-        else
             holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.primary));
+        else
+            holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.accent));
 
 
-        holder.mCommentTextView.setVisibility(View.GONE); //todo: not being used
+        holder.mCommentTextView.setVisibility(View.GONE); //todo: comments not being used
         //holder.mCommentTextView.setText("");//tabData.get(position).getTabStatus());
 
 

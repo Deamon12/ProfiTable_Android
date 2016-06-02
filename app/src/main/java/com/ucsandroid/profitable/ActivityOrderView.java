@@ -230,7 +230,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         else if(tabStatus.equalsIgnoreCase("InProgress")){ //Actual
             message = "In progress";
         }
-        else if(tabStatus.equalsIgnoreCase("Completed")){ //Actual
+        else if(tabStatus.equalsIgnoreCase("complete")){ //Actual
             message = "Order is complete";
         }
         else{

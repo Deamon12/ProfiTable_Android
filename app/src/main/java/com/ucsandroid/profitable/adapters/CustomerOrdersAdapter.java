@@ -307,7 +307,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     private void showCustomerEditDialog(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("What to do...Customer "+(getItemCount()-position));
+        builder.setTitle("Edit Customer "+(getItemCount()-position));
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -549,12 +549,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         @Override
         public void onErrorResponse(VolleyError error) {
 
-            /*if(context.findViewById(R.id.the_coordinator)  != null){
-                Snackbar snackbar = Snackbar
-                        .make(getActivity().findViewById(R.id.the_coordinator), "Error sending order", Snackbar.LENGTH_LONG);
 
-                snackbar.show();
-            }*/
         }
     };
 

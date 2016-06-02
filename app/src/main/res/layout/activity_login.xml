@@ -1,169 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/the_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/gray_light">
+    android:layout_height="match_parent">
 
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:cardBackgroundColor="@color/primary"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/logo_75"
-            android:tint="@android:color/white"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            />
-
-    </android.support.v7.widget.CardView>
-
-    <TextView
-        android:text="ProfiTable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textview"
-        android:textSize="30sp"
-        android:textColor="@color/secondary_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/imageView"/>
-
-    <!-- layout width and height used to be wrap_content-->
-
-    <android.support.v7.widget.CardView
-        android:layout_below="@+id/textview"
-        android:layout_width="400dp"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_light">
 
 
-        <com.rey.material.widget.EditText
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            style="@style/Material.Widget.EditText.Light"
-            android:id="@+id/username_textfield"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:textColor="@color/primary_text"
-            android:textColorHint="@color/secondary_text"
-            android:hint="Username"
-            app:et_autoCompleteMode="none"
-            app:et_dividerColor="@color/primary_light"
-            app:et_dividerPadding="4dp"
-            app:et_supportTextErrorColor="#FFFF0000"
-            app:et_dividerErrorColor="#FFFF0000"
-            app:et_supportMode="helper"
-            android:gravity="left"
-            android:ems="7"
-            android:textCursorDrawable="@null"
-            android:layout_centerHorizontal="true"/>
+        <android.support.v7.widget.CardView
+            android:id="@+id/imageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="@color/primary">
 
-
-            <com.rey.material.widget.EditText
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                style="@style/Material.Widget.EditText.Light"
-                android:id="@+id/pin_textfield"
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:textColor="@color/primary_text"
-                android:textColorHint="@color/secondary_text"
-                android:hint="Password"
-                android:inputType="textPassword"
-                app:et_autoCompleteMode="none"
-                app:et_dividerColor="@color/primary_light"
-                app:et_dividerPadding="4dp"
-                app:et_supportTextErrorColor="#FFFF0000"
-                app:et_dividerErrorColor="#FFFF0000"
-                app:et_supportMode="helper"
-                android:gravity="start"
-                android:ems="7"
-                android:textCursorDrawable="@null"
-                android:layout_centerInParent="true"
-                android:layout_below="@+id/username_textfield"/>
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:src="@drawable/logo_75"
+                android:tint="@android:color/white" />
 
-        <com.rey.material.widget.EditText
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            style="@style/Material.Widget.EditText.Light"
-            android:id="@+id/restaurant_id_textfield"
-            android:layout_width="match_parent"
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            app:et_autoCompleteMode="none"
-            android:textColor="@color/primary_text"
-            android:textColorHint="@color/secondary_text"
-            android:hint="Restaurant"
-            app:et_dividerColor="@color/primary_light"
-            app:et_dividerPadding="4dp"
-            app:et_supportTextErrorColor="#FFFF0000"
-            app:et_dividerErrorColor="#FFFF0000"
-            app:et_supportMode="helper"
-            android:gravity="start"
-            android:ems="7"
-            android:textCursorDrawable="@null"
+            android:text="ProfiTable"
+            android:textColor="@color/secondary_text"
+            android:textSize="30sp" />
+
+        <!-- layout width and height used to be wrap_content-->
+
+        <android.support.v7.widget.CardView
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview"
             android:layout_centerInParent="true"
-            android:layout_below="@+id/pin_textfield"/>
+            android:layout_margin="10dp">
 
-
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/login_card"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_below="@+id/restaurant_id_textfield"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="5dp"
-                >
+                android:layout_height="match_parent">
+
+
+                <com.rey.material.widget.EditText xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/username_textfield"
+                    style="@style/Material.Widget.EditText.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:ems="7"
+                    android:gravity="left"
+                    android:hint="Username"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:textCursorDrawable="@null"
+                    app:et_autoCompleteMode="none"
+                    app:et_dividerColor="@color/primary_light"
+                    app:et_dividerErrorColor="#FFFF0000"
+                    app:et_dividerPadding="4dp"
+                    app:et_supportMode="helper"
+                    app:et_supportTextErrorColor="#FFFF0000" />
+
+
+                <com.rey.material.widget.EditText xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/pin_textfield"
+                    style="@style/Material.Widget.EditText.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/username_textfield"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:ems="7"
+                    android:gravity="start"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:textCursorDrawable="@null"
+                    app:et_autoCompleteMode="none"
+                    app:et_dividerColor="@color/primary_light"
+                    app:et_dividerErrorColor="#FFFF0000"
+                    app:et_dividerPadding="4dp"
+                    app:et_supportMode="helper"
+                    app:et_supportTextErrorColor="#FFFF0000" />
+
+                <com.rey.material.widget.EditText xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/restaurant_id_textfield"
+                    style="@style/Material.Widget.EditText.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pin_textfield"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:ems="7"
+                    android:gravity="start"
+                    android:hint="Restaurant"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:textCursorDrawable="@null"
+                    app:et_autoCompleteMode="none"
+                    app:et_dividerColor="@color/primary_light"
+                    app:et_dividerErrorColor="#FFFF0000"
+                    app:et_dividerPadding="4dp"
+                    app:et_supportMode="helper"
+                    app:et_supportTextErrorColor="#FFFF0000" />
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/login_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_below="@+id/restaurant_id_textfield"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:id="@+id/login_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/primary"
+                        android:gravity="center"
+                        android:text="LOGIN"
+                        android:textColor="@android:color/white"
+                        android:textSize="23sp"
+                        android:textStyle="bold" />
+
+                </android.support.v7.widget.CardView>
 
                 <TextView
-                    android:id="@+id/login_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="LOGIN"
-                    android:textSize="23sp"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:background="@color/primary"
-                    />
+                    android:id="@+id/forgot_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@+id/login_card"
+                    android:layout_below="@+id/login_card"
+                    android:layout_marginBottom="5dp"
+                    android:text="Forgot Login"
+                    android:textColor="@color/primary_dark" />
 
-            </android.support.v7.widget.CardView>
-
-            <TextView
-                android:id="@+id/forgot_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forgot Login"
-                android:layout_below="@+id/login_card"
-                android:layout_marginBottom="5dp"
-                android:layout_alignRight="@+id/login_card"
-                android:textColor="@color/primary_dark"/>
-
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
 
 
+    </RelativeLayout>
 
-</RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -167,7 +168,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             checkSendToKitchenVisibility();
 
         } else { //No customer is selected
-            //System.out.println("Need to add item: "+itemId+ " to nobody "); //TODO: what to do here...
+            Toast.makeText(getActivity(), "Create or choose a customer to add items", Toast.LENGTH_LONG).show();
         }
 
         sendUpdateAmountBroadcast();
@@ -203,7 +204,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     private void checkSendToKitchenVisibility(){
 
-        if(Singleton.getInstance().getCurrentLocation().hasCost()){
+        if(Singleton.getInstance().getCurrentLocation().getCurrentTab().hasUnOrderedItems()){
             sendToKitchenButton.setVisibility(View.VISIBLE);
         }
         else{
@@ -219,18 +220,26 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     private void showAdditionsDialog(int customerPosition, int position) {
 
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if(nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getDefaultAdditions().size() > 0 ||
+                nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getOptionalAdditions().size() > 0){
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 
-        if (prev != null) {
-            fragmentTransaction.remove(prev);
+            if (prev != null) {
+                fragmentTransaction.remove(prev);
+            }
+            fragmentTransaction.addToBackStack(null);
+
+            DialogFragment newFragment = DialogItemAttributes.newInstance(customerPosition, position, nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position));
+            newFragment.setTargetFragment(this, 0);
+
+            newFragment.show(fragmentTransaction, "dialog");
         }
-        fragmentTransaction.addToBackStack(null);
+        else{
+            String menuItemName = nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getName();
+            Toast.makeText(getActivity(), menuItemName+" has no additions", Toast.LENGTH_LONG).show();
+        }
 
-        DialogFragment newFragment = DialogItemAttributes.newInstance(customerPosition, position, nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position));
-        newFragment.setTargetFragment(this, 0);
-
-        newFragment.show(fragmentTransaction, "dialog");
 
     }
 
@@ -256,7 +265,7 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     private void showOrderedItemLongClickedDialog(final int customer, final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("What to do...");
+        builder.setTitle(""+nestedRecyclerAdapter.getOrderedItemFromCustomer(customer, position).getMenuItem().getName());
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -281,7 +290,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
 
     // -----Volley Calls & Responses------ //
-
 
 
     /**

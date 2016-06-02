@@ -66,7 +66,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         @Override
         public boolean onLongClick(View v) {
 
-            //todo:dialog?? System.out.println("longed: "+dataSet.get(getAdapterPosition()).getId());
+            //todo:dialog for location long clicked?? System.out.println("longed: "+dataSet.get(getAdapterPosition()).getId());
 
             if (longClickListener != null) {
                 longClickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
@@ -122,7 +122,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     }
 
     public void updateStatus(int position, String status){
-        System.out.println("adapter wants to update status: "+status);
         dataSet.get(position).setStatus(status);
         notifyItemChanged(position);
     }

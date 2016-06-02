@@ -1,12 +1,12 @@
 package com.ucsandroid.profitable;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -17,7 +17,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -31,16 +30,11 @@ import org.json.JSONObject;
 
 public class ActivityLogin extends AppCompatActivity implements View.OnClickListener {
 
+    private CoordinatorLayout mCoordinator;
     private String mToken = "";
-    //private String userIID = "";
     private CardView loginButton;
     private TextView forgotButton;
     private EditText usernameField, restaurantField, pinField;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +45,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
             Singleton.initialize(this);
         }
 
+        mCoordinator = (CoordinatorLayout) findViewById(R.id.the_coordinator);
         loginButton = (CardView) findViewById(R.id.login_card);
         loginButton.setOnClickListener(this);
 
@@ -70,9 +65,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         checkUserLoggedIn();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //GoogleApiClient client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
     }
 
     private boolean checkPlayServices() {
@@ -92,7 +86,6 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     }
 
     private void checkUserLoggedIn() {
-
 
         FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
         mToken = instanceID.getToken();
@@ -116,7 +109,6 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         String accountName = userData.getString("accountName");
         String firstName = userData.getString("firstName");
         String lastName = userData.getString("lastName");
-
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         SharedPreferences.Editor edit = settings.edit();
@@ -186,9 +178,12 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
     }
 
+
+
+    // ----- Volley Calls & responses------//
+
     private void doVolleyLogin(String username, String restId, String pin) {
 
-        //http://52.38.148.241:8080/com.ucsandroid.profitable/rest/employee/login?rest_id=1&account_name=bigX&account_pass=password
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
@@ -203,11 +198,11 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST,
                 myUrl,
                 (JSONObject) null,
-                loginSuccessListener, loginErrorListener);
+                loginSuccessListener,
+                errorListener);
 
-        // Access the RequestQueue through your singleton class.
+
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
     }
 
 
@@ -223,25 +218,17 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     String employeeId = userData.getInt("employeeId") + "";
 
                     //update userToken in server
-                    if (!mToken.equalsIgnoreCase("")) {
+                    if (mToken != null && !mToken.equalsIgnoreCase("")) {
                         updateUserToken(employeeId, mToken);
                     }
                     //Send retrieved data to saver method
                     saveLoginInfo(userData);
                 } else {
-                    //TODO:Results Error
-                    System.out.println("Volley login error: ");
+                    showErrorSnackbar("Unable to login with those credentials");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-    };
-
-    Response.ErrorListener loginErrorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("Volley error: " + error);///TODO Connect/server error
         }
     };
 
@@ -259,14 +246,12 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         String myUrl = builder.build().toString();
 
-        //System.out.println("update DeviceId:" + myUrl);
-
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                 myUrl,
                 (JSONObject) null,
-                deviceSuccessListener, deviceErrorListener);
+                deviceSuccessListener,
+                errorListener);
 
-        // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
@@ -278,7 +263,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                 JSONObject theResponse = new JSONObject(response.toString());
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
                 } else {
-                    System.out.println("Error updating deviceID");
+                    showErrorSnackbar("Error updating deviceID");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -286,12 +271,18 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    Response.ErrorListener deviceErrorListener = new Response.ErrorListener() {
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            //showDeviceErrorDialog();
-            System.out.println("ErrorListener updating deviceID");
+            showErrorSnackbar("Connection Error");
         }
     };
+
+
+    public void showErrorSnackbar(String message){
+        Snackbar snackbar = Snackbar
+                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
 
 }

@@ -5,7 +5,6 @@
     android:animateLayoutChanges="true">
 
 
-
     <ProgressBar
         android:id="@+id/progress_spinner"
         android:layout_width="wrap_content"
@@ -21,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:background="@drawable/square_rounded_edge"
+        android:visibility="gone"
         >
 
 

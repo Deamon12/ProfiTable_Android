@@ -53,7 +53,6 @@ public class MenuItemRecyclerAdapter extends RecyclerView.Adapter<MenuItemRecycl
         String localeCountry = settings.getString("locale_country", "us");
 
         currentLocale = new Locale(localeLang, localeCountry);
-        //currentCurrency = Currency.getInstance(currentLocale);
         currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
     }
 

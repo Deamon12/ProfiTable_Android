@@ -102,11 +102,11 @@ public class FragmentKitchenOrders extends Fragment {
         int layoutWidth;
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             getResources().getValue(R.dimen.kitchen_order_width_landscape, outValue, true);
-            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat()); //.15
+            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat());
         }
         else{
             getResources().getValue(R.dimen.kitchen_order_width_landscape, outValue, true);
-            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat()); //.1
+            layoutWidth = (int)(metrics.widthPixels*outValue.getFloat());
         }
 
 
@@ -130,7 +130,8 @@ public class FragmentKitchenOrders extends Fragment {
 
         @Override
         public void nestedClickListener(int position, Tab tab) {
-            System.out.println("In nested click listener");
+
+            System.out.println("In nested click listener, updating ALL status");
             setOrderStatus(position);
         }
     };
@@ -167,7 +168,7 @@ public class FragmentKitchenOrders extends Fragment {
     }
 
     /**
-     * Use the list of orderId's to create a series of volley calls that inidividually update the
+     * Use the list of orderId's to create a series of volley calls that individually update the
      * statuses of each item.
      * @param orderIds
      */
@@ -210,20 +211,19 @@ public class FragmentKitchenOrders extends Fragment {
 
                 if(theResponse.getBoolean("success")){
                     volleyCounter -= 1;
-                    System.out.println("volleycounter: "+volleyCounter);
+                    //System.out.println("volleycounter: "+volleyCounter);
 
                     if(volleyCounter == 0){
                         System.out.println("Status updates complete...do something");
-
 
                     }
                     else{
                         System.out.println("Waiting for other volleys to finish");
                     }
+
                 }
                 else{
-                    //TODO:Results Error
-                    System.out.println("volley error: "+theResponse);
+                    ((ActivityKitchen) getActivity()).showErrorSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {
@@ -237,8 +237,8 @@ public class FragmentKitchenOrders extends Fragment {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            ///TODO Connect/server error
             System.out.println("Volley error: " + error);
+            ((ActivityKitchen) getActivity()).showErrorSnackbar(error.toString());
         }
     };
 
