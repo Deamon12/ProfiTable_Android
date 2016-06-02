@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "418685242715",
+    "project_id": "ucsandroid-profitable"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418685242715:android:57e38daa51f29187",
+        "android_client_info": {
+          "package_name": "com.ucsandroid.profitable"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTcGfpPDfjOtSXIk8v471tsW9hhUuFlYI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-69544449-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
