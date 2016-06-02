@@ -65,8 +65,8 @@ public class ActivityLocationView extends AppCompatActivity {
 
         initBottomNavigation(savedInstanceState);
         getMenu();
-        evaluateLocationData();
-
+        //evaluateLocationData();
+        getLocationsData();
     }
 
 
@@ -197,24 +197,8 @@ public class ActivityLocationView extends AppCompatActivity {
      */
     private void evaluateLocationData() {
 
-        getLocationsData();
-        /*
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
 
-        if(settings.getString(getString(R.string.locations_jsonobject), "").equalsIgnoreCase("")) {
-            System.out.println("getting tables data");
-            getLocationsData();
-        }
-        else if(!Singleton.getInstance().hasLocationData()){
-            System.out.println("setting tables data");
-            setLocationsFromPrefs();
-            getLocationsData(); //todo:progress?
-        }
-        else{ //use local data
-            System.out.println("using tables data");
-            initFragments();
-            getLocationsData(); //progress?
-        }*/
+
     }
 
 
@@ -257,17 +241,18 @@ public class ActivityLocationView extends AppCompatActivity {
 
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
-                    String newData = theResponse.getJSONArray("result").toString();
-                    String localData = settings.getString(getString(R.string.locations_jsonobject), "");
+                    //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
+                    //String newData = theResponse.getJSONArray("result").toString();
+                    //String localData = settings.getString(getString(R.string.locations_jsonobject), "");
 
                     //IF results are different than local data, update local data
                     //if(!newData.equalsIgnoreCase(localData)){
 
-                        SharedPreferences.Editor edit = settings.edit();
-                        edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
-                        edit.apply();
-                        setLocationsFromPrefs();
+                        //SharedPreferences.Editor edit = settings.edit();
+                        //edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
+                        //edit.apply();
+                        //setLocationsFromPrefs();
+
 
                         initFragments();
                    // }

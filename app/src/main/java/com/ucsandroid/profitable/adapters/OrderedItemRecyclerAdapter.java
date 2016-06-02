@@ -152,7 +152,7 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
             allAdditions.add(item);
         }
 
-        //Have list of ALL at this point
+        //Have list of ALL additions at this point
 
         //Loop through all and check the correct ones
         for(FoodAddition item : allAdditions){

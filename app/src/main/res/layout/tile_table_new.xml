@@ -18,7 +18,7 @@
             android:id="@+id/tile_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/table_unseated_75x75_blackseats"
+            android:src="@drawable/unseated_75_alpha50"
             android:layout_above="@+id/tile_text"
             android:padding="@dimen/table_padding"
             android:layout_centerInParent="true"
