@@ -241,20 +241,20 @@ public class ActivityLocationView extends AppCompatActivity {
 
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-                    //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
                     //String newData = theResponse.getJSONArray("result").toString();
                     //String localData = settings.getString(getString(R.string.locations_jsonobject), "");
 
                     //IF results are different than local data, update local data
                     //if(!newData.equalsIgnoreCase(localData)){
 
-                        //SharedPreferences.Editor edit = settings.edit();
-                        //edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
-                        //edit.apply();
-                        //setLocationsFromPrefs();
+                        SharedPreferences.Editor edit = settings.edit();
+                        edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
+                        edit.apply();
+                        setLocationsFromPrefs();
 
 
-                        initFragments();
+                        //initFragments();
                    // }
                     //else if(newData.equalsIgnoreCase(localData)){
                         //System.out.println("Local locations are the same as new locations. Not updating data or UI");
