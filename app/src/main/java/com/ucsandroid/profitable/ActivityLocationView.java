@@ -83,6 +83,7 @@ public class ActivityLocationView extends AppCompatActivity {
             case R.id.action_kitchen:
                 Intent intent = new Intent(ActivityLocationView.this, ActivityKitchen.class);
                 startActivity(intent);
+                finish();
                 return true;
 
             case R.id.action_logout:
@@ -198,9 +199,7 @@ public class ActivityLocationView extends AppCompatActivity {
     private void evaluateLocationData() {
 
 
-
     }
-
 
 
 

@@ -9,9 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.NestedClickListener;
+import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
@@ -25,15 +28,19 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
+    private OrderedItemClickListener orderedItemClickListener;
     private NestedClickListener nestedClickListener;
 
-    public NestedKitchenRecyclerAdapter(Context context, List<Tab> dataSet, int layout, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
+    public NestedKitchenRecyclerAdapter(Context context, List<Tab> dataSet, int layout, ViewGroup.LayoutParams params,
+                                        NestedClickListener clickListener, OrderedItemClickListener orderedItemClickListener) {
         tabData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
+        this.orderedItemClickListener = orderedItemClickListener;
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
@@ -49,7 +56,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
-            if(layout == R.layout.tile_kitchen_order){
+            if (layout == R.layout.tile_kitchen_order) {
 
                 doneButton = (ImageView) v.findViewById(R.id.check_button);
                 mCommentTextView = (TextView) v.findViewById(R.id.comment_text);
@@ -65,8 +72,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
                 cardView.setOnClickListener(this);
                 doneButton.setOnClickListener(this);
-            }
-            else{
+            } else {
 
             }
         }
@@ -74,17 +80,23 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         @Override
         public void onClick(View v) {
 
-            if(v == doneButton){
+            if (v == doneButton) {
                 //Do volley and update UI
-                System.out.println("in onclick of nestedKitchen");
                 nestedClickListener.nestedClickListener(getAdapterPosition(), tabData.get(getAdapterPosition()));
             }
+            else if(v == cardView){
+                Toast.makeText(context,tabData.get(getAdapterPosition()).allOrdersReady()+"", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
         @Override
         public boolean onLongClick(View v) {
 
-            System.out.println("In long click: "+tabData.get(getAdapterPosition()).allOrdersReady());
+            System.out.println("In long click: " + tabData.get(getAdapterPosition()).getTabStatus());
+            System.out.println("In long click: " + tabData.get(getAdapterPosition()).allOrdersReady());
+            //tabData.remove(getAdapterPosition());
+            //notifyDataSetChanged();
 
             return true;
         }
@@ -110,22 +122,24 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        //tabData.get(position).getCustomers().get(0).getOrders().get(0).getOrderedItemStatus();
+        System.out.println("TAB STATUS: " + tabData.get(position).getTabStatus());
+        System.out.println("ALL ORDERS READY STATUS: " + tabData.get(position).allOrdersReady());
 
 
-
-        //Green for done, Blue for not done
-        if(tabData.get(position).allOrdersReady())
+        //Green for ready, Blue for not ready
+        if (tabData.get(position).allOrdersReady())
             holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.primary));
         else
             holder.doneButton.setColorFilter(ContextCompat.getColor(context, R.color.accent));
 
 
         holder.mCommentTextView.setVisibility(View.GONE); //todo: comments not being used
-        //holder.mCommentTextView.setText("");//tabData.get(position).getTabStatus());
 
 
-        holder.mTextView.setText("Table " + tabData.get(position).getTabId()); //(position+1)
+        if (tabData.get(position).getServer() != null)
+            holder.mTextView.setText("Server: " + tabData.get(position).getServer().getFirstName()); //tabData.get(position).getTabId()); //(position+1)
+        else
+            holder.mTextView.setText("Order#  " + tabData.get(position).getTabId());
 
 
         holder.mAdapter = new KitchenCustomerRecyclerAdapter(context,
@@ -133,7 +147,7 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
                 R.layout.tile_recyclerview,
                 position,
                 null,
-                null);
+                orderedItemClickListener);
 
         holder.recyclerView.setAdapter(holder.mAdapter);
 
@@ -145,9 +159,15 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
     }
 
 
-    public Tab getDataItem(int position){
+    public Tab getDataItem(int position) {
         return tabData.get(position);
     }
+
+    public void setOrderStatus(int tab, int customer, int orderPosition, String orderedItemStatus) {
+        tabData.get(tab).getCustomers().get(customer).getOrders().get(orderPosition).setOrderedItemStatus(orderedItemStatus);
+    }
+
+
 
 
 }

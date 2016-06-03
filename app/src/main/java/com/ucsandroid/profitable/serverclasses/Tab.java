@@ -165,6 +165,19 @@ public class Tab {
     }
 
 
+    public int[] hasOrderedItemId(int orderedItemId){
+        int[] location = {-1, -1};
+        for(int a = 0; a < customers.size();a++){
+            int custHas = customers.get(a).hasOrderedItemId(orderedItemId);
+            if(custHas != -1){
+                location[0] = a;
+                location[1] = custHas;
+                return location;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Tab{" +

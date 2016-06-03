@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.NestedClickListener;
+import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 
 import java.util.ArrayList;
@@ -26,13 +28,13 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
 
     private ViewGroup.LayoutParams layoutParams;
     private static Context context;
-    private NestedClickListener nestedClickListener;
+    private OrderedItemClickListener nestedClickListener;
     private RecyclerViewLongClickListener nestedLongClickListener;
     private int parentPosition = 0;
 
 
 
-    public KitchenCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, NestedClickListener clickListener) {
+    public KitchenCustomerRecyclerAdapter(Context context, List<Customer> dataSet, int layout, int parentPostion, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener) {
         customerData = dataSet;
         this.context = context;
         this.layout = layout;
@@ -55,7 +57,6 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
             mTextView = (TextView) v.findViewById(R.id.tile_text);
 
             if(layout == R.layout.tile_recyclerview){
-
                 recyclerView = (RecyclerView) v.findViewById(R.id.the_recycler);
                 recyclerView.setHasFixedSize(false);
                 recyclerView.setLayoutManager(new MyLinearLayoutManager(context));
@@ -67,6 +68,7 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
         @Override
         public void onClick(View v) {
             System.out.println("nestedCust clicked: "+getAdapterPosition());
+
         }
 
         @Override
@@ -76,6 +78,15 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
         }
     }
 
+    /**
+     * Pass ordered Item up to fragment
+     */
+    OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
+        @Override
+        public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
+            nestedClickListener.recyclerViewListClicked(v, parentPosition, position, item);
+        }
+    };
 
 
     public KitchenCustomerRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -97,16 +108,12 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        //holder.mCommentTextView.setText(customerData.get(position));
-
-        //holder.mTextView.setText("Table " + (position+1));
-
         holder.mAdapter = new OrderedItemRecyclerAdapter(context,
                 customerData.get(position).getOrders(),
                 R.layout.item_imageview_textview_textview2,
                 position,
                 null,
-                null,
+                orderedItemClickListener,
                 null);
 
         holder.recyclerView.setAdapter(holder.mAdapter);

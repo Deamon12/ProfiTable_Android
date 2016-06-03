@@ -17,13 +17,13 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage message){
 
-        Map data = message.getData();
 
+        Map data = message.getData();
+        System.out.println("Recieved FCM push: "+data);
 
         JSONObject response = new JSONObject(data);
 
         int notificationType = -1;
-
 
         try {
             notificationType = response.getInt("type");
@@ -33,7 +33,7 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
 
         if(notificationType == 1){
-            System.out.println("Recieved FCM location update: "+data);
+            System.out.println("Recieved FCM location update");
             //location status
             int locationId = -1;
             String locationStatus = "";
@@ -48,15 +48,25 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
         }
         else if(notificationType == 2){
-            System.out.println("Recieved FCM kitchen update: "+data);
+            System.out.println("Recieved FCM kitchen update");
             //kitchen - an order has been added to the queue
             sendUpdateKitchenUI();
 
         }
         else if(notificationType == 3){
-            System.out.println("Recieved FCM order status update: "+data);
+            System.out.println("Recieved FCM order status update");
             //food/order status
-            sendUpdateOrderStatus();
+
+            try {
+                int orderedItemId = response.getInt("orderedItemId");
+                String orderedItemStatus = response.getString("orderedItemStatus");
+                sendUpdateOrderStatus(orderedItemId, orderedItemStatus);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            sendUpdateKitchenUI();
+
         }
 
 
@@ -71,13 +81,15 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 
-    private void sendUpdateKitchenUI(){ //todo make reciver in kitchen
+    private void sendUpdateKitchenUI(){
         Intent updateIntent = new Intent("update-kitchen");
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 
-    private void sendUpdateOrderStatus(){ //todo make recivers in location frags
-        Intent updateIntent = new Intent("update-order-status");
+    private void sendUpdateOrderStatus(int orderedItemId, String orderedItemStatus){ //todo make receiver in location frags
+        Intent updateIntent = new Intent("update-kitchen");
+        updateIntent.putExtra("orderedItemId" , orderedItemId);
+        updateIntent.putExtra("orderedItemStatus", orderedItemStatus);
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 

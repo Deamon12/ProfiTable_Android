@@ -96,6 +96,16 @@ public class Customer {
     }
 
 
+    public int hasOrderedItemId(int orderedItemId){
+        for(int a = 0; a < order.size(); a++){
+            if (order.get(a).getOrderedItemId() == orderedItemId){
+                return a;
+            }
+        }
+        return -1;
+    }
+
+
     @Override
     public String toString() {
         return "Customer{" +

@@ -2,7 +2,7 @@
 <resources>
 
     <!--Customer Tile-->
-    <dimen name="customer_order_text">18sp</dimen>
+    <dimen name="customer_order_text">22sp</dimen>
     <dimen name="customer_title">24sp</dimen>
     <dimen name="customer_image">30dp</dimen>
     <dimen name="customer_comment_image">25dp</dimen>
@@ -24,8 +24,8 @@
     <item name="menu_item_width" format="float" type="dimen">.4</item>
 
     <!--Kitchen-->
-    <item name="kitchen_order_width_landscape" format="float" type="dimen">.3</item>
-    <item name="kitchen_order_width_portrait" format="float" type="dimen">.4</item>
+    <item name="kitchen_order_width_landscape" format="float" type="dimen">.35</item>
+    <item name="kitchen_order_width_portrait" format="float" type="dimen">.5</item>
     <dimen name="kitchen_quantity_text">16sp</dimen>
     <item name="kitchen_amount_frag_width_landscape" format="float" type="dimen">.15</item>
     <item name="kitchen_amount_frag_width_portrait" format="float" type="dimen">.1</item>

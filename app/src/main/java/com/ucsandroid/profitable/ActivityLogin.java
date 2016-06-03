@@ -58,6 +58,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         forgotButton.setOnClickListener(this);
 
 
+
         if (checkPlayServices()) {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
@@ -89,8 +90,6 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
 
         FirebaseInstanceId instanceID = FirebaseInstanceId.getInstance();
         mToken = instanceID.getToken();
-
-        System.out.println("mToken = " + mToken);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLogin.this);
         if (settings.contains(getResources().getString(R.string.user_name)) &&

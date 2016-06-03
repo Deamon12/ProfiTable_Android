@@ -3,12 +3,9 @@ package com.ucsandroid.profitable;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,15 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ActivityKitchen extends AppCompatActivity {
 
@@ -48,7 +36,8 @@ public class ActivityKitchen extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setupFragmentContainers();
-        getKitchenData();
+        //getKitchenData();
+        initFragments();
 
     }
 
@@ -90,6 +79,11 @@ public class ActivityKitchen extends AppCompatActivity {
             case R.id.action_tables:
                 Intent netLabActivity = new Intent(ActivityKitchen.this, ActivityLocationView.class);
                 startActivity(netLabActivity);
+                finish();
+                return true;
+
+            case R.id.action_refresh:
+                sendUpdateKitchenBroadcast();
                 return true;
 
             default:
@@ -98,14 +92,10 @@ public class ActivityKitchen extends AppCompatActivity {
     }
 
 
-    /**
-     * Pass the Tab list to the fragments as a string. Gson parse them on the other side.
-     * @param tabList
-     */
-    private void initFragments(String tabList) {
+    private void initFragments() {
 
-        Fragment ordersFrag = FragmentKitchenOrders.newInstance(tabList);
-        Fragment quantityFrag = FragmentKitchenAmounts.newInstance(tabList);
+        Fragment ordersFrag = FragmentKitchenOrders.newInstance();
+        Fragment quantityFrag = FragmentKitchenAmounts.newInstance();
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.kitchen_items_frag_container, ordersFrag);
@@ -116,7 +106,7 @@ public class ActivityKitchen extends AppCompatActivity {
     }
 
 
-
+/*
     private void getKitchenData() {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -137,9 +127,9 @@ public class ActivityKitchen extends AppCompatActivity {
                 errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-    }
+    }*/
 
-
+/*
     private Response.Listener successListener = new Response.Listener() {
         @Override
         public void onResponse(Object response) {
@@ -175,6 +165,11 @@ public class ActivityKitchen extends AppCompatActivity {
         Snackbar snackbar = Snackbar
                 .make(mCoordinator, message, Snackbar.LENGTH_LONG);
         snackbar.show();
+    }*/
+
+    private void sendUpdateKitchenBroadcast(){
+        Intent updateIntent = new Intent("update-kitchen");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 
 

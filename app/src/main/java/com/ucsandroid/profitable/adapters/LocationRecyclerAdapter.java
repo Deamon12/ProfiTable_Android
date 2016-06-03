@@ -92,6 +92,12 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+
+
+        if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied") &&
+                dataSet.get(position).getCurrentTab().allOrdersReady()){
+            System.out.println("Location "+ position +" has ready orders ");
+        }
         //Tables
         if(layout == R.layout.tile_table_new){
             holder.mTextView.setText("Table "+(position+1));
@@ -100,17 +106,17 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
                 holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
             }
             else if(dataSet.get(position).getStatus().equalsIgnoreCase("available")) {
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_75x75_blackseats));
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_alpha_75));
             }
         }
         else if(layout == R.layout.tile_bar_new){
             holder.mTextView.setText("Bar "+(position+1));
 
             if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied")) {
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_seated));
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_seated_alpha_65_61));
             }
             else if(dataSet.get(position).getStatus().equalsIgnoreCase("available")) {
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_75));
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_alpha_65_61));
             }
         }
 
