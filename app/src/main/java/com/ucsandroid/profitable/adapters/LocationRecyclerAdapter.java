@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +43,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         public CardView mCardView;
         public TextView mTextView;
         private ImageView mImageView;
+        private ImageView mAlertImage;
 
         public ViewHolder(View v) {
             super(v);
@@ -49,6 +51,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             mCardView = (CardView) v.findViewById(R.id.the_cardview);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
             mImageView = (ImageView) v.findViewById(R.id.tile_image);
+            mAlertImage = (ImageView) v.findViewById(R.id.alert_image);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -92,18 +95,20 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-
-
-        if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied") &&
-                dataSet.get(position).getCurrentTab().allOrdersReady()){
-            System.out.println("Location "+ position +" has ready orders ");
+        System.out.println("Location has orders:  "+dataSet.get(position).toString());
+        if(dataSet.get(position).isFoodIsReady()){
+            holder.mTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
         }
+        else{
+            holder.mTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_dark));
+        }
+
         //Tables
         if(layout == R.layout.tile_table_new){
             holder.mTextView.setText("Table "+(position+1));
 
             if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied")) {
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75_colors));
             }
             else if(dataSet.get(position).getStatus().equalsIgnoreCase("available")) {
                 holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_alpha_75));
@@ -130,6 +135,10 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public void updateStatus(int position, String status){
         dataSet.get(position).setStatus(status);
         notifyItemChanged(position);
+    }
+
+    public void updateLocation(int position, Location location){
+        dataSet.set(position, location);
     }
 
 }

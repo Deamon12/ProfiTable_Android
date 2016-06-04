@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -74,6 +75,18 @@ public class ActivityKitchen extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent netLabActivity = new Intent(ActivityKitchen.this, ActivityLocationView.class);
+            startActivity(netLabActivity);
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_tables:
@@ -104,68 +117,6 @@ public class ActivityKitchen extends AppCompatActivity {
         transaction.commit();
 
     }
-
-
-/*
-    private void getKitchenData() {
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        String restId = settings.getString(getString(R.string.rest_id), 1+"");
-
-        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
-        builder.appendPath("com.ucsandroid.profitable")
-                .appendPath("rest")
-                .appendPath("orders")
-                .appendPath("kitchen")
-                .appendQueryParameter("rest_id", restId);
-        String myUrl = builder.build().toString();
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                myUrl,
-                (JSONObject) null,
-                successListener,
-                errorListener);
-
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-    }*/
-
-/*
-    private Response.Listener successListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
-
-            try {
-                JSONObject theResponse = new JSONObject(response.toString());
-
-                if(theResponse.getBoolean("success") && theResponse.has("result")){
-
-                    JSONArray locationCats = theResponse.getJSONArray("result");
-                    initFragments(locationCats.toString());
-                }
-                else{
-                    showErrorSnackbar(theResponse.getString("message"));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("Volley error: " + error);
-            showErrorSnackbar(error.toString());
-        }
-    };
-
-    public void showErrorSnackbar(String message){
-        Snackbar snackbar = Snackbar
-                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
-        snackbar.show();
-    }*/
 
     private void sendUpdateKitchenBroadcast(){
         Intent updateIntent = new Intent("update-kitchen");

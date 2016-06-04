@@ -6,7 +6,7 @@
 
 
     <TextView
-        android:id="@+id/subtotaltext"
+        android:id="@+id/totaltext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Subtotal"
@@ -22,7 +22,7 @@
         android:text="$100.00"
         android:textSize="@dimen/amount_frag_amount_text"
         android:layout_marginLeft="15dp"
-        android:layout_below="@+id/subtotaltext"/>
+        android:layout_below="@+id/totaltext"/>
 
 
     <TextView

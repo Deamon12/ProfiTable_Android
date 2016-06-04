@@ -152,6 +152,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         selectedPosition = 0;
         checkLocationStatus();
         notifyDataSetChanged();
+
     }
 
     /**

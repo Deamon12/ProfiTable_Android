@@ -13,6 +13,7 @@ public class Tab {
     private Discount discount;
     private List<Customer> customers;
     private Employee server;
+    public String status = "not_ready";
 
 
     public Tab(int tabId, String tabStatus, Date timeIn,
@@ -147,11 +148,15 @@ public class Tab {
     }
 
     public boolean allOrdersReady(){
+        if(customers.size() == 0){
+            return false;
+        }
         for(Customer customer : customers){
             if(!customer.allOrdersReady()){
                 return false;
             }
         }
+        status = "ready";
         return true;
     }
 

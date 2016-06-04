@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -38,8 +36,6 @@ import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.adapters.CustomerOrdersAdapter;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
-
-import org.json.JSONObject;
 
 import java.util.List;
 

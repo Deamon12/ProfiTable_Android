@@ -84,12 +84,12 @@ public class FragmentKitchenAmounts extends Fragment {
                     receivedItem = foundItems.get(orderItem.getMenuItem().getId());
 
                     if(receivedItem != null && !orderItem.getOrderedItemStatus().equalsIgnoreCase("ready")){
-                        System.out.println("hash contains: "+ orderItem.getMenuItem().getId());
+                        //System.out.println("hash contains: "+ orderItem.getMenuItem().getId());
                         receivedItem.addQuantityByIncrement(1);
                         foundItems.put(receivedItem.getId(), receivedItem);
                     }
                     else if(!orderItem.getOrderedItemStatus().equalsIgnoreCase("ready")){
-                        System.out.println("hash does not contain: "+ orderItem.getMenuItem().getId());
+                        //System.out.println("hash does not contain: "+ orderItem.getMenuItem().getId());
                         foundItems.put(orderItem.getMenuItem().getId(), orderItem.getMenuItem());
                     }
 

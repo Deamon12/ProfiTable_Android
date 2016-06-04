@@ -26,6 +26,7 @@ import com.ucsandroid.profitable.serverclasses.Location;
 public class FragmentBar extends Fragment {
 
 
+    private BroadcastReceiver mUpdateLocationOrdersStatus;
     private BroadcastReceiver mUpdateLocationUI;
     private LocationRecyclerAdapter mAdapter;
     private int mRecyclerViewWidth;
@@ -55,7 +56,7 @@ public class FragmentBar extends Fragment {
             //System.out.println("bar adapter is null");
         }
         initUpdateLocationStatus();
-
+        initUpdateLocationStatusListener();
     }
 
 
@@ -63,6 +64,7 @@ public class FragmentBar extends Fragment {
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationOrdersStatus);
     }
 
     private void initRecyclerView() {
@@ -165,5 +167,35 @@ public class FragmentBar extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationUI,
                 new IntentFilter("update-location"));
     }
+
+
+    private void initUpdateLocationStatusListener() {
+
+        mUpdateLocationOrdersStatus = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("Received update location UI broadcast");
+
+                int locationId = intent.getIntExtra("locationId", -1);
+                String foodStatus = intent.getStringExtra("locationStatus");
+
+                for(int a = 0; a < Singleton.getInstance().getBars().size(); a++){
+                    if(Singleton.getInstance().getBars().get(a).getId() == locationId){
+                        Singleton.getInstance().getBars().get(a).setFoodStatus(foodStatus);
+                        mAdapter.updateLocation(a, Singleton.getInstance().getBars().get(a));
+                        mAdapter.notifyItemChanged(a);
+                        break;
+                    }
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationOrdersStatus,
+                new IntentFilter("update-location-status"));
+
+    }
+
+
+
 
 }

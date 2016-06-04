@@ -1,5 +1,6 @@
 package com.ucsandroid.profitable;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,6 +14,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -29,10 +31,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.Location;
+import com.ucsandroid.profitable.serverclasses.OrderedItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,6 +54,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     private FloatingActionButton doCheckout;
     private View menuDivider;
 
+    int volleyCounter = 0;
 
     int custFragHeight, custFragWidth;
     int menuItemsFragHeight, menuItemsFragWidth;
@@ -57,6 +65,10 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_order_view);
 
         initToolbar();
+
+        if (!Singleton.hasBeenInitialized()) {
+            Singleton.initialize(this);
+        }
 
         mCoordinator = (CoordinatorLayout) findViewById(R.id.the_coordinator);
         customerFragContainer = (FrameLayout) findViewById(R.id.orders_frag_container);
@@ -91,6 +103,7 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         switch (item.getItemId()) {
 
             case R.id.action_check_status:
+                System.out.println("Ready: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().allOrdersReady());
                 showOrderStatus();
                 return true;
 
@@ -215,7 +228,11 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     private void showOrderStatus() {
         String message = "";
         String tabStatus = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus();
-        if(tabStatus == null || tabStatus.equalsIgnoreCase("null")){
+        if(Singleton.getInstance().getCurrentLocation().getCurrentTab().allOrdersReady()){
+            //message = "The food for this order is ready in the kitchen";
+            showFoodStatusDialog();
+        }
+        else if(tabStatus == null || tabStatus.equalsIgnoreCase("null")){
             message = "No order for this location";
         }
         else if(tabStatus.equalsIgnoreCase("ordered")){
@@ -237,7 +254,8 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             message = "Status is unknown";
         }
 
-        System.out.println("tabStatus: "+tabStatus);
+
+
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
     }
@@ -253,7 +271,32 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         fragmentTransaction.addToBackStack(null);
         DialogFragment newFragment = DialogBillSplit.newInstance();
         newFragment.show(fragmentTransaction, "bill_split");
+
+
     }
+
+
+    private void showFoodStatusDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Order Status");
+        builder.setMessage("Set this order as delivered");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                List<Integer> orderedIds = getOrderedItemIds();
+                doStatusVolleyCalls(orderedIds, "delivered");
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+    }
+
 
     private void doNFCReceiptTransfer(){
         Intent intent = new Intent(ActivityOrderView.this, ActivityCheckout.class);
@@ -276,13 +319,22 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         snackbar.show();
     }
 
-
-
     private void sendOrderUIUpdate(){
         Intent intent = new Intent("update-orders");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+    private List<Integer> getOrderedItemIds() {
+        List<Integer> orderedIds = new ArrayList<>();
+
+        for (Customer customer : Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers()) {
+
+            for (OrderedItem item : customer.getOrders()) {
+                orderedIds.add(item.getOrderedItemId());
+            }
+        }
+        return orderedIds;
+    }
 
 
     //----- Volley Calls -----//
@@ -339,8 +391,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
                     sendOrderUIUpdate();
 
-
-
                 } else {
                     //empty location
                 }
@@ -351,6 +401,42 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
         }
     };
+
+
+    private void doStatusVolleyCalls(List<Integer> orderIds, String status) {
+
+        for(Integer orderId : orderIds){
+
+            Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+            builder.appendPath("com.ucsandroid.profitable")
+                    .appendPath("rest")
+                    .appendPath("orders")
+                    .appendPath("item")
+                    .appendPath(status)
+                    .appendQueryParameter("ordered_item_id", orderId+"");
+            String myUrl = builder.build().toString();
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                    myUrl,
+                    (JSONObject) null,
+                    statusSuccessListener,
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            showErrorSnackbar("Error setting order status");
+                        }
+                    });
+            Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        }
+    }
+
+    private Response.Listener statusSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+        }
+    };
+
 
 
 }

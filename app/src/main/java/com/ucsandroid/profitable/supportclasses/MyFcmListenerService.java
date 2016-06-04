@@ -58,9 +58,13 @@ public class MyFcmListenerService extends FirebaseMessagingService {
             //food/order status
 
             try {
-                int orderedItemId = response.getInt("orderedItemId");
-                String orderedItemStatus = response.getString("orderedItemStatus");
-                sendUpdateOrderStatus(orderedItemId, orderedItemStatus);
+                int locationId = response.getInt("locationId");
+                String orderedItemStatus = response.getString("status");
+                sendUpdateOrderStatus(locationId, orderedItemStatus);
+
+                if(orderedItemStatus.equalsIgnoreCase("delivered"))
+                    sendUpdateKitchenUI();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -87,9 +91,9 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     }
 
     private void sendUpdateOrderStatus(int orderedItemId, String orderedItemStatus){ //todo make receiver in location frags
-        Intent updateIntent = new Intent("update-kitchen");
-        updateIntent.putExtra("orderedItemId" , orderedItemId);
-        updateIntent.putExtra("orderedItemStatus", orderedItemStatus);
+        Intent updateIntent = new Intent("update-location-status");
+        updateIntent.putExtra("locationId" , orderedItemId);
+        updateIntent.putExtra("locationStatus", orderedItemStatus);
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 

@@ -63,6 +63,7 @@ public class ActivityLocationView extends AppCompatActivity {
             Singleton.initialize(this);
         }
 
+
         initBottomNavigation(savedInstanceState);
         getMenu();
         //evaluateLocationData();
@@ -100,6 +101,8 @@ public class ActivityLocationView extends AppCompatActivity {
 
     private void initBottomNavigation(Bundle savedInstanceState) {
 
+
+
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setActiveTabColor(ContextCompat.getColor(this, R.color.accent));
 
@@ -108,9 +111,10 @@ public class ActivityLocationView extends AppCompatActivity {
             @Override
             public void onMenuItemSelected(int itemId) {
                 int location = -1;
+
                 switch (itemId) {
                     case R.id.action_show_tables:
-                        if(!mTableFrag.isVisible()){
+                        if(mTableFrag != null && !mTableFrag.isVisible()){
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mTableFrag);
                             transaction.commit();
@@ -118,7 +122,7 @@ public class ActivityLocationView extends AppCompatActivity {
                         }
                         break;
                     case R.id.action_show_bar:
-                        if(!mBarFrag.isVisible()){
+                        if(mBarFrag != null && !mBarFrag.isVisible()){
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mBarFrag);
                             transaction.commit();
@@ -126,7 +130,7 @@ public class ActivityLocationView extends AppCompatActivity {
                         }
                         break;
                     case R.id.action_show_takeout:
-                        if(!mTakeoutFrag.isVisible()){
+                        if(mTakeoutFrag != null && !mTakeoutFrag.isVisible()){
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.location_frag_container, mTakeoutFrag);
                             transaction.commit();
@@ -138,7 +142,8 @@ public class ActivityLocationView extends AppCompatActivity {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
                 SharedPreferences.Editor edit = settings.edit();
                 edit.putInt("location_tab", location);
-                edit.apply();
+                if(location != -1)
+                    edit.apply();
 
             }
         });
@@ -250,17 +255,20 @@ public class ActivityLocationView extends AppCompatActivity {
                         SharedPreferences.Editor edit = settings.edit();
                         edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
                         edit.apply();
-                        setLocationsFromPrefs();
+                        //setLocationsFromPrefs();
 
+                    //TODO: compare current locations to new -- needs work
+                    Singleton.getInstance().setLocations(new JSONArray(theResponse.getJSONArray("result").toString()));
 
-                        //initFragments();
+                    initFragments();
+
                    // }
                     //else if(newData.equalsIgnoreCase(localData)){
                         //System.out.println("Local locations are the same as new locations. Not updating data or UI");
                     //}
                 }
                 else{
-                    showErrorSnackbar(theResponse.getString("message"));
+                    showErrorSnackbar("Error getting location data");
                 }
 
             } catch (JSONException e) {

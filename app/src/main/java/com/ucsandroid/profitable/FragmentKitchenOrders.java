@@ -82,20 +82,24 @@ public class FragmentKitchenOrders extends Fragment {
     }
 
 
-    //Remove tabs that are all ready
+    //Remove tabs that are all ready - should do this on server
     private void evaluateStatuses(){
-        System.out.println("evaluating orders for ready: "+mTabs.size());
+
+
+
+/*
         for(int a = 0; a < mTabs.size();a++){
-            if(mTabs.get(a).allOrdersReady()){
+            if(mTabs.get(a).){
                 System.out.println("found ready order at "+a);
                 mTabs.remove(a);
             }
-        }
+        }*/
+
 
         if(getActivity() != null)
             initRecyclerView();
 
-        System.out.println("done evaluating orders for ready: "+mTabs.size());
+        //System.out.println("done evaluating orders for ready: "+mTabs.size());
     }
 
 
@@ -330,8 +334,8 @@ public class FragmentKitchenOrders extends Fragment {
         mUpdateKitchenUI = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
                 System.out.println("Received update location UI broadcast");
+
                 getKitchenData();
 
             }
@@ -339,6 +343,7 @@ public class FragmentKitchenOrders extends Fragment {
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateKitchenUI,
                 new IntentFilter("update-kitchen"));
+
     }
 
 

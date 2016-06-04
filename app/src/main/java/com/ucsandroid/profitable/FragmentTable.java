@@ -27,6 +27,7 @@ import com.ucsandroid.profitable.serverclasses.Location;
  */
 public class FragmentTable extends Fragment {
 
+    private BroadcastReceiver mUpdateLocationOrdersStatus;
     private BroadcastReceiver mUpdateLocationUI;
 
     private int mRecyclerViewWidth;
@@ -51,16 +52,13 @@ public class FragmentTable extends Fragment {
         return view;
     }
 
-    /**
-     * Use the recently checked table (via the Singleton) to see if the UI needs updating.
-     * The UI will update if a customer is currently at the table.
-     * Also, reinitialize the Measuring listener
-     */
+
     @Override
     public void onResume() {
         super.onResume();
 
         initUpdateLocationStatus();
+        initUpdateLocationStatusListener();
 
     }
 
@@ -69,6 +67,7 @@ public class FragmentTable extends Fragment {
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationUI);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateLocationOrdersStatus);
     }
 
     private void initRecyclerView() {
@@ -86,6 +85,7 @@ public class FragmentTable extends Fragment {
                 showTableData();
             }
         });
+
     }
 
     private void showTableData() {
@@ -148,8 +148,7 @@ public class FragmentTable extends Fragment {
 
 
     /**
-     * Indicates if location data has changed, if so we need to update the UI.
-     * Update Singleton data, and currently used adapter
+     * Let the UI know if someone is sitting at this table, or not.
      */
     private void initUpdateLocationStatus() {
 
@@ -175,6 +174,38 @@ public class FragmentTable extends Fragment {
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationUI,
                 new IntentFilter("update-location"));
+    }
+
+
+    /**
+     * Alert the UI if this location has food to be picked up from the kitchen
+     */
+    private void initUpdateLocationStatusListener() {
+
+        mUpdateLocationOrdersStatus = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                int locationId = intent.getIntExtra("locationId", -1);
+                String foodStatus = intent.getStringExtra("locationStatus");
+
+                System.out.println("Food is "+foodStatus+" push: "+locationId);
+
+                for(int a = 0; a < Singleton.getInstance().getTables().size(); a++){
+                    if(Singleton.getInstance().getTables().get(a).getId() == locationId){
+                        Singleton.getInstance().getTables().get(a).setFoodStatus(foodStatus);
+                        mAdapter.updateLocation(a, Singleton.getInstance().getTables().get(a));
+                        mAdapter.notifyItemChanged(a);
+                        break;
+                    }
+                }
+
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationOrdersStatus,
+                new IntentFilter("update-location-status"));
+
     }
 
 
