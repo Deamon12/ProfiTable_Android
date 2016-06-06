@@ -22,7 +22,7 @@
             android:layout_alignTop="@+id/tile_text"
             android:layout_alignBottom="@+id/tile_text"
             android:padding="3dp"
-            android:src="@drawable/ic_query_builder_black_18dp"
+            android:src="@drawable/ic_query_builder_white_18dp"
             />
 
 

@@ -1,58 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:padding="20dp">
-
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="0dp">
-
-    <TextView
-        android:id="@+id/addons_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Addons"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:textStyle="bold"
-
-        android:visibility="gone"/>
-
+    android:layout_height="wrap_content"
+    android:padding="@dimen/additions_dialog_padding">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/addons_recycler"
-        android:layout_below="@+id/addons_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"/>
-
-
-
-    <TextView
-        android:id="@+id/sides_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sides"
-        android:textSize="20sp"
-        android:layout_below="@+id/addons_recycler"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:textStyle="bold"
-
-        android:visibility="gone"/>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/sides_recycler"
-        android:layout_below="@+id/sides_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"/>
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -66,13 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Done"
-        android:layout_below="@+id/sides_recycler"
+        android:layout_below="@+id/addons_recycler"
         android:layout_alignParentRight="true"/>
 
 
-
-
 </RelativeLayout>
-
-
-</LinearLayout>

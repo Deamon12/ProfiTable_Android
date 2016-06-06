@@ -45,7 +45,7 @@ public class TakeoutRecyclerAdapter extends RecyclerView.Adapter<TakeoutRecycler
 
         public ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.tile_name);
+            mTextView = (TextView) v.findViewById(R.id.tile_text);
             v.setOnClickListener(this);
         }
 
@@ -55,11 +55,8 @@ public class TakeoutRecyclerAdapter extends RecyclerView.Adapter<TakeoutRecycler
             if (clickListener != null) {
                 clickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), null);
             }
-
         }
-
     }
-
 
 
     public TakeoutRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -77,9 +74,7 @@ public class TakeoutRecyclerAdapter extends RecyclerView.Adapter<TakeoutRecycler
             v.getLayoutParams().width = mParams.width;
         }
 
-
         ViewHolder vh = new ViewHolder(v);
-
 
         return vh;
     }
@@ -97,9 +92,7 @@ public class TakeoutRecyclerAdapter extends RecyclerView.Adapter<TakeoutRecycler
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (position > 0) {
-
             holder.mTextView.setText(locationList.get(position).getName());
-
         }
     }
 

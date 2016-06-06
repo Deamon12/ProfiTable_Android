@@ -1,6 +1,5 @@
 package com.ucsandroid.profitable;
 
-import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +36,7 @@ public class FragmentMenuViewpager extends Fragment {
     private View mView;
 
     private List<Category> mCategories = new ArrayList<>();;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
 
 
     @Override
@@ -52,8 +51,8 @@ public class FragmentMenuViewpager extends Fragment {
 
 
         //TODO: make the call to get updated menu? Could be push notified
-        //if(!hasMenu())
-        getMenu();
+        if(!hasMenu())
+            getMenu();
 
         return mView;
     }
@@ -64,12 +63,12 @@ public class FragmentMenuViewpager extends Fragment {
      * Shows a progressDialog dialog before beginning
      */
     private void getMenu() {
-
+/*
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.isIndeterminate();
         progressDialog.setMessage("Retrieving Menu Items");
         progressDialog.show();
-
+*/
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
         builder.appendPath("com.ucsandroid.profitable")
                 .appendPath("rest")
@@ -236,14 +235,14 @@ public class FragmentMenuViewpager extends Fragment {
 
                 }
                 else{
-                    ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    ((ActivityOrderView)getActivity()).showSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
 
         }
     };
@@ -252,7 +251,7 @@ public class FragmentMenuViewpager extends Fragment {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            progressDialog.dismiss();
+            //progressDialog.dismiss();
             System.out.println("Volley error: " + error);
         }
     };

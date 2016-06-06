@@ -10,15 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.ucsandroid.profitable.adapters.FoodAdditionsRecyclerAdapter;
-import com.ucsandroid.profitable.adapters.JSONArrayRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.DialogDismissListener;
 import com.ucsandroid.profitable.listeners.RecyclerViewCheckListener;
-import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;

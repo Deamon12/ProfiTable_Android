@@ -78,4 +78,40 @@ public class Customer {
         return true;
     }
 
+    public boolean hasUnordedItems(){
+        for(OrderedItem item : order){
+            System.out.println(item.getMenuItem().getName()+" : "+item.getOrderedItemStatus());
+
+            if(item.getOrderedItemStatus().equalsIgnoreCase("ordered") ||
+                    item.getOrderedItemStatus().equalsIgnoreCase("ready") ||
+                        item.getOrderedItemStatus().equalsIgnoreCase("cooking") ||
+                            item.getOrderedItemStatus().equalsIgnoreCase("delivered")){
+                //return true;
+            }
+            else{
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasReadyOrder(){
+        for(OrderedItem item : getOrders()){
+            if(item.getOrderedItemStatus().equalsIgnoreCase("ready"))
+                return true;
+        }
+        return false;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerId=" + customerId +
+                ", tabId=" + tabId +
+                ", order=" + order +
+                ", customerNotes='" + customerNotes + '\'' +
+                '}';
+    }
 }

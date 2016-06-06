@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="5000dp"
+    android:layout_marginBottom="-3000dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="5000dp"
+        >
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/imageView"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            app:cardBackgroundColor="@color/primary">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:src="@drawable/logo_75"
+                android:tint="@android:color/white" />
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/restaurant_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Restaurant Name"
+            android:textColor="@color/secondary_text"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/server_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/amount_frag_header_text"
+            android:text="Server: "
+            android:textColor="@color/primary_text"
+            android:layout_below="@+id/restaurant_name_text"
+            android:layout_toLeftOf="@+id/center_point"/>
+
+        <TextView
+            android:id="@+id/server_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jim Jim"
+            android:textSize="@dimen/amount_frag_amount_text"
+            android:textColor="@color/primary_text"
+            android:layout_marginLeft="15dp"
+            android:layout_alignBottom="@+id/server_label"
+            android:layout_toRightOf="@+id/server_label"/>
+
+
+    <TextView
+        android:id="@+id/tabid_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/amount_frag_header_text"
+        android:text="Order #: "
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/server_label"
+        android:layout_toLeftOf="@+id/center_point"/>
+
+    <TextView
+        android:id="@+id/tabid_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="J123453"
+        android:textSize="@dimen/amount_frag_amount_text"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/primary_text"
+        android:layout_alignBottom="@+id/tabid_label"
+        android:layout_toRightOf="@+id/tabid_label"/>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/accent"
+            android:layout_below="@+id/tabid_label"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"/>
+
+
+        <!-- amounts -->
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="2dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/center_point"
+            android:layout_below="@+id/divider1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:id="@+id/totaltext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: "
+            android:textSize="@dimen/amount_frag_header_text"
+            android:layout_toLeftOf="@+id/center_point"
+            android:textColor="@color/primary_text"
+            android:layout_alignBottom="@+id/center_point"/>
+
+        <TextView
+            android:id="@+id/subtotal_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$100.00"
+            android:textSize="@dimen/amount_frag_amount_text"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/primary_text"
+            android:layout_alignBottom="@+id/totaltext"
+            android:layout_toRightOf="@+id/totaltext"/>
+
+
+        <TextView
+            android:id="@+id/taxtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tax (7.5%): "
+            android:layout_toLeftOf="@+id/center_point"
+            android:textSize="@dimen/amount_frag_header_text"
+            android:textColor="@color/primary_text"
+            android:layout_below="@+id/subtotal_label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="@dimen/amount_margin_top"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$15.00"
+            android:id="@+id/tax_textview"
+            android:textSize="@dimen/amount_frag_amount_text"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/primary_text"
+            android:layout_alignBottom="@+id/taxtext"
+            android:layout_toRightOf="@+id/taxtext"/>
+
+
+        <TextView
+            android:id="@+id/discount_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discount: "
+            android:layout_toLeftOf="@+id/center_point"
+            android:textSize="@dimen/amount_frag_header_text"
+            android:textColor="@color/primary_text"
+            android:layout_below="@+id/tax_textview"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="@dimen/amount_margin_top"
+            android:textStyle="italic"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$10.00"
+            android:id="@+id/discount_text"
+            android:textSize="@dimen/amount_frag_amount_text"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/primary_text"
+            android:textStyle="italic"
+            android:layout_alignBottom="@+id/discount_label"
+            android:layout_alignTop="@+id/discount_label"
+            android:layout_toRightOf="@+id/discount_label"
+            android:visibility="gone"/>
+
+
+
+    <TextView
+        android:id="@+id/amountdue_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount Due: "
+        android:layout_toLeftOf="@+id/center_point"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/amount_frag_header_text"
+        android:layout_below="@+id/discount_label"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/amount_margin_top"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$10.00"
+        android:id="@+id/amountdue_textview"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/amount_frag_amount_text"
+        android:layout_marginLeft="15dp"
+        android:layout_alignBottom="@+id/amountdue_label"
+        android:layout_toRightOf="@+id/amountdue_label"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/accent"
+        android:layout_below="@+id/amountdue_label"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"/>
+
+<android.support.v7.widget.RecyclerView
+    android:id="@+id/the_recycler"
+    android:layout_below="@+id/divider2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+</android.support.v7.widget.RecyclerView>
+
+
+
+    </RelativeLayout>
+
+
+</FrameLayout>

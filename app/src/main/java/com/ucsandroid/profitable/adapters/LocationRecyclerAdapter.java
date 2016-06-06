@@ -13,9 +13,7 @@ import android.widget.TextView;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.LocationLongClickListener;
-import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
-import com.ucsandroid.profitable.listeners.RecyclerViewClickListener;
 
 import java.util.ArrayList;
 
@@ -37,7 +35,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         this.params = params;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -45,6 +42,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         public CardView mCardView;
         public TextView mTextView;
         private ImageView mImageView;
+        private ImageView mAlertImage;
 
         public ViewHolder(View v) {
             super(v);
@@ -52,12 +50,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             mCardView = (CardView) v.findViewById(R.id.the_cardview);
             mTextView = (TextView) v.findViewById(R.id.tile_text);
             mImageView = (ImageView) v.findViewById(R.id.tile_image);
-
-            /*
-            if(layout == R.layout.tile_kitchen_order){
-            }
-            else if(layout == R.layout.tile_bar_new){
-            }*/
+            mAlertImage = (ImageView) v.findViewById(R.id.alert_image);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -74,6 +67,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
         @Override
         public boolean onLongClick(View v) {
+
             if (longClickListener != null) {
                 longClickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
             }
@@ -85,7 +79,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public LocationRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-
         if (params != null) {
             v.getLayoutParams().height = params.height;
             v.getLayoutParams().width = params.width;
@@ -96,67 +89,39 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         return vh;
     }
 
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        //Kitchen orders
-        if(layout == R.layout.tile_kitchen_order){
-            holder.mTextView.setText(dataSet.get(position).getName());
 
-        } //Tables
-        else if(layout == R.layout.tile_table_new){
 
+        if(dataSet.get(position).hasReadyOrders()){
+            holder.mTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
+        }
+        else{
+            holder.mTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_dark));
+        }
+
+        //Tables
+        if(layout == R.layout.tile_table_new){
             holder.mTextView.setText("Table "+(position+1));
 
-            if(dataSet.get(position).getCurrentTab().getTabId() != 0
-                    || dataSet.get(position).getLocationCost() > 0) {
-
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
+            if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied")) {
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75_colors));
             }
-            else{
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_75x75_blackseats));
+            else if(dataSet.get(position).getStatus().equalsIgnoreCase("available")) {
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_unseated_alpha_75));
             }
         }
         else if(layout == R.layout.tile_bar_new){
-
             holder.mTextView.setText("Bar "+(position+1));
 
-            if(dataSet.get(position).getCurrentTab().getTabId() != 0
-                    || dataSet.get(position).getLocationCost() > 0) {
-
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_seated));
+            if(dataSet.get(position).getStatus().equalsIgnoreCase("occupied")) {
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_seated_alpha_65_61));
             }
-            else{
-                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_75));
+            else if(dataSet.get(position).getStatus().equalsIgnoreCase("available")) {
+                holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bar_unseated_alpha_65_61));
             }
         }
-
-
-
-        else{
-
-
-            if(dataSet.get(position).getCurrentTab().getTabId() != 0
-                    || dataSet.get(position).getLocationCost() > 0){ //TODO change to status
-
-                if(layout == R.layout.tile_table_new){
-                    holder.mImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.table_seated_75x75_blackseats));
-                }
-                else{
-                    holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.primary_light));
-                }
-
-
-
-            }
-            else{
-                //holder.mCardView.setCardBackgroundColor(0);
-            }
-
-        }
-
-
 
     }
 
@@ -164,5 +129,17 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public int getItemCount() {
         return dataSet.size();
     }
+
+    public void updateStatus(int position, String status){
+        dataSet.get(position).setStatus(status);
+        notifyItemChanged(position);
+    }
+
+    public void updateLocation(int position, Location location){
+        dataSet.set(position, location);
+    }
+
+
+
 
 }

@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_show_tables"
+        android:icon="@drawable/table_32"
+        android:title="Tables"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_show_bar"
+        android:icon="@drawable/bar_32"
+        android:title="Bar"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_show_takeout"
+        android:icon="@drawable/takeout_32"
+        android:title="Takeout"
+        app:showAsAction="always"/>
+
+</menu>

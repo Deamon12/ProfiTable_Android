@@ -7,9 +7,9 @@
     >
 
     <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="0dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/bar_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

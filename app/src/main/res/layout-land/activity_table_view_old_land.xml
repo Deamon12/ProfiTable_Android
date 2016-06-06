@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/the_toolbar"
         android:layout_width="match_parent"
@@ -13,12 +12,12 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:elevation="4dp"/>
 
+
     <FrameLayout
-        android:id="@+id/table_frag_container"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/section_text_bar"/>
+        android:id="@+id/location_frag_container"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/the_toolbar"/>
 
 
     <View
@@ -32,7 +31,7 @@
 
     <TextView
         android:id="@+id/section_text_bar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bar"
         android:padding="5dp"
@@ -40,8 +39,9 @@
         android:ellipsize="end"
         android:lines="1"
         android:gravity="center_vertical"
-        android:layout_above="@+id/bar_frag_container"
+        android:layout_below="@+id/the_toolbar"
         android:layout_toLeftOf="@+id/bar_divider_arrow"
+        android:layout_toRightOf="@+id/location_frag_container"
         />
 
     <ImageView
@@ -60,8 +60,9 @@
     <FrameLayout
         android:id="@+id/bar_frag_container"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_above="@+id/section_text_takeout" />
+        android:layout_height="50dp"
+        android:layout_below="@+id/section_text_bar"
+        android:layout_toRightOf="@+id/location_frag_container" />
 
 
     <View
@@ -76,7 +77,7 @@
 
     <TextView
         android:id="@+id/section_text_takeout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Takeout"
         android:padding="5dp"
@@ -84,8 +85,9 @@
         android:ellipsize="end"
         android:lines="1"
         android:gravity="center_vertical"
-        android:layout_above="@+id/takeout_frag_container"
-        android:layout_toLeftOf="@+id/takeout_divider_arrow"/>
+        android:layout_below="@+id/bar_frag_container"
+        android:layout_toLeftOf="@+id/takeout_divider_arrow"
+        android:layout_toRightOf="@+id/location_frag_container"/>
 
     <ImageView
         android:id="@+id/takeout_divider_arrow"
@@ -99,12 +101,14 @@
         android:scaleType="fitCenter" />
 
     <!--end divider-->
+
     <FrameLayout
         android:id="@+id/takeout_frag_container"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        />
+        android:layout_below="@+id/section_text_takeout"
+        android:layout_toRightOf="@+id/location_frag_container" />
 
 
 </RelativeLayout>

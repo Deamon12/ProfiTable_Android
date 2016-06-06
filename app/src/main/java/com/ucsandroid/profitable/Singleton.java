@@ -15,21 +15,21 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.google.gson.Gson;
-import com.ucsandroid.profitable.serverclasses.Category;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 
 
 public class Singleton {
 
+
     static final int TYPE_TABLE = 1;
     static final int TYPE_BAR = 2;
     static final int TYPE_TAKEOUT = 3;
 
 	private final String TAG = "Profit Tag";
+    private String restaurantName;
 	private static Singleton instance = null;
 	private static Context mContext;
 
@@ -43,6 +43,7 @@ public class Singleton {
 
     private int currentLocationPosition = -1;
     private int currentLocationType = -1;
+    public Location newOrders;
 
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
@@ -232,6 +233,10 @@ public class Singleton {
         return mTables;
     }
 
+    public void updateTable(int position, Location location){
+        mTables.set(position, location);
+    }
+
 
     //Bar calls
     public ArrayList<Location> getBars(){
@@ -249,6 +254,9 @@ public class Singleton {
         }
     }
 
+    public void updateBar(int position, Location location){
+        mBars.set(position, location);
+    }
 
 
     //Takeout calls
@@ -284,4 +292,11 @@ public class Singleton {
     }
 
 
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
 }

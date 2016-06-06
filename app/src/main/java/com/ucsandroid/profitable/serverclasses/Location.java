@@ -11,6 +11,7 @@ public class Location implements Serializable {
     private Tab currentTab;
     private int restaurantId;
     private boolean editedLocally = false;
+    private String foodStatus = "not_ready";
 
     public Location(int id, String status, String name, int restaurantId) {
         super();
@@ -85,12 +86,28 @@ public class Location implements Serializable {
         return cost;
     }
 
-    public void setEditedLocally(boolean edited){
-        editedLocally = edited;
+
+    public void setFoodStatus(String status){
+        foodStatus = status;
     }
 
-    public boolean isEditedLocally(){
-        return editedLocally;
+    public boolean isFoodIsReady() {
+        return (foodStatus.equalsIgnoreCase("ready"));
     }
 
+    public boolean hasReadyOrders(){
+        return currentTab.hasReadyOrders();
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locationId=" + locationId +
+                ", locationStatus='" + locationStatus + '\'' +
+                ", locationName='" + locationName + '\'' +
+                ", currentTab=" + currentTab +
+                ", restaurantId=" + restaurantId +
+                ", editedLocally=" + editedLocally +
+                '}';
+    }
 }

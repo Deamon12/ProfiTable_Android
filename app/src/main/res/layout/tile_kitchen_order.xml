@@ -27,6 +27,8 @@
             android:layout_marginLeft="5dp"
             android:textSize="@dimen/kitchen_title"
             android:textStyle="bold"
+            android:lines="1"
+            android:ellipsize="end"
             android:gravity="center_vertical"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/check_button"

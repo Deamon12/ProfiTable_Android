@@ -5,7 +5,12 @@
         android:orderInCategory="100"
         android:title="Table Mode"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="Refresh"
+        android:icon="@drawable/ic_refresh_white_18dp"
+        app:showAsAction="ifRoom" />
 
 
 </menu>

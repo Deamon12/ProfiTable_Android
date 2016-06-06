@@ -9,10 +9,14 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+
     <!-- For Volley -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.NFC" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -20,6 +24,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".ActivityLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +33,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ActivityTableView" />
+        <activity android:name=".ActivityLocationView" />
         <activity android:name=".ActivityOrderView" />
         <activity android:name=".ActivityKitchen" />
         <activity android:name=".ActivityCheckout"/>
+
+
+        <service android:name=".supportclasses.RegistrationIntentService" android:exported="false"/>
+
+        <service
+            android:name=".supportclasses.MyFcmListenerService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
 
     </application>
 

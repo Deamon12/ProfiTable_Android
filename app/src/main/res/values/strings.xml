@@ -10,11 +10,19 @@
     <string name="employee_type">employee_type</string>
     <string name="first_name">first_name</string>
     <string name="last_name">last_name</string>
-
-
-    <bool name="isTablet">false</bool>
+    <string name="location_available">free</string>
+    <string name="location_occupied">occupy</string>
 
     <integer name="table_tile_span_landscape">6</integer>
     <integer name="table_tile_span_portrait">4</integer>
+
+    <integer name="bar_tile_span_landscape">8</integer>
+    <integer name="bar_tile_span_portrait">5</integer>
+
+    <integer name="takeout_tile_span_landscape">7</integer>
+    <integer name="takeout_tile_span_portrait">4</integer>
+
+    <string name="FCM_defaultSenderId">FCM_defaultSenderId</string>
+
 
 </resources>

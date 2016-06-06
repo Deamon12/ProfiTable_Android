@@ -3,6 +3,9 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -16,20 +19,28 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.MenuItem;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
-import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
 import com.ucsandroid.profitable.listeners.RecyclerViewLongClickListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
-public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAdapter.ViewHolder> {
+public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAdapter.ViewHolder> {
 
     private int layout;
 
@@ -43,14 +54,16 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
     private RecyclerViewLongClickListener nestedLongClickListener;
 
 
-    public NestedRecyclerAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener,
+    public CustomerOrdersAdapter(Context context, Location dataSet, int layout, ViewGroup.LayoutParams params, OrderedItemClickListener clickListener,
                                  RecyclerViewLongClickListener longClickListener) {
+
         this.locationData = dataSet;
         this.context = context;
         this.layout = layout;
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
         this.nestedLongClickListener = longClickListener;
+
     }
 
 
@@ -94,7 +107,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         @Override
         public void onClick(View v) {
 
-
             if(v == mCommentImageView){
                 showCustomerCommentDialog(getAdapterPosition());
             }
@@ -117,26 +129,26 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
                     notifyItemChanged(selectedPosition);
 
             }
-
         }
 
         @Override
         public boolean onLongClick(View v) {
 
             showCustomerEditDialog(getAdapterPosition());
-
             return true;
         }
     }
 
     /**
-     * Add new order/customer to local data structure
+     * Update local data and call method to check location status
      */
-    //TODO add to server
     public void addCustomer() {
-        locationData.getCurrentTab().addCustomer(new Customer());
+
+        locationData.getCurrentTab().addCustomer(new Customer(0, locationData.getCurrentTab().getTabId()));
         selectedPosition = 0;
+        checkLocationStatus();
         notifyDataSetChanged();
+
     }
 
     /**
@@ -144,15 +156,38 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
      * @param position
      */
     public void removeCustomer(int position) {
+
         locationData.getCurrentTab().removeCustomer(position);
         selectedPosition = -1;
         sendUpdateAmountBroadcast();
         notifyDataSetChanged();
-
-
+        checkLocationStatus();
     }
 
-    public NestedRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    /**
+     * Evaluate local data, and update server if needed
+     */
+    private void checkLocationStatus() {
+
+        //No customers, set this table as free
+        //Remove tab
+        if(locationData.getCurrentTab().getCustomers().size() == 0){
+            setLocationStatusVolley(context.getString(R.string.location_available), locationData.getId());
+            closeTabAtLocation();
+        }
+        else if(locationData.getCurrentTab().getCustomers().size() > 0 &&
+                locationData.getStatus().equalsIgnoreCase("available")){
+            setLocationStatusVolley(context.getString(R.string.location_occupied), locationData.getId());
+
+            //add tab
+            if(locationData.getCurrentTab().getTabId() == 0){
+                openTabAtLocation();
+            }
+        }
+    }
+
+
+    public CustomerOrdersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
@@ -169,7 +204,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
 
         if(!locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes().equalsIgnoreCase("")){
             holder.mCommentTextView.setVisibility(View.VISIBLE);
@@ -190,7 +224,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         } else {
             holder.cardView.setCardBackgroundColor(0);
         }
-
 
         holder.rcAdapter = new OrderedItemRecyclerAdapter(context,
                 locationData.getCurrentTab().getCustomers().get(position).getOrders(),
@@ -226,7 +259,6 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
     }
 
-    //TODO send remove item webservice
     //Remove a specific item from the items list
     public void removeItemFromCustomer(int customer, int position) {
 
@@ -248,9 +280,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         return locationData.getCurrentTab().getCustomers().get(customer).getOrders().get(position);
     }
 
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
+    //Pass clicks from nested recyclerview through parent recyclerview, to fragment
     OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
@@ -258,9 +288,7 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
     };
 
-    /**
-     * Pass clicks from nested recyclerview through parent recyclerview, to fragment
-     */
+    //Pass clicks from nested recyclerview through parent recyclerview, to fragment
     RecyclerViewLongClickListener longClickListener = new RecyclerViewLongClickListener() {
 
         @Override
@@ -269,11 +297,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         }
     };
 
-
     private void showCustomerEditDialog(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("What to do...Customer "+(getItemCount()-position));
+        builder.setTitle("Edit Customer "+(getItemCount()-position));
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -283,7 +310,12 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         });
         builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                removeCustomer(position);
+                if(locationData.getCurrentTab().getCustomers().size() == 1){
+                    showRemoveLastCustomerConfirm(position);
+                }
+                else{
+                    removeCustomer(position);
+                }
             }
         });
         builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -294,6 +326,31 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
 
         builder.show();
     }
+
+    private void showRemoveLastCustomerConfirm(final int position) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Remove customer");
+
+        TextView textView = new TextView(context);
+
+        textView.setText("Removing this customer will close the table and clear all the data attached to it. Continue?  ");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeCustomer(position);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+    }
+
+
 
     private void sendUpdateAmountBroadcast(){
         Intent updateIntent = new Intent("update-amount");
@@ -306,10 +363,10 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 
         final EditText edittext = new EditText(context);
-        edittext.setPadding(20,10,20,10);
+
         edittext.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        edittext.setSingleLine(false);
-        dialog.setTitle("Add comment");
+        edittext.setHint("Comment");
+        dialog.setTitle("Add comment to this order");
 
 
         edittext.setText(locationData.getCurrentTab().getCustomers().get(position).getCustomerNotes());
@@ -332,6 +389,129 @@ public class NestedRecyclerAdapter extends RecyclerView.Adapter<NestedRecyclerAd
         });
 
         dialog.show();
+
+
     }
+
+
+
+
+    //----- Volley Calls -------//
+
+    private void setLocationStatusVolley(String status, int locationId) {
+
+        //free or occupy
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("location")
+                .appendPath(status)
+                .appendQueryParameter("location_id", locationId+"");
+
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+
+
+    private void closeTabAtLocation(){
+
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+        int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("close")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", tabId+"");
+
+        String myUrl = builder.build().toString();
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
+                myUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+
+    private void openTabAtLocation(){
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        String employeeId = settings.getString(context.getString(R.string.employee_id), "");
+        int locationId = Singleton.getInstance().getCurrentLocation().getId();
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("seat")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", employeeId);
+
+        String myUrl = builder.build().toString();
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
+                myUrl,
+                openTabSuccessListener,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+
+    private Response.Listener openTabSuccessListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+
+            try {
+                JSONObject theResponse = new JSONObject(response.toString());
+                if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                    int tabId = theResponse.getJSONObject("result").getInt("tabId");
+                    Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId(tabId);
+                    locationData.getCurrentTab().setTabId(tabId);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
 
 }

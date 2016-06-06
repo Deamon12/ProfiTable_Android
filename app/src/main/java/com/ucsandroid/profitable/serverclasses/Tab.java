@@ -1,5 +1,7 @@
 package com.ucsandroid.profitable.serverclasses;
 
+import android.widget.RelativeLayout;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +15,7 @@ public class Tab {
     private Discount discount;
     private List<Customer> customers;
     private Employee server;
+    public String status = "not_ready";
 
 
     public Tab(int tabId, String tabStatus, Date timeIn,
@@ -106,8 +109,14 @@ public class Tab {
     public int getTabId() {
         return tabId;
     }
+
     public void setTabId(int tabId) {
         this.tabId = tabId;
+
+        for(Customer customer : customers){
+            customer.setTabId(tabId);
+        }
+
     }
     public String getTabStatus() {
         return tabStatus;
@@ -141,11 +150,46 @@ public class Tab {
     }
 
     public boolean allOrdersReady(){
+        if(customers.size() == 0){
+            return false;
+        }
         for(Customer customer : customers){
             if(!customer.allOrdersReady()){
                 return false;
             }
         }
+        status = "ready";
         return true;
+    }
+
+    public boolean hasUnOrderedItems(){
+        for(Customer customer : customers){
+            if(customer.hasUnordedItems()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasReadyOrders(){
+        for(Customer customer : customers){
+            if(customer.hasReadyOrder()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Tab{" +
+                "tabId=" + tabId +
+                ", tabStatus='" + tabStatus + '\'' +
+                ", timeIn=" + timeIn +
+                ", timeOut=" + timeOut +
+                ", discount=" + discount +
+                ", customers=" + customers +
+                ", server=" + server +
+                '}';
     }
 }

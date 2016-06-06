@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/the_coordinator">
+    
+    
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_below="@+id/the_toolbar"
-        android:layout_above="@+id/kitchen_totals_frag_container"/>
+        android:layout_above="@+id/divider"/>
 
     <View
         android:id="@+id/divider"
@@ -33,3 +39,8 @@
         android:layout_marginBottom="5dp"/>
 
 </RelativeLayout>
+
+
+    
+</android.support.design.widget.CoordinatorLayout>
+    

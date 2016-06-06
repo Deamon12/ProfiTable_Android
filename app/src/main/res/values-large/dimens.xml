@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Customer Tile-->
+    <dimen name="customer_order_text">22sp</dimen>
+    <dimen name="customer_title">24sp</dimen>
+    <dimen name="customer_image">30dp</dimen>
+    <dimen name="customer_comment_image">25dp</dimen>
+
+    <dimen name="divider_bar_height">30dp</dimen>
+
+    <!--Order Amount Frag -->
+    <dimen name="amount_frag_header_text">20sp</dimen>
+    <dimen name="amount_frag_amount_text">24sp</dimen>
+    <dimen name="amount_frag_total_text">34dp</dimen>
+    <dimen name="amount_margin_top">10dp</dimen>
+
+    <!--Order Fragment -->
+    <dimen name="send_to_kitchen_padding">10dp</dimen>
+    <dimen name="additions_button_text">18dp</dimen>
+    <dimen name="additions_dialog_padding">20dp</dimen>
+
+    <!--Menu Item Fragment-->
+    <item name="menu_item_width" format="float" type="dimen">.4</item>
+
+    <!--Kitchen-->
+    <item name="kitchen_order_width_landscape" format="float" type="dimen">.35</item>
+    <item name="kitchen_order_width_portrait" format="float" type="dimen">.5</item>
+    <dimen name="kitchen_quantity_text">16sp</dimen>
+    <item name="kitchen_amount_frag_width_landscape" format="float" type="dimen">.15</item>
+    <item name="kitchen_amount_frag_width_portrait" format="float" type="dimen">.1</item>
+    <dimen name="kitchen_title">20sp</dimen>
+    <dimen name="kitchen_check_button">50dp</dimen>
+
+    <!--Textview_Textview2 -->
+    <dimen name="text_text2_margin_top">3dp</dimen>
+
+    <!--Location Fragments -->
+    <dimen name="location_divider_text">20sp</dimen>
+    <dimen name="table_padding">10dp</dimen>
+    <dimen name="bar_padding">10dp</dimen>
+
+</resources>
