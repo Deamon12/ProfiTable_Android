@@ -95,15 +95,14 @@ public class Customer {
         return false;
     }
 
-
-    public int hasOrderedItemId(int orderedItemId){
-        for(int a = 0; a < order.size(); a++){
-            if (order.get(a).getOrderedItemId() == orderedItemId){
-                return a;
-            }
+    public boolean hasReadyOrder(){
+        for(OrderedItem item : getOrders()){
+            if(item.getOrderedItemStatus().equalsIgnoreCase("ready"))
+                return true;
         }
-        return -1;
+        return false;
     }
+
 
 
     @Override

@@ -60,7 +60,7 @@ public class FragmentOrderAmount extends Fragment {
 
         subTotalText = (TextView) view.findViewById(R.id.subtotal_label);
         taxText = (TextView) view.findViewById(R.id.tax_textview);
-        discountText = (TextView) view.findViewById(R.id.discount_textview);
+        discountText = (TextView) view.findViewById(R.id.discount_text);
         amountDueText = (TextView) view.findViewById(R.id.amountdue_textview);
 
         initUpdateAmountListener();
@@ -91,6 +91,11 @@ public class FragmentOrderAmount extends Fragment {
 
         tax = (subTotal-(discount))*(taxRate);
         amountDue = subTotal+tax;
+
+        if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getDiscount() != null){
+            System.out.println("Discount: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().getDiscount().getPercent());
+            discount = Singleton.getInstance().getCurrentLocation().getCurrentTab().getDiscount().getPercent();
+        }
 
         subTotalText.setText(currencyFormatter.format(subTotal));
         taxText.setText(currencyFormatter.format(tax));

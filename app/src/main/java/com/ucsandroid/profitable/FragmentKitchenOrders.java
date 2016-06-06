@@ -18,6 +18,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -42,10 +43,10 @@ public class FragmentKitchenOrders extends Fragment {
 
     private BroadcastReceiver mUpdateKitchenUI;
 
+    private RelativeLayout noOrdersDialog;
     private RecyclerView recyclerView;
     private List<Tab> mTabs;
     private NestedKitchenRecyclerAdapter mAdapter;
-    private int volleyCounter = 0;
 
     public static FragmentKitchenOrders newInstance() {
         FragmentKitchenOrders thisFrag = new FragmentKitchenOrders();
@@ -64,10 +65,9 @@ public class FragmentKitchenOrders extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_kitchen_orders, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.kitchen_orders_recyclerview);
-
+        noOrdersDialog = (RelativeLayout) view.findViewById(R.id.no_orders_relative);
 
         getKitchenData();
-
         initUpdateKitchenListener();
 
         return view;
@@ -78,35 +78,17 @@ public class FragmentKitchenOrders extends Fragment {
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateKitchenUI);
-
     }
-
 
     //Remove tabs that are all ready - should do this on server
     private void evaluateStatuses(){
 
-
-
-/*
-        for(int a = 0; a < mTabs.size();a++){
-            if(mTabs.get(a).){
-                System.out.println("found ready order at "+a);
-                mTabs.remove(a);
-            }
-        }*/
-
-
         if(getActivity() != null)
             initRecyclerView();
-
-        //System.out.println("done evaluating orders for ready: "+mTabs.size());
     }
 
 
     private void initRecyclerView() {
-
-        int oldScroll = recyclerView.computeHorizontalScrollOffset();
-        System.out.println("before scroll: "+oldScroll);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -125,7 +107,6 @@ public class FragmentKitchenOrders extends Fragment {
             layoutWidth = (int)(metrics.widthPixels*outValue.getFloat());
         }
 
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,7 +120,6 @@ public class FragmentKitchenOrders extends Fragment {
 
         recyclerView.setAdapter(mAdapter);
 
-        System.out.println("after scroll: "+recyclerView.computeHorizontalScrollOffset());
     }
 
     /**
@@ -149,24 +129,17 @@ public class FragmentKitchenOrders extends Fragment {
 
         @Override
         public void nestedClickListener(int position, Tab tab) {
-
             System.out.println("In nested click listener, updating ALL status");
             setOrderStatusToReady(position);
         }
     };
 
-
     OrderedItemClickListener orderedItemClickListener = new OrderedItemClickListener() {
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, OrderedItem item) {
-            System.out.println("orderedITem click: "+item.getMenuItem().getName());
-            List<Integer> orderedIds = new ArrayList<>();
-            orderedIds.add(item.getOrderedItemId());
-            doStatusVolleyCalls(orderedIds, "ready");
+            doStatusVolleyCall(item.getOrderedItemId(), "ready");
         }
     };
-
-
 
     /**
      * Get Tab item from adapter and parse thru it to get OrderId's
@@ -176,7 +149,9 @@ public class FragmentKitchenOrders extends Fragment {
     private void setOrderStatusToReady(int position){
 
         List<Integer> orderedIds = getOrderedItemIds(position);
-        doStatusVolleyCalls(orderedIds, "ready");
+        for(Integer orderId : orderedIds){
+            doStatusVolleyCall(orderId, "ready");
+        }
 
     }
 
@@ -192,7 +167,8 @@ public class FragmentKitchenOrders extends Fragment {
         for (Customer customer : mAdapter.getDataItem(position).getCustomers()) {
 
             for (OrderedItem item : customer.getOrders()) {
-                orderedIds.add(item.getOrderedItemId());
+                if(item.getOrderedItemStatus().equalsIgnoreCase("ordered"))
+                    orderedIds.add(item.getOrderedItemId());
             }
         }
         return orderedIds;
@@ -202,15 +178,10 @@ public class FragmentKitchenOrders extends Fragment {
     /**
      * Use the list of orderId's to create a series of volley calls that individually update the
      * statuses of each item.
-     * @param orderIds as a list of integers
+     * @param orderId as a list of integers
      * @param status: ready, cooking, delivered
      */
-    private void doStatusVolleyCalls(List<Integer> orderIds, String status) {
-
-        volleyCounter = orderIds.size();
-        System.out.println("In volley call with "+volleyCounter+" orderIds");
-
-        for(Integer orderId : orderIds){
+    private void doStatusVolleyCall(int orderId, String status) {
 
             Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
             builder.appendPath("com.ucsandroid.profitable")
@@ -224,42 +195,23 @@ public class FragmentKitchenOrders extends Fragment {
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                     myUrl,
                     (JSONObject) null,
-                    statusSuccessListener,
-                    errorListener);
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
 
             Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-        }
-
     }
 
-    private Response.Listener statusSuccessListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
 
-            try {
-                JSONObject theResponse = new JSONObject(response.toString());
-
-                if(theResponse.getBoolean("success")){
-                    volleyCounter -= 1;
-
-                    if(volleyCounter == 0){
-                        System.out.println("Status updates complete...wait for push to do something");
-                    }
-                    else{
-                        System.out.println("Waiting for other volleys to finish");
-                    }
-                }
-                else{
-                    //((ActivityKitchen) getActivity()).showErrorSnackbar(theResponse.getString("message"));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
 
     private void getKitchenData() {
 
@@ -278,7 +230,12 @@ public class FragmentKitchenOrders extends Fragment {
                 myUrl,
                 (JSONObject) null,
                 kitchenDataSuccessListener,
-                errorListener);
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
@@ -292,10 +249,8 @@ public class FragmentKitchenOrders extends Fragment {
                 JSONObject theResponse = new JSONObject(response.toString());
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
-
                     mTabs = new ArrayList<>();
                     JSONArray tabsJson = new JSONArray(theResponse.getJSONArray("result").toString());
-                    System.out.println("Kitchen received: "+tabsJson);
 
                     Gson gson = new Gson();
                     for(int a = 0; a < tabsJson.length(); a++){
@@ -303,11 +258,18 @@ public class FragmentKitchenOrders extends Fragment {
                         mTabs.add(tab);
                     }
 
+                    if(mTabs.size() > 0){
+                        noOrdersDialog.setVisibility(View.GONE);
+                    }
+                    else{
+                        noOrdersDialog.setVisibility(View.VISIBLE);
+                    }
+
                     evaluateStatuses();
 
                 }
                 else{
-                    //showErrorSnackbar(theResponse.getString("message"));
+                    //Error response
                 }
 
             } catch (JSONException e) {
@@ -316,15 +278,6 @@ public class FragmentKitchenOrders extends Fragment {
         }
     };
 
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-
-            System.out.println("Volley error: " + error);
-            //((ActivityKitchen) getActivity()).showErrorSnackbar("Connection error, try again");
-        }
-    };
 
 
     // ------- BroadCast Receivers -----//
@@ -335,7 +288,6 @@ public class FragmentKitchenOrders extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 System.out.println("Received update location UI broadcast");
-
                 getKitchenData();
 
             }
@@ -343,7 +295,6 @@ public class FragmentKitchenOrders extends Fragment {
 
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateKitchenUI,
                 new IntentFilter("update-kitchen"));
-
     }
 
 

@@ -37,15 +37,15 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
     private OrderedItemClickListener clickListener;
     private RecyclerViewLongClickListener longClickListener;
     private Context context;
-    private int parentPosition = -1;
+    private int customerPosition = -1;
 
 
-    public OrderedItemRecyclerAdapter(Context context, List<OrderedItem> dataSet, int layout, int parentPosition, ViewGroup.LayoutParams params,
+    public OrderedItemRecyclerAdapter(Context context, List<OrderedItem> dataSet, int layout, int customerPosition, ViewGroup.LayoutParams params,
                                       OrderedItemClickListener clickListener, RecyclerViewLongClickListener longClickListener) {
         this.mOrderedItems = dataSet;
         this.context = context;
         this.layout = layout;
-        this.parentPosition = parentPosition;
+        this.customerPosition = customerPosition;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
         this.params = params;
@@ -60,11 +60,13 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
 
 
 
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private ImageView mImageView;
         private TextView mTextView;
         private TextView mTextView2;
+        private TextView mTextView3;
 
         public ViewHolder(View v) {
             super(v);
@@ -82,6 +84,10 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
                 mTextView2 = (TextView) v.findViewById(R.id.tile_text2);
                 mImageView = (ImageView) v.findViewById(R.id.tile_image);
             }
+            else if(layout == R.layout.item_textview_textview_textview){
+                mTextView3 = (TextView) v.findViewById(R.id.tile_text2); //price
+                mTextView2 = (TextView) v.findViewById(R.id.tile_text3); //additions
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -92,7 +98,7 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
         @Override
         public void onClick(View v) {
             if (clickListener != null) {
-                clickListener.recyclerViewListClicked(v, parentPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()));
+                clickListener.recyclerViewListClicked(v, customerPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()));
             }
         }
 
@@ -100,7 +106,7 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
         public boolean onLongClick(View v) {
 
             if(longClickListener != null)
-                longClickListener.recyclerViewListLongClicked(v, parentPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()).getMenuItem());
+                longClickListener.recyclerViewListLongClicked(v, customerPosition, getAdapterPosition(), mOrderedItems.get(getAdapterPosition()).getMenuItem());
 
             return true;
         }
@@ -129,6 +135,12 @@ public class OrderedItemRecyclerAdapter extends RecyclerView.Adapter<OrderedItem
         //Set itemName
         String menuItemName = mOrderedItems.get(position).getMenuItem().getName();
         holder.mTextView.setText(menuItemName);
+
+        //Set price
+        if(holder.mTextView3 != null){
+            double price = (double)mOrderedItems.get(position).getMenuItem().getPrice()/100;
+            holder.mTextView3.setText(currencyFormatter.format(price)+"");
+        }
 
         //Start create additions string
         int menuItemId = mOrderedItems.get(position).getMenuItem().getId();

@@ -1,6 +1,5 @@
 package com.ucsandroid.profitable;
 
-import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -236,7 +235,7 @@ public class FragmentMenuViewpager extends Fragment {
 
                 }
                 else{
-                    ((ActivityOrderView)getActivity()).showErrorSnackbar(theResponse.getString("message"));
+                    ((ActivityOrderView)getActivity()).showSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {

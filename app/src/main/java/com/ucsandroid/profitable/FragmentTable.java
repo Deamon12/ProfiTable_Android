@@ -5,9 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,10 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.LocationLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -60,6 +72,12 @@ public class FragmentTable extends Fragment {
         initUpdateLocationStatus();
         initUpdateLocationStatusListener();
 
+        /*
+        int position = Singleton.getInstance().getCurrentLocationPosition();
+        if(position >= 0 && position < Singleton.getInstance().getTables().size())
+        mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
+        */
+
     }
 
 
@@ -94,6 +112,7 @@ public class FragmentTable extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
+
         mAdapter = new LocationRecyclerAdapter(getActivity(),
                 Singleton.getInstance().getTables(),
                 R.layout.tile_table_new,
@@ -127,6 +146,8 @@ public class FragmentTable extends Fragment {
             System.out.println("restId: "+item.getRestaurantId());
             System.out.println("tabId: "+item.getCurrentTab().getTabId());
 
+            getOrderData(item.getId());
+
         }
     };
 
@@ -145,6 +166,7 @@ public class FragmentTable extends Fragment {
             return getResources().getInteger(R.integer.table_tile_span_portrait);
 
     }
+
 
 
     /**
@@ -168,7 +190,6 @@ public class FragmentTable extends Fragment {
                         return;
                     }
                 }
-
             }
         };
 
@@ -191,14 +212,8 @@ public class FragmentTable extends Fragment {
 
                 System.out.println("Food is "+foodStatus+" push: "+locationId);
 
-                for(int a = 0; a < Singleton.getInstance().getTables().size(); a++){
-                    if(Singleton.getInstance().getTables().get(a).getId() == locationId){
-                        Singleton.getInstance().getTables().get(a).setFoodStatus(foodStatus);
-                        mAdapter.updateLocation(a, Singleton.getInstance().getTables().get(a));
-                        mAdapter.notifyItemChanged(a);
-                        break;
-                    }
-                }
+                if(getActivity() != null)
+                    getOrderData(locationId);
 
             }
         };
@@ -207,6 +222,67 @@ public class FragmentTable extends Fragment {
                 new IntentFilter("update-location-status"));
 
     }
+
+
+    //------- VOLLEY -----//
+    /**
+     * Get all orders, customers, and anything else related to this location
+     */
+    private void getOrderData(final int locationId){
+
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String restId = settings.getString(getActivity().getString(R.string.rest_id), 1+"");
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("rest_id", restId+"");
+        String myUrl = builder.build().toString();
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject theResponse = new JSONObject(response.toString());
+                            if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                                Gson gson = new Gson();
+                                Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
+                                for (int a = 0; a < Singleton.getInstance().getTables().size(); a++) {
+                                    if(Singleton.getInstance().getTables().get(a).getId() == locationId){
+                                        System.out.println("updating table "+a);
+                                        Singleton.getInstance().updateTable(a, mLocation);
+                                        mAdapter.notifyItemChanged(a);
+
+                                        return;
+                                    }
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //showSnackbar("Error getting order info");
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+
+
 
 
 }

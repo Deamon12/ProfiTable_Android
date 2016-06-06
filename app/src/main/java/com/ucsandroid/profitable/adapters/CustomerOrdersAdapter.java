@@ -230,7 +230,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
             holder.cardView.setCardBackgroundColor(0);
         }
 
-
         holder.rcAdapter = new OrderedItemRecyclerAdapter(context,
                 locationData.getCurrentTab().getCustomers().get(position).getOrders(),
                 R.layout.item_textview_textview2,
@@ -265,7 +264,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         }
     }
 
-    //TODO send remove item webservice
     //Remove a specific item from the items list
     public void removeItemFromCustomer(int customer, int position) {
 
@@ -304,7 +302,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         }
     };
 
-
     private void showCustomerEditDialog(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -338,7 +335,7 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
     private void showRemoveLastCustomerConfirm(final int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Removing this customer will make this table available"+(getItemCount()-position));
+        builder.setTitle("Remove customer");
 
         TextView textView = new TextView(context);
 
@@ -422,41 +419,27 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                 myUrl,
                 (JSONObject) null,
-                statusSuccessListener,
-                statusErrorListener);
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
-
-    private Response.Listener statusSuccessListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
-
-            try {
-                JSONObject theResponse = new JSONObject(response.toString());
-                if (theResponse.getBoolean("success") && theResponse.has("result")) {
-
-                } else {
-                    System.out.println("Error settings location status"); //todo snackbar?
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    Response.ErrorListener statusErrorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("ErrorListener updating deviceID");
-        }
-    };
 
 
 
     private void closeTabAtLocation(){
 
-        System.out.println("Closing tab: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId());
+        //System.out.println("Closing tab: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId());
 
         int locationId = Singleton.getInstance().getCurrentLocation().getId();
         int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
@@ -471,25 +454,24 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         String myUrl = builder.build().toString();
 
-
-
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
-                closeTabSuccessListener,
-                errorListener);
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
-
-    private Response.Listener closeTabSuccessListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
-
-            //Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId();
-            System.out.println("Volley success: " + response);
-        }
-    };
 
 
     private void openTabAtLocation(){
@@ -508,12 +490,15 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         String myUrl = builder.build().toString();
 
-        System.out.println("SEAT URL: "+myUrl);
-
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,
                 openTabSuccessListener,
-                errorListener);
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -527,7 +512,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
             try {
 
                 JSONObject theResponse = new JSONObject(response.toString());
-                System.out.println("Volley success: " + response);
 
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
@@ -536,27 +520,12 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                     locationData.getCurrentTab().setTabId(tabId);
                 }
 
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            //Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId();
-
         }
     };
-
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-
-
-        }
-    };
-
-
-
-
 
 
 

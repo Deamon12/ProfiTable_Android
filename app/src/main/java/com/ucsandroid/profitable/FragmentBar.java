@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,10 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.ucsandroid.profitable.adapters.LocationRecyclerAdapter;
 import com.ucsandroid.profitable.listeners.LocationClickListener;
 import com.ucsandroid.profitable.listeners.LocationLongClickListener;
 import com.ucsandroid.profitable.serverclasses.Location;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FragmentBar extends Fragment {
 
@@ -130,6 +139,7 @@ public class FragmentBar extends Fragment {
             System.out.println("tableId: "+item.getId());
             System.out.println("restId: "+item.getRestaurantId());
             System.out.println("tabId: "+item.getCurrentTab().getTabId());
+            getOrderData(item.getId());
 
         }
     };
@@ -195,6 +205,64 @@ public class FragmentBar extends Fragment {
 
     }
 
+    private void getOrderData(final int locationId){
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String restId = settings.getString(getActivity().getString(R.string.rest_id), 1+"");
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("rest_id", restId+"");
+        String myUrl = builder.build().toString();
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject theResponse = new JSONObject(response.toString());
+                            if (theResponse.getBoolean("success") && theResponse.has("result")) {
+
+                                Gson gson = new Gson();
+                                Location mLocation = gson.fromJson(theResponse.getJSONObject("result").toString(), Location.class);
+                                for (int a = 0; a < Singleton.getInstance().getTables().size(); a++) {
+                                    /*if(Singleton.getInstance().getTables().get(a).getId() == locationId){
+                                        System.out.println("updating table "+a);
+                                        Singleton.getInstance().updateTable(a, mLocation);
+                                        mAdapter.notifyItemChanged(a);
+
+                                        return;
+                                    }*/
+
+                                    if(Singleton.getInstance().getBars().get(a).getId() == locationId){
+                                        System.out.println("updating bar "+a);
+                                        Singleton.getInstance().updateBar(a, mLocation);
+                                        mAdapter.notifyItemChanged(a);
+                                        break;
+                                    }
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //showSnackbar("Error getting order info");
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
 
 
 

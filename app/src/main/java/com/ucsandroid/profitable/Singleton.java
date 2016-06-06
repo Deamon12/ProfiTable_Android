@@ -42,6 +42,7 @@ public class Singleton {
 
     private int currentLocationPosition = -1;
     private int currentLocationType = -1;
+    public Location newOrders;
 
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
@@ -231,6 +232,10 @@ public class Singleton {
         return mTables;
     }
 
+    public void updateTable(int position, Location location){
+        mTables.set(position, location);
+    }
+
 
     //Bar calls
     public ArrayList<Location> getBars(){
@@ -248,6 +253,9 @@ public class Singleton {
         }
     }
 
+    public void updateBar(int position, Location location){
+        mBars.set(position, location);
+    }
 
 
     //Takeout calls

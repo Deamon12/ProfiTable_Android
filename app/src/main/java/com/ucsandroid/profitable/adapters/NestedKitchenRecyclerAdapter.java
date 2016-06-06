@@ -1,6 +1,7 @@
 package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.ucsandroid.profitable.R;
+import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.NestedClickListener;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
+import com.ucsandroid.profitable.serverclasses.Customer;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
 import com.ucsandroid.profitable.serverclasses.Tab;
 import com.ucsandroid.profitable.supportclasses.MyLinearLayoutManager;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -95,6 +104,19 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
             System.out.println("In long click: " + tabData.get(getAdapterPosition()).getTabStatus());
             System.out.println("In long click: " + tabData.get(getAdapterPosition()).allOrdersReady());
+
+            for(Customer customer : tabData.get(getAdapterPosition()).getCustomers()){
+
+                for(OrderedItem item : customer.getOrders()){
+                    System.out.println(item.getMenuItem().getName()+" is "+item.getOrderedItemStatus());
+                    if(item.getOrderedItemStatus().equalsIgnoreCase("ordered") ||
+                            item.getOrderedItemStatus().equalsIgnoreCase("ready")){
+                        System.out.println("Attempting to deliver: "+item.getOrderedItemId());
+                        doStatusVolleyCall(item.getOrderedItemId(), "delivered");
+                    }
+                }
+            }
+
             //tabData.remove(getAdapterPosition());
             //notifyDataSetChanged();
 
@@ -120,10 +142,6 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
-
-        System.out.println("TAB STATUS: " + tabData.get(position).getTabStatus());
-        System.out.println("ALL ORDERS READY STATUS: " + tabData.get(position).allOrdersReady());
 
 
         //Green for ready, Blue for not ready
@@ -167,7 +185,36 @@ public class NestedKitchenRecyclerAdapter extends RecyclerView.Adapter<NestedKit
         tabData.get(tab).getCustomers().get(customer).getOrders().get(orderPosition).setOrderedItemStatus(orderedItemStatus);
     }
 
+    private void doStatusVolleyCall(int orderId, String status) {
 
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("item")
+                .appendPath(status+"")
+                .appendQueryParameter("ordered_item_id", orderId+"");
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("response: "+response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("error: "+error);
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
 
 
 }

@@ -42,6 +42,8 @@ import java.util.List;
 
 public class FragmentOrders extends Fragment implements DialogDismissListener, View.OnClickListener {
 
+
+
     private ProgressBar mProgress;
     private BroadcastReceiver mUpdateOrderUI;
     private BroadcastReceiver mDoCalculationUpdate;
@@ -159,8 +161,11 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
             String orderedItemStatus = "not_ordered";
             boolean bringFirst = false;
 
+
+
             List<FoodAddition> additions = item.getDefaultAdditions();
             nestedRecyclerAdapter.addOrderedItemToCustomer( new OrderedItem(orderedItemId, orderedItemNotes, orderedItemStatus, bringFirst, item, additions ));
+
             checkSendToKitchenVisibility();
 
         } else { //No customer is selected
@@ -169,6 +174,8 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
 
         sendUpdateAmountBroadcast();
     }
+
+
 
 
     @Override
@@ -216,8 +223,10 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
      */
     private void showAdditionsDialog(int customerPosition, int position) {
 
-        if(nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getDefaultAdditions().size() > 0 ||
-                nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getOptionalAdditions().size() > 0){
+        int defaults = Singleton.getInstance().getMenuItem(nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getId()).getDefaultAdditions().size();
+        int optionals = Singleton.getInstance().getMenuItem(nestedRecyclerAdapter.getOrderedItemFromCustomer(customerPosition, position).getMenuItem().getId()).getOptionalAdditions().size();
+
+        if(defaults > 0 && optionals > 0){
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 
@@ -252,7 +261,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
     }
 
     private void sendUpdateAmountBroadcast(){
-        Singleton.getInstance().getCurrentLocation().setEditedLocally(true);
         Intent updateIntent = new Intent("update-amount");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(updateIntent);
     }
@@ -296,7 +304,13 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
         mProgress.setVisibility(View.VISIBLE);
         Gson gson = new GsonBuilder().create();
 
-        String customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
+        String customerslist;
+        /*if(newOrders != null){
+            customerslist = gson.toJson(newOrders);
+        }
+        else {*/
+            customerslist = gson.toJson(Singleton.getInstance().getCurrentLocation().getCurrentTab().getCustomers());
+        //}
 
 
         Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
@@ -306,8 +320,6 @@ public class FragmentOrders extends Fragment implements DialogDismissListener, V
                 .appendQueryParameter("customers", customerslist);
 
         String myUrl = builder.build().toString();
-
-        System.out.println("customerslist: "+customerslist);
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
                 myUrl,

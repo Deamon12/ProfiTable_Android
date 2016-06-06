@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabSelectedListener;
 import com.ucsandroid.profitable.serverclasses.Category;
+import com.ucsandroid.profitable.serverclasses.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +78,7 @@ public class ActivityLocationView extends AppCompatActivity {
         inflater.inflate(R.menu.menu_table_view, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -178,7 +180,9 @@ public class ActivityLocationView extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Used for logout
+     */
     private void clearSharedPrefs() {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
         SharedPreferences.Editor edit = settings.edit();
@@ -187,26 +191,12 @@ public class ActivityLocationView extends AppCompatActivity {
     }
 
 
-    private void setLocationsFromPrefs() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
-        try {
-            Singleton.getInstance().setLocations(new JSONArray(settings.getString(getString(R.string.locations_jsonobject), "")));
 
-            initFragments();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void showErrorSnackbar(String message){
+        Snackbar snackbar = Snackbar
+                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
-
-    /**
-     * Compare local location data, initiate volley call, if necessary.
-     */
-    private void evaluateLocationData() {
-
-
-    }
-
-
 
 
     //------ Volley Calls ------//
@@ -357,10 +347,6 @@ public class ActivityLocationView extends AppCompatActivity {
     };
 
 
-    public void showErrorSnackbar(String message){
-        Snackbar snackbar = Snackbar
-                .make(mCoordinator, message, Snackbar.LENGTH_LONG);
-        snackbar.show();
-    }
+
 
 }

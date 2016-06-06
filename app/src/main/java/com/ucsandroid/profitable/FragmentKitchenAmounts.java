@@ -183,7 +183,7 @@ public class FragmentKitchenAmounts extends Fragment {
 
                 }
                 else{
-                    //showErrorSnackbar(theResponse.getString("message"));
+                    //showSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {
@@ -198,7 +198,7 @@ public class FragmentKitchenAmounts extends Fragment {
         public void onErrorResponse(VolleyError error) {
 
             System.out.println("Volley error: " + error.getStackTrace());
-            //((ActivityKitchen) getActivity()).showErrorSnackbar("Connection error, try again");
+            //((ActivityKitchen) getActivity()).showSnackbar("Connection error, try again");
         }
     };
 

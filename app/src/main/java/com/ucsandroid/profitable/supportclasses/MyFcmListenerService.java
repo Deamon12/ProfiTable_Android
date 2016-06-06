@@ -74,7 +74,6 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         }
 
 
-
     }
 
     private void sendUpdateLocationUI(String locationStatus, int locationId){
@@ -90,7 +89,7 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 
-    private void sendUpdateOrderStatus(int orderedItemId, String orderedItemStatus){ //todo make receiver in location frags
+    private void sendUpdateOrderStatus(int orderedItemId, String orderedItemStatus){
         Intent updateIntent = new Intent("update-location-status");
         updateIntent.putExtra("locationId" , orderedItemId);
         updateIntent.putExtra("locationStatus", orderedItemStatus);

@@ -1,7 +1,6 @@
 package com.ucsandroid.profitable.adapters;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -69,8 +68,6 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         @Override
         public boolean onLongClick(View v) {
 
-            //todo:dialog for location long clicked?? System.out.println("longed: "+dataSet.get(getAdapterPosition()).getId());
-
             if (longClickListener != null) {
                 longClickListener.recyclerViewListClicked(v, -1, getAdapterPosition(), dataSet.get(getAdapterPosition()));
             }
@@ -95,8 +92,9 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        System.out.println("Location has orders:  "+dataSet.get(position).toString());
-        if(dataSet.get(position).isFoodIsReady()){
+
+
+        if(dataSet.get(position).hasReadyOrders()){
             holder.mTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.amber));
         }
         else{
@@ -140,5 +138,8 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     public void updateLocation(int position, Location location){
         dataSet.set(position, location);
     }
+
+
+
 
 }

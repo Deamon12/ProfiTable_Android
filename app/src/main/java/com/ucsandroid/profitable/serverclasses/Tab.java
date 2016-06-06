@@ -1,5 +1,7 @@
 package com.ucsandroid.profitable.serverclasses;
 
+import android.widget.RelativeLayout;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -169,18 +171,13 @@ public class Tab {
         return false;
     }
 
-
-    public int[] hasOrderedItemId(int orderedItemId){
-        int[] location = {-1, -1};
-        for(int a = 0; a < customers.size();a++){
-            int custHas = customers.get(a).hasOrderedItemId(orderedItemId);
-            if(custHas != -1){
-                location[0] = a;
-                location[1] = custHas;
-                return location;
+    public boolean hasReadyOrders(){
+        for(Customer customer : customers){
+            if(customer.hasReadyOrder()){
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     @Override

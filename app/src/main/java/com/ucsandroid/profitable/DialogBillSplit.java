@@ -29,9 +29,6 @@ import java.io.OutputStream;
 public class DialogBillSplit extends DialogFragment implements View.OnClickListener {
 
 
-    LayoutInflater layoutInflater;
-    private View receiptView;
-    private View v;
     private RelativeLayout customerSplit;
     private RelativeLayout noSplit;
     private RelativeLayout equalSplit;
@@ -60,7 +57,7 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
                              Bundle savedInstanceState) {
 
         getDialog().setTitle("Split the bill?");
-        v = inflater.inflate(R.layout.dialog_bill_split, container, false);
+        View v = inflater.inflate(R.layout.dialog_bill_split, container, false);
 
         customerSplit = (RelativeLayout) v.findViewById(R.id.split_pre_customer_relative);
         equalSplit = (RelativeLayout) v.findViewById(R.id.equal_split_relative);
@@ -70,8 +67,6 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
         equalSplit.setOnClickListener(this);
         noSplit.setOnClickListener(this);
 
-
-        receiptView = inflater.inflate(R.layout.layout_receipt, container, true);
 
 
         return v;
@@ -111,7 +106,7 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
         }
 
         fragmentTransaction.addToBackStack(null);
-        FragmentReciept newFragment = FragmentReciept.newInstance(46754);
+        FragmentReciept newFragment = FragmentReciept.newInstance();
         newFragment.show(fragmentTransaction, "receipt");
 
 
@@ -126,18 +121,20 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
         // crate a page description
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(1400, 1600, 1).create();
 
+
+
         // start a page
         PdfDocument.Page page = document.startPage(pageInfo);
 
-        // draw something on the page
-
-        //View content = receiptView;
-
-        //v.setLayoutParams(new ViewGroup.LayoutParams(400, 600));
-        receiptView.draw(page.getCanvas());
+        //todo receiptView.draw(page.getCanvas());
 
         // finish the page
         document.finishPage(page);
+
+
+        //Add pages...
+
+
 
         // write the document content
         try {

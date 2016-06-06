@@ -86,13 +86,6 @@ public class Location implements Serializable {
         return cost;
     }
 
-    public void setEditedLocally(boolean edited){
-        editedLocally = edited;
-    }
-
-    public boolean isEditedLocally(){
-        return editedLocally;
-    }
 
     public void setFoodStatus(String status){
         foodStatus = status;
@@ -102,6 +95,9 @@ public class Location implements Serializable {
         return (foodStatus.equalsIgnoreCase("ready"));
     }
 
+    public boolean hasReadyOrders(){
+        return currentTab.hasReadyOrders();
+    }
 
     @Override
     public String toString() {
