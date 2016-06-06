@@ -219,7 +219,8 @@ public class ActivityOrderView extends AppCompatActivity implements DialogDismis
             sendAddCustomerBroadcast();
         }
         else if(v == doCheckout){
-            if(Singleton.getInstance().getCurrentLocation().getCurrentTab() != null)
+            System.out.println("Current Tab: "+Singleton.getInstance().getCurrentLocation().getCurrentTab());
+            if(Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabStatus() != null)
                 doCheckOut();
         }
 
