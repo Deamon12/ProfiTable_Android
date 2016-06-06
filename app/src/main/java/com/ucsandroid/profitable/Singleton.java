@@ -29,6 +29,7 @@ public class Singleton {
     static final int TYPE_TAKEOUT = 3;
 
 	private final String TAG = "Profit Tag";
+    private String restaurantName;
 	private static Singleton instance = null;
 	private static Context mContext;
 
@@ -291,4 +292,11 @@ public class Singleton {
     }
 
 
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
 }

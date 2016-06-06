@@ -32,10 +32,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.ucsandroid.profitable.listeners.DialogDismissListener;
 import com.ucsandroid.profitable.serverclasses.Customer;
+import com.ucsandroid.profitable.serverclasses.FoodAddition;
 import com.ucsandroid.profitable.serverclasses.Location;
 import com.ucsandroid.profitable.serverclasses.OrderedItem;
+import com.ucsandroid.profitable.serverclasses.Tab;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +47,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityOrderView extends AppCompatActivity implements View.OnClickListener {
+public class ActivityOrderView extends AppCompatActivity implements DialogDismissListener, View.OnClickListener {
 
 
     private BroadcastReceiver mUpdateLocationOrdersStatus;
@@ -84,7 +88,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         menuDivider.setOnClickListener(this);
         dividerArrow = (ImageView) findViewById(R.id.divider_image);
 
-
         getOrderData();
 
         dynamicallySizeContainers();
@@ -100,13 +103,16 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
             case R.id.action_check_status:
                 showFoodStatusDialog();
+                return true;
+
+            case R.id.action_close_table:
+                showCloseBillDialog();
                 return true;
 
             default:
@@ -218,12 +224,16 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     }
 
-    //TODO: split bills dialog
+
     private void doCheckOut() {
-        showBillSplitDialog();
+        //showBillSplitDialog();
+        showReciept();
 
     }
 
+
+
+    //TODO: split bills dialog
     private void showBillSplitDialog() {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -240,8 +250,54 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
     }
 
 
-    private void showFoodStatusDialog() {
+    private void showReciept() {
 
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("receipt");
+
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+
+        fragmentTransaction.addToBackStack(null);
+        FragmentReceipt newFragment = FragmentReceipt.newInstance();
+        newFragment.show(fragmentTransaction, "receipt");
+
+    }
+
+    @Override
+    public void dialogDismissListener(int customer, int position, List<FoodAddition> additions) {
+        showCloseBillDialog();
+    }
+
+    private void showCloseBillDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Close this table?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                int locationId = Singleton.getInstance().getCurrentLocation().getId();
+                int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
+
+                setLocationStatusVolley(getString(R.string.location_available), Singleton.getInstance().getCurrentLocation().getId());
+                closeTabAtLocation(locationId, tabId);
+                Singleton.getInstance().getCurrentLocation().setCurrentTab(new Tab());
+                ActivityOrderView.this.finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    private void showFoodStatusDialog() {
 
         StringBuilder ready = new StringBuilder();
         StringBuilder delivered = new StringBuilder();
@@ -424,7 +480,12 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
                     myUrl,
                     (JSONObject) null,
-                    statusSuccessListener,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
@@ -435,13 +496,69 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
 
     }
 
-    private Response.Listener statusSuccessListener = new Response.Listener() {
-        @Override
-        public void onResponse(Object response) {
 
-        }
-    };
+    private void closeTabAtLocation(int locationId, int tabId){
 
+
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("orders")
+                .appendPath("close")
+                .appendQueryParameter("location_id", locationId+"")
+                .appendQueryParameter("employee_id", tabId+"");
+
+        String myUrl = builder.build().toString();
+
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST,
+                myUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+    private void setLocationStatusVolley(String status, int locationId) {
+
+        //free or occupy
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("location")
+                .appendPath(status)
+                .appendQueryParameter("location_id", locationId+"");
+
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.PUT,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
 
     /**
      * Update UI if we receive any status updates pertaining to this order
@@ -458,7 +575,6 @@ public class ActivityOrderView extends AppCompatActivity implements View.OnClick
                 if(Singleton.getInstance().getCurrentLocation().getId() == locationId){
                     showSnackbar("");
                 }
-
             }
         };
 

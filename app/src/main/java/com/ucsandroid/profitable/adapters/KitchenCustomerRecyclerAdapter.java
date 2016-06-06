@@ -3,6 +3,7 @@ package com.ucsandroid.profitable.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.List;
 public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<KitchenCustomerRecyclerAdapter.ViewHolder> {
 
     private int layout;
+    private int childLayout = -1;
 
     private List<Customer> customerData;
     private List<Customer> oldCustomerData = new ArrayList<>();
@@ -42,6 +44,22 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
         this.layoutParams = params;
         this.nestedClickListener = clickListener;
 
+    }
+
+    public KitchenCustomerRecyclerAdapter(Context context,
+                                          List<Customer> dataSet,
+                                          int layout,
+                                          int parentPostion,
+                                          ViewGroup.LayoutParams params,
+                                          OrderedItemClickListener clickListener,
+                                          int childLayout) {
+        customerData = dataSet;
+        this.context = context;
+        this.layout = layout;
+        this.parentPosition = parentPostion;
+        this.layoutParams = params;
+        this.nestedClickListener = clickListener;
+        this.childLayout = childLayout;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -108,13 +126,24 @@ public class KitchenCustomerRecyclerAdapter extends RecyclerView.Adapter<Kitchen
     public void onBindViewHolder(ViewHolder holder, int position) {
 
 
-        holder.mAdapter = new OrderedItemRecyclerAdapter(context,
-                customerData.get(position).getOrders(),
-                R.layout.item_imageview_textview_textview2,
-                position,
-                null,
-                orderedItemClickListener,
-                null);
+        if(childLayout == -1){
+            holder.mAdapter = new OrderedItemRecyclerAdapter(context,
+                    customerData.get(position).getOrders(),
+                    R.layout.item_imageview_textview_textview2,
+                    position,
+                    null,
+                    orderedItemClickListener,
+                    null);
+        }
+        else{
+            holder.mAdapter = new OrderedItemRecyclerAdapter(context,
+                    customerData.get(position).getOrders(),
+                    childLayout,
+                    position,
+                    null,
+                    orderedItemClickListener,
+                    null);
+        }
 
         holder.recyclerView.setAdapter(holder.mAdapter);
 

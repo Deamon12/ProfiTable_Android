@@ -2,10 +2,7 @@ package com.ucsandroid.profitable;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,12 +10,12 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,7 +25,6 @@ import com.google.gson.Gson;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabSelectedListener;
 import com.ucsandroid.profitable.serverclasses.Category;
-import com.ucsandroid.profitable.serverclasses.Location;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +45,6 @@ public class ActivityLocationView extends AppCompatActivity {
     private BottomBar mBottomBar;
     private Toolbar toolbar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +59,9 @@ public class ActivityLocationView extends AppCompatActivity {
             Singleton.initialize(this);
         }
 
-
         initBottomNavigation(savedInstanceState);
         getMenu();
-        //evaluateLocationData();
+        getRestaurantName();
         getLocationsData();
     }
 
@@ -78,7 +72,6 @@ public class ActivityLocationView extends AppCompatActivity {
         inflater.inflate(R.menu.menu_table_view, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,8 +95,6 @@ public class ActivityLocationView extends AppCompatActivity {
     }
 
     private void initBottomNavigation(Bundle savedInstanceState) {
-
-
 
         mBottomBar = BottomBar.attach(this, savedInstanceState);
         mBottomBar.setActiveTabColor(ContextCompat.getColor(this, R.color.accent));
@@ -179,7 +170,6 @@ public class ActivityLocationView extends AppCompatActivity {
         mBottomBar.selectTabAtPosition(location, true);
     }
 
-
     /**
      * Used for logout
      */
@@ -190,9 +180,7 @@ public class ActivityLocationView extends AppCompatActivity {
         edit.apply();
     }
 
-
-
-    public void showErrorSnackbar(String message){
+    public void showSnackbar(String message){
         Snackbar snackbar = Snackbar
                 .make(mCoordinator, message, Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -223,7 +211,6 @@ public class ActivityLocationView extends AppCompatActivity {
                 errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
     }
 
     private Response.Listener locationSuccessListener = new Response.Listener() {
@@ -236,29 +223,17 @@ public class ActivityLocationView extends AppCompatActivity {
                 if(theResponse.getBoolean("success") && theResponse.has("result")){
 
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
-                    //String newData = theResponse.getJSONArray("result").toString();
-                    //String localData = settings.getString(getString(R.string.locations_jsonobject), "");
-
-                    //IF results are different than local data, update local data
-                    //if(!newData.equalsIgnoreCase(localData)){
-
-                        SharedPreferences.Editor edit = settings.edit();
-                        edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
-                        edit.apply();
-                        //setLocationsFromPrefs();
+                    SharedPreferences.Editor edit = settings.edit();
+                    edit.putString(getString(R.string.locations_jsonobject), theResponse.getJSONArray("result").toString());
+                    edit.apply();
 
                     //TODO: compare current locations to new -- needs work
                     Singleton.getInstance().setLocations(new JSONArray(theResponse.getJSONArray("result").toString()));
 
                     initFragments();
-
-                   // }
-                    //else if(newData.equalsIgnoreCase(localData)){
-                        //System.out.println("Local locations are the same as new locations. Not updating data or UI");
-                    //}
                 }
                 else{
-                    showErrorSnackbar("Error getting location data");
+                    showSnackbar("Error getting location data");
                 }
 
             } catch (JSONException e) {
@@ -267,6 +242,49 @@ public class ActivityLocationView extends AppCompatActivity {
         }
     };
 
+
+    private void getRestaurantName() {
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String restId = settings.getString(getString(R.string.rest_id), "1");
+
+        Uri.Builder builder = Uri.parse("http://52.38.148.241:8080").buildUpon();
+        builder.appendPath("com.ucsandroid.profitable")
+                .appendPath("rest")
+                .appendPath("restaurant")
+                .appendQueryParameter("rest_id", restId);
+        String myUrl = builder.build().toString();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                myUrl,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            String restName = response.getString("name");
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ActivityLocationView.this);
+                            SharedPreferences.Editor edit = settings.edit();
+                            edit.putString("rest_name", restName);
+                            edit.apply();
+                            Singleton.getInstance().setRestaurantName(restName);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //showSnackbar("Error setting order status");
+                    }
+                });
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
 
     /**
      * Create and execute a volley call to retrieve JSON data from the server
@@ -289,7 +307,6 @@ public class ActivityLocationView extends AppCompatActivity {
                 errorListener);
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
 
     }
     /**
@@ -328,7 +345,7 @@ public class ActivityLocationView extends AppCompatActivity {
 
 
                 } else {
-                    showErrorSnackbar(theResponse.getString("message"));
+                    showSnackbar(theResponse.getString("message"));
                 }
 
             } catch (JSONException e) {
@@ -342,7 +359,7 @@ public class ActivityLocationView extends AppCompatActivity {
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            showErrorSnackbar(error.toString());
+            showSnackbar(error.toString());
         }
     };
 

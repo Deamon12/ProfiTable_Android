@@ -1,14 +1,9 @@
 package com.ucsandroid.profitable;
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.print.PrintAttributes;
-import android.print.pdf.PrintedPdfDocument;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
-import org.w3c.dom.Document;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -36,9 +29,6 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
     static DialogBillSplit newInstance() {
         DialogBillSplit f = new DialogBillSplit();
 
-        //Bundle args = new Bundle();
-        //f.setArguments(args);
-
         return f;
     }
 
@@ -46,9 +36,6 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, 0);
-
-
-
 
     }
 
@@ -66,8 +53,6 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
         customerSplit.setOnClickListener(this);
         equalSplit.setOnClickListener(this);
         noSplit.setOnClickListener(this);
-
-
 
         return v;
     }
@@ -89,7 +74,7 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
 
         }
         else if(v == noSplit){
-
+            showReciept();
         }
 
 
@@ -106,56 +91,18 @@ public class DialogBillSplit extends DialogFragment implements View.OnClickListe
         }
 
         fragmentTransaction.addToBackStack(null);
-        FragmentReciept newFragment = FragmentReciept.newInstance();
+        FragmentReceipt newFragment = FragmentReceipt.newInstance();
         newFragment.show(fragmentTransaction, "receipt");
 
 
     }
 
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void buildPDF() {
-
-        PdfDocument document = new PdfDocument();
-
-        // crate a page description
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(1400, 1600, 1).create();
 
 
 
-        // start a page
-        PdfDocument.Page page = document.startPage(pageInfo);
-
-        //todo receiptView.draw(page.getCanvas());
-
-        // finish the page
-        document.finishPage(page);
 
 
-        //Add pages...
-
-
-
-        // write the document content
-        try {
-            document.writeTo(getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // close the document
-        document.close();
-
-
-    }
-
-
-
-    private OutputStream getOutputStream() throws FileNotFoundException {
-        File file = new File(getActivity().getExternalFilesDir(null), "fileName.pdf");
-        System.out.println("File: "+file.getAbsolutePath());
-        return new FileOutputStream(file);
-    }
 
     private BufferedOutputStream getBufferedOutputStream() throws FileNotFoundException {
         File file = new File(getActivity().getFilesDir(), "filename");

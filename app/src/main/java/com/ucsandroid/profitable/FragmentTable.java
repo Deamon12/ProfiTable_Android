@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -60,7 +59,6 @@ public class FragmentTable extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.table_recyclerview);
         initRecyclerView();
 
-
         return view;
     }
 
@@ -71,12 +69,6 @@ public class FragmentTable extends Fragment {
 
         initUpdateLocationStatus();
         initUpdateLocationStatusListener();
-
-        /*
-        int position = Singleton.getInstance().getCurrentLocationPosition();
-        if(position >= 0 && position < Singleton.getInstance().getTables().size())
-        mAdapter.notifyItemChanged(Singleton.getInstance().getCurrentLocationPosition());
-        */
 
     }
 
@@ -112,7 +104,6 @@ public class FragmentTable extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayout);
 
-
         mAdapter = new LocationRecyclerAdapter(getActivity(),
                 Singleton.getInstance().getTables(),
                 R.layout.tile_table_new,
@@ -142,12 +133,10 @@ public class FragmentTable extends Fragment {
 
         @Override
         public void recyclerViewListClicked(View v, int parentPosition, int position, Location item) {
-            System.out.println("tableId: "+item.getId());
-            System.out.println("restId: "+item.getRestaurantId());
-            System.out.println("tabId: "+item.getCurrentTab().getTabId());
-
+            //System.out.println("tableId: "+item.getId());
+            //System.out.println("restId: "+item.getRestaurantId());
+            //System.out.println("tabId: "+item.getCurrentTab().getTabId());
             getOrderData(item.getId());
-
         }
     };
 
@@ -155,7 +144,6 @@ public class FragmentTable extends Fragment {
         Intent orderViewActivity = new Intent(getActivity(), ActivityOrderView.class);
         getActivity().startActivity(orderViewActivity);
     }
-
 
     private int getSpanCount(){
 
@@ -206,18 +194,12 @@ public class FragmentTable extends Fragment {
         mUpdateLocationOrdersStatus = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
                 int locationId = intent.getIntExtra("locationId", -1);
                 String foodStatus = intent.getStringExtra("locationStatus");
-
-                System.out.println("Food is "+foodStatus+" push: "+locationId);
-
                 if(getActivity() != null)
                     getOrderData(locationId);
-
             }
         };
-
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateLocationOrdersStatus,
                 new IntentFilter("update-location-status"));
 
@@ -230,7 +212,6 @@ public class FragmentTable extends Fragment {
      */
     private void getOrderData(final int locationId){
 
-
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String restId = settings.getString(getActivity().getString(R.string.rest_id), 1+"");
 
@@ -241,7 +222,6 @@ public class FragmentTable extends Fragment {
                 .appendQueryParameter("location_id", locationId+"")
                 .appendQueryParameter("rest_id", restId+"");
         String myUrl = builder.build().toString();
-
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 myUrl,
@@ -274,15 +254,11 @@ public class FragmentTable extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //showSnackbar("Error getting order info");
                     }
                 });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
-
-
-
 
 
 }

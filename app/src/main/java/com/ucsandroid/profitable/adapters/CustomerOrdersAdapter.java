@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -25,9 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.rey.material.app.Dialog;
-import com.rey.material.app.DialogFragment;
-import com.rey.material.app.SimpleDialog;
 import com.ucsandroid.profitable.R;
 import com.ucsandroid.profitable.Singleton;
 import com.ucsandroid.profitable.listeners.OrderedItemClickListener;
@@ -188,7 +184,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                 openTabAtLocation();
             }
         }
-
     }
 
 
@@ -371,7 +366,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
         edittext.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         edittext.setHint("Comment");
-        //edittext.setSingleLine(false);
         dialog.setTitle("Add comment to this order");
 
 
@@ -439,8 +433,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
 
     private void closeTabAtLocation(){
 
-        //System.out.println("Closing tab: "+Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId());
-
         int locationId = Singleton.getInstance().getCurrentLocation().getId();
         int tabId = Singleton.getInstance().getCurrentLocation().getCurrentTab().getTabId();
 
@@ -459,13 +451,11 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                     }
                 });
 
@@ -501,7 +491,6 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
                 });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
     }
 
 
@@ -510,20 +499,16 @@ public class CustomerOrdersAdapter extends RecyclerView.Adapter<CustomerOrdersAd
         public void onResponse(Object response) {
 
             try {
-
                 JSONObject theResponse = new JSONObject(response.toString());
-
                 if (theResponse.getBoolean("success") && theResponse.has("result")) {
 
                     int tabId = theResponse.getJSONObject("result").getInt("tabId");
                     Singleton.getInstance().getCurrentLocation().getCurrentTab().setTabId(tabId);
                     locationData.getCurrentTab().setTabId(tabId);
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     };
 

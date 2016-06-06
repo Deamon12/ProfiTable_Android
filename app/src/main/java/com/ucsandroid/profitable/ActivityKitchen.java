@@ -37,7 +37,6 @@ public class ActivityKitchen extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         setupFragmentContainers();
-        //getKitchenData();
         initFragments();
 
     }
@@ -122,6 +121,5 @@ public class ActivityKitchen extends AppCompatActivity {
         Intent updateIntent = new Intent("update-kitchen");
         LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
-
 
 }

@@ -7,5 +7,10 @@
         android:icon="@drawable/ic_query_builder_white_18dp"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_close_table"
+        android:orderInCategory="100"
+        android:title="Close Table"
+        app:showAsAction="never" />
 
 </menu>
