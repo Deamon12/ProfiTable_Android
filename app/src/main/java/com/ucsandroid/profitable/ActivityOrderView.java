@@ -219,7 +219,8 @@ public class ActivityOrderView extends AppCompatActivity implements DialogDismis
             sendAddCustomerBroadcast();
         }
         else if(v == doCheckout){
-            doCheckOut();
+            if(Singleton.getInstance().getCurrentLocation().getCurrentTab() != null)
+                doCheckOut();
         }
 
     }
